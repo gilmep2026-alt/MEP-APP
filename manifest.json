@@ -1,0 +1,23 @@
+{
+  "name": "MEP · Movimiento Electoral del Pueblo",
+  "short_name": "MEP",
+  "description": "Plataforma oficial del Movimiento Electoral del Pueblo",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#080212",
+  "theme_color": "#2b0d4f",
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
