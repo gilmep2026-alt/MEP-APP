@@ -936,6 +936,31 @@ body.subapp-mode main { margin-left: 0 !important; padding: 0 !important; max-wi
   </div>
 </div>
 
+<!-- MODAL DE TÉRMINOS Y CONDICIONES -->
+<div class="modal-overlay" id="termsModal" style="display: none; z-index: 300;">
+  <div class="modal-card" style="max-width: 500px; text-align: left;">
+    <div class="modal-head" style="text-align: center;">
+      <div class="modal-logo" style="background: var(--gold-500); color: var(--purple-950);">MEP</div>
+      <h2>Términos y Condiciones</h2>
+      <p style="font-size: 12px; margin-top: 5px;">Última actualización: Octubre 2026</p>
+    </div>
+    <div style="font-size: 13px; color: var(--text-dim); max-height: 300px; overflow-y: auto; margin-bottom: 20px; padding-right: 10px; text-align: justify;">
+      <p>Bienvenido a la plataforma oficial del <b>Movimiento Electoral del Pueblo (MEP)</b>. Al utilizar esta aplicación, usted acepta los siguientes términos, los cuales se rigen por las leyes de la República Bolivariana de Venezuela.</p>
+      <br>
+      <p><b>1. Objeto de la Plataforma:</b> Esta herramienta es de carácter informativo, organizativo y comunicacional para la militancia y simpatizantes. El uso indebido, la difusión de información falsa o las actividades ilícitas están estrictamente prohibidas.</p>
+      <p><b>2. Protección de Datos Personales (LOPDP):</b> De conformidad con la Ley Orgánica de Protección de Datos Personales, le informamos que los datos ingresados (nombre en el chat, mensajes, etc.) son tratados con estricta confidencialidad. Al aceptar, usted otorga su <b>consentimiento libre, informado y expreso</b> para el tratamiento de sus datos con la única finalidad de gestionar la comunicación interna. Usted conserva sus derechos de acceso, rectificación, cancelación y oposición (ARCO).</p>
+      <p><b>3. Propiedad Intelectual:</b> Todo el contenido (logos, imágenes, textos, videos, estatutos) es propiedad del MEP o se encuentra debidamente licenciado. Su reproducción, distribución o modificación sin autorización expresa está penada por la Ley sobre el Derecho de Autor.</p>
+      <p><b>4. Normas de Conducta:</b> El chat y las herramientas interactivas deben usarse con respeto. Los administradores se reservan el derecho de suspender o eliminar el acceso a cualquier usuario que incumpla estas normas, sin perjuicio de las acciones legales a que hubiere lugar.</p>
+      <p><b>5. Aceptación Electrónica:</b> Conforme a la Ley de Mensajes de Datos y Firmas Electrónicas, al hacer clic en "Aceptar y Continuar", usted manifiesta su voluntad inequívoca de quedar vinculado por estos términos. Esta acción tiene la misma validez legal que una firma manuscrita.</p>
+      <br>
+      <p>Si no está de acuerdo con estos términos, le solicitamos abstenerse de utilizar la aplicación.</p>
+    </div>
+    <button class="modal-submit" id="acceptTermsBtn" style="width: 100%;">
+      <svg class="ico"><use href="#i-check"/></svg> Aceptar y Continuar
+    </button>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <div id="installBar">
@@ -1378,13 +1403,9 @@ function reiniciarAutoplay(){
   iniciarAutoplay();
 }
 
-/* ============================================================
-   CHAT EN TIEMPO REAL CON POCKETBASE
-   ============================================================ */
 const USER_KEY = 'mep_user_v3';
 const DEVICE_KEY = 'mep_device_id';
 
-// Generar un ID único para este dispositivo si no existe
 let myDeviceId = localStorage.getItem(DEVICE_KEY);
 if (!myDeviceId) {
   myDeviceId = 'dev_' + Math.random().toString(36).substr(2, 9);
@@ -1400,7 +1421,6 @@ function nombreUsuario(){
   return u;
 }
 
-// Suscribirse a los cambios en tiempo real
 pb.collection('mensajes').subscribe('*', function (e) {
   if (e.action === 'create' || e.action === 'delete') {
     renderChat();
@@ -1810,11 +1830,30 @@ async function init() {
     isAdmin = true;
     $('adminNavWrap').style.display = 'block';
   }
+
+  // --- LÓGICA DE TÉRMINOS Y CONDICIONES ---
+  const termsModal = document.getElementById('termsModal');
+  const acceptBtn = document.getElementById('acceptTermsBtn');
+  const TERMS_KEY = 'mep_terms_accepted_v1';
+
+  if (localStorage.getItem(TERMS_KEY) !== 'true') {
+    termsModal.style.display = 'flex';
+  }
+
+  acceptBtn.addEventListener('click', () => {
+    localStorage.setItem(TERMS_KEY, 'true');
+    termsModal.style.display = 'none';
+    toast('✅ Gracias por aceptar los términos');
+  });
 }
 
 document.addEventListener('DOMContentLoaded', init);
 
+/* ============================================================
+   PWA INSTALL PROMPT
+   ============================================================ */
 let deferredPrompt = null;
+
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
@@ -1850,7 +1889,7 @@ window.addEventListener('load', () => {
   }
 });
 
-console.log('%c MEP · Chat en tiempo real activado ', 'color:#080212;background:linear-gradient(135deg,#ffd700,#f59e0b);padding:8px 14px;border-radius:8px;font-weight:900;font-size:14px');
+console.log('%c MEP · Chat en tiempo real y Términos Legales activados ', 'color:#080212;background:linear-gradient(135deg,#ffd700,#f59e0b);padding:8px 14px;border-radius:8px;font-weight:900;font-size:14px');
 </script>
 </body>
 </html>
