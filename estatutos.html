@@ -68,26 +68,35 @@
 
     <!-- Encabezado -->
     <header class="bg-purple-950/80 backdrop-blur-lg border-b border-purple-800/50 sticky top-0 z-50 shadow-2xl">
-        <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div class="flex items-center gap-4 group cursor-pointer" @click="searchQuery = ''; window.scrollTo({top: 0, behavior: 'smooth'})">
-                <div class="relative">
-                    <div class="absolute inset-0 bg-amber-400 blur-md opacity-20 group-hover:opacity-40 transition-opacity duration-300"></div>
-                    <div class="relative bg-gradient-to-br from-amber-400 to-amber-500 text-purple-950 font-black p-2.5 rounded-xl text-lg tracking-wider shadow-lg transform group-hover:scale-105 transition-transform duration-300">MEP</div>
-                </div>
-                <div>
-                    <span class="text-[10px] uppercase tracking-widest text-amber-400 font-bold block mb-0.5">Documento Oficial · DPN 2023</span>
-                    <h1 class="text-xl sm:text-2xl font-black text-white leading-tight tracking-tight">Estatutos del Partido</h1>
+        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-col sm:flex-row justify-between items-center gap-3">
+            
+            <!-- Contenedor Izquierdo: Botón Volver + Logo + Título -->
+            <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
+                
+                <!-- Botón Volver -->
+                <button onclick="volverApp()" class="flex items-center justify-center text-amber-400 hover:text-purple-950 hover:bg-amber-400 transition-all bg-purple-900/60 p-2.5 rounded-xl border border-purple-700/60 shadow-sm" title="Volver a la App">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                </button>
+
+                <!-- Logo y Título -->
+                <div class="flex items-center gap-3 cursor-pointer group" @click="searchQuery = ''; window.scrollTo({top: 0, behavior: 'smooth'})">
+                    <!-- Imagen del Logo -->
+                    <img src="logo.png" alt="MEP Logo" class="h-10 sm:h-12 w-auto object-contain rounded-lg bg-white/90 p-0.5 shadow-md">
+                    <div>
+                        <span class="text-[9px] sm:text-[10px] uppercase tracking-widest text-amber-400 font-bold block mb-0.5">Documento Oficial · DPN 2023</span>
+                        <h1 class="text-lg sm:text-xl font-black text-white leading-tight tracking-tight">Estatutos del Partido</h1>
+                    </div>
                 </div>
             </div>
             
             <!-- Buscador -->
-            <div class="w-full sm:w-96 relative group">
+            <div class="w-full sm:w-80 relative group">
                 <div class="absolute inset-0 bg-amber-400 rounded-xl blur opacity-0 group-focus-within:opacity-20 transition-opacity duration-300"></div>
                 <div class="relative flex items-center bg-purple-900/60 border border-purple-700/60 rounded-xl overflow-hidden focus-within:border-amber-400 transition-colors duration-300 shadow-inner">
                     <span class="pl-4 text-purple-400 group-focus-within:text-amber-400 transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     </span>
-                    <input type="text" x-model.debounce.250ms="searchQuery" placeholder="Buscar artículo, tema o palabra..." class="w-full bg-transparent px-4 py-3 text-sm text-white placeholder-purple-400/70 focus:outline-none">
+                    <input type="text" x-model.debounce.250ms="searchQuery" placeholder="Buscar artículo..." class="w-full bg-transparent px-3 py-2.5 text-sm text-white placeholder-purple-400/70 focus:outline-none">
                     <button x-show="searchQuery" @click="searchQuery=''" class="pr-4 text-purple-400 hover:text-amber-400 transition-colors" title="Limpiar">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
@@ -360,6 +369,15 @@
 
     <!-- ============ LÓGICA ============ -->
     <script>
+        // Función para regresar a la pantalla principal de la App
+        function volverApp() {
+            if (window.history.length > 1) {
+                window.history.back(); // Intenta regresar a la página anterior
+            } else {
+                window.location.href = './'; // Si no hay historial, va a la raíz (index.html)
+            }
+        }
+
         function estatutosApp() {
             return {
                 searchQuery: '',
