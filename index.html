@@ -9,6 +9,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="MEP">
 <link rel="apple-touch-icon" href="logo.png">
+<!-- ENLACE AL MANIFEST PARA PWABUILDER -->
+<link rel="manifest" href="manifest.json">
 <title>MEP · Movimiento Electoral del Pueblo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -112,15 +114,10 @@ img,video,iframe{display:block;max-width:100%}
 
 .brand{display:flex;align-items:center;gap:14px;cursor:pointer;user-select:none;flex:1;min-width:0; overflow:hidden;}
 .brand-logo{
-  height: 52px;
-  width: auto;
-  max-width: 160px;
-  object-fit: contain;
-  flex: none;
-  border-radius: 8px;
+  height: 52px; width: auto; max-width: 160px;
+  object-fit: contain; flex: none; border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-  background: #fff;
-  padding: 2px;
+  background: #fff; padding: 2px;
 }
 .brand-text-wrap { display: flex; flex-direction: column; min-width: 0; }
 .brand-txt{font-weight:800;font-size:16px;letter-spacing:-0.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff}
@@ -763,6 +760,17 @@ body.subapp-mode main { margin-left: 0 !important; padding: 0 !important; max-wi
     <div class="page-head">
       <h1><span class="accent">Panel</span> de Administración</h1>
       <p>Gestión completa de contenidos, agenda, transmisiones y accesos directos.</p>
+    </div>
+
+    <div class="card">
+      <h2><svg class="ico"><use href="#i-broadcast"/></svg>Enviar Notificación Push</h2>
+      <label>Título de la Alerta</label>
+      <input id="n_titulo" placeholder="Ej: ¡Nuevo evento en vivo!">
+      <label>Mensaje corto (cuerpo de la notificación)</label>
+      <input id="n_mensaje" placeholder="Conéctate ahora a la transmisión central.">
+      <div class="row">
+        <button class="btn primary" id="n_send"><svg class="ico"><use href="#i-broadcast"/></svg>Enviar a todos los usuarios</button>
+      </div>
     </div>
 
     <div class="card">
@@ -1427,6 +1435,46 @@ pb.collection('mensajes').subscribe('*', function (e) {
   }
 });
 
+/* ============================================================
+   NOTIFICACIONES PUSH
+   ============================================================ */
+// Pedir permiso al cargar
+if ('Notification' in window && Notification.permission !== 'granted') {
+  Notification.requestPermission();
+}
+
+// Suscribirse a la colección de notificaciones en tiempo real
+pb.collection('notificaciones').subscribe('*', function (e) {
+  if (e.action === 'create') {
+    const data = e.record;
+    // Mostrar notificación nativa
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification(data.titulo, {
+        body: data.mensaje,
+        icon: 'logo.png',
+        vibrate: [200, 100, 200]
+      });
+    }
+    toast(`🔔 ${data.titulo}`);
+  }
+});
+
+$('n_send').onclick = async () => {
+  const titulo = $('n_titulo').value.trim();
+  const mensaje = $('n_mensaje').value.trim();
+  if (!titulo || !mensaje) { toast('Escribe título y mensaje'); return; }
+  
+  try {
+    await pb.collection('notificaciones').create({ titulo, mensaje });
+    $('n_titulo').value = '';
+    $('n_mensaje').value = '';
+    toast('✅ Notificación enviada con éxito');
+  } catch (err) {
+    console.error(err);
+    toast('❌ Error al enviar notificación');
+  }
+};
+
 async function renderChat(){
   const boxPublic = $('chatBox');
   const boxAdmin = $('adminChatBox');
@@ -1831,6 +1879,13 @@ async function init() {
     $('adminNavWrap').style.display = 'block';
   }
 
+  // --- REGISTRAR SERVICE WORKER ---
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(err => {
+      console.warn('Error al registrar SW:', err);
+    });
+  }
+
   // --- LÓGICA DE TÉRMINOS Y CONDICIONES ---
   const termsModal = document.getElementById('termsModal');
   const acceptBtn = document.getElementById('acceptTermsBtn');
@@ -1889,7 +1944,7 @@ window.addEventListener('load', () => {
   }
 });
 
-console.log('%c MEP · Chat en tiempo real y Términos Legales activados ', 'color:#080212;background:linear-gradient(135deg,#ffd700,#f59e0b);padding:8px 14px;border-radius:8px;font-weight:900;font-size:14px');
+console.log('%c MEP · Notificaciones Push activadas ', 'color:#080212;background:linear-gradient(135deg,#ffd700,#f59e0b);padding:8px 14px;border-radius:8px;font-weight:900;font-size:14px');
 </script>
 </body>
 </html>
