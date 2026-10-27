@@ -1,5 +1,5 @@
 // Cambia el número de versión para forzar la actualización
-const CACHE_NAME = 'mep-v4'; 
+const CACHE_NAME = 'mep-v5'; 
 const ASSETS = [
   '/',
   '/index.html',
