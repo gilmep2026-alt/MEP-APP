@@ -9,7 +9,6 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="MEP">
 <link rel="apple-touch-icon" href="logo.png">
-<!-- ENLACE AL MANIFEST PARA PWABUILDER -->
 <link rel="manifest" href="manifest.json">
 <title>MEP · Movimiento Electoral del Pueblo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -464,6 +463,14 @@ body.subapp-mode main { margin-left: 0 !important; padding: 0 !important; max-wi
 .persistent-gallery .pg-badge::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--gold-400);box-shadow:0 0 12px var(--gold-400);animation:pgDot 2s ease-in-out infinite;}
 @keyframes pgDot{50%{opacity:0.35}}
 
+/* INTRANET LOGIN CARD */
+.intranet-login-card {
+  max-width: 400px; margin: 40px auto; background: var(--surface-1); padding: 30px; border-radius: var(--r-xl); border: 1px solid var(--glass-border); text-align: center;
+}
+.intranet-login-card .ico-xl { color: var(--gold-400); margin-bottom: 15px; }
+.intranet-login-card h2 { font-size: 20px; margin-bottom: 10px; color: #fff; }
+.intranet-login-card p { font-size: 14px; color: var(--text-dim); margin-bottom: 20px; }
+
 /* RESPONSIVE */
 @media(min-width:961px){
   .sidebar{transform:none}
@@ -548,6 +555,7 @@ body.subapp-mode main { margin-left: 0 !important; padding: 0 !important; max-wi
   <symbol id="i-external" viewBox="0 0 256 256"><path d="M224,104a8,8,0,0,1-16,0V59.32l-82.34,82.34a8,8,0,0,1-11.32-11.32L196.68,48H152a8,8,0,0,1,0-16h64a8,8,0,0,1,8,8Zm-40,24a8,8,0,0,0-8,8v72H48V80h72a8,8,0,0,0,0-16H40a8,8,0,0,0-8,8V208a8,8,0,0,0,8,8H176a8,8,0,0,0,8-8V136A8,8,0,0,0,184,128Z" fill="currentColor"/></symbol>
   <symbol id="i-warn" viewBox="0 0 256 256"><path d="M236.8,188.09,149.35,36.22h0a24.76,24.76,0,0,0-42.7,0L19.2,188.09a23.51,23.51,0,0,0,0,23.72A24.35,24.35,0,0,0,40.55,224h174.9a24.35,24.35,0,0,0,21.33-12.19A23.51,23.51,0,0,0,236.8,188.09Z" opacity=".25" fill="currentColor"/><path d="M236.8,188.09,149.35,36.22h0a24.76,24.76,0,0,0-42.7,0L19.2,188.09a23.51,23.51,0,0,0,0,23.72A24.35,24.35,0,0,0,40.55,224h174.9a24.35,24.35,0,0,0,21.33-12.19A23.51,23.51,0,0,0,236.8,188.09ZM222.93,203.8a8.5,8.5,0,0,1-7.48,4.2H40.55a8.5,8.5,0,0,1-7.48-4.2,7.59,7.59,0,0,1,0-7.72L120.52,44.21a8.75,8.75,0,0,1,15,0l87.45,151.87A7.59,7.59,0,0,1,222.93,203.8ZM120,144V104a8,8,0,0,1,16,0v40a8,8,0,0,1-16,0Zm20,36a12,12,0,1,1-12-12A12,12,0,0,1,140,180Z" fill="currentColor"/></symbol>
   <symbol id="i-check" viewBox="0 0 256 256"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm45.66-109.66-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,144.69l50.34-50.35a8,8,0,0,1,11.32,11.32Z" fill="currentColor"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 256 256"><path d="M216,96V56a8,8,0,0,0-8-8H48a8,8,0,0,0-8,8V96a8,8,0,0,0,8,8H208A8,8,0,0,0,216,96ZM120,176v48a8,8,0,0,0,8,8h96a8,8,0,0,0,8-8V176a8,8,0,0,0-8-8H128A8,8,0,0,0,120,176Zm-80,0v48a8,8,0,0,0,8,8h48a8,8,0,0,0,8-8V176a8,8,0,0,0-8-8H48A8,8,0,0,0,40,176Z" opacity=".25" fill="currentColor"/><path d="M208,88H48A16,16,0,0,0,32,104v48a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V104A16,16,0,0,0,208,88Zm0,64H48V104H208ZM224,208a16,16,0,0,1-16,16H48a16,16,0,0,1-16-16V168a16,16,0,0,1,16-16H208a16,16,0,0,1,16,16Z" fill="currentColor"/></symbol>
 </svg>
 
 <header class="topbar">
@@ -628,7 +636,11 @@ body.subapp-mode main { margin-left: 0 !important; padding: 0 !important; max-wi
       <div class="nav-body">
         <div class="nav-item" data-view="chat">
           <svg class="ico"><use href="#i-chat"/></svg>
-          <span class="label">Chat del Movimiento</span>
+          <span class="label">Chat Público</span>
+        </div>
+        <div class="nav-item" data-view="intranet">
+          <svg class="ico" style="color: var(--gold-400);"><use href="#i-shield"/></svg>
+          <span class="label" style="color: var(--gold-400); font-weight: 800;">Intranet Privada</span>
         </div>
       </div>
     </div>
@@ -738,11 +750,12 @@ body.subapp-mode main { margin-left: 0 !important; padding: 0 !important; max-wi
     <div id="liveList"></div>
   </section>
 
+  <!-- CHAT PÚBLICO -->
   <section id="view-chat" class="view">
     <div class="page-head">
       <h1>Chat del <span class="accent">Movimiento</span></h1>
       <p>
-        Canal directo de comunicación para la militancia. Militante actual:
+        Canal abierto para la militancia. Militante actual:
         <b id="chatUserLabel" style="color:var(--gold-300)">—</b>
         <button class="btn sm" id="btnChangeName" style="margin-left:10px">Cambiar nombre</button>
       </p>
@@ -756,6 +769,46 @@ body.subapp-mode main { margin-left: 0 !important; padding: 0 !important; max-wi
     </div>
   </section>
 
+  <!-- INTRANET PRIVADA -->
+  <section id="view-intranet" class="view">
+    <div class="page-head">
+      <h1>Intranet <span class="accent">Privada</span></h1>
+      <p>Canal exclusivo para dirigentes y personal autorizado. Inicia sesión para participar.</p>
+    </div>
+
+    <!-- Estado: No logueado -->
+    <div id="intranetLoginView" class="intranet-login-card" style="display: none;">
+      <svg class="ico ico-xl"><use href="#i-lock"/></svg>
+      <h2>Acceso Restringido</h2>
+      <p>Ingresa tus credenciales para acceder al chat interno.</p>
+      <form id="intranetLoginForm">
+        <div class="modal-field">
+          <input type="email" id="intranetEmail" placeholder="Correo Electrónico" required>
+        </div>
+        <div class="modal-field">
+          <input type="password" id="intranetPass" placeholder="Contraseña" required>
+        </div>
+        <button type="submit" class="btn primary block" id="intranetLoginBtn">Ingresar a la Intranet</button>
+      </form>
+    </div>
+
+    <!-- Estado: Logueado -->
+    <div id="intranetChatView" style="display: none;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <p style="margin: 0;">Conectado como: <b id="intranetUserLabel" style="color: var(--gold-400);"></b></p>
+        <button class="btn sm danger" id="intranetLogoutBtn">Cerrar Sesión</button>
+      </div>
+      <div class="chat-wrap">
+        <div class="chat-box" id="intranetChatBox"></div>
+        <form class="chat-form" id="intranetChatForm" autocomplete="off">
+          <input id="intranetChatInput" placeholder="Escribe un mensaje interno..." maxlength="600">
+          <button class="btn primary" type="submit"><svg class="ico"><use href="#i-chat"/></svg>Enviar</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ADMIN PANEL -->
   <section id="view-admin" class="view">
     <div class="page-head">
       <h1><span class="accent">Panel</span> de Administración</h1>
@@ -890,6 +943,15 @@ body.subapp-mode main { margin-left: 0 !important; padding: 0 !important; max-wi
       </div>
     </div>
 
+    <!-- PANEL DE USUARIOS SUSPENDIDOS -->
+    <div class="card">
+      <h2><svg class="ico"><use href="#i-warn"/></svg>Usuarios Suspendidos del Chat Público</h2>
+      <p style="font-size:14px;color:var(--text-dim);margin-bottom:20px;">Aquí puedes gestionar a los usuarios que han sido bloqueados por incumplir las normas.</p>
+      <div class="admin-list" id="blockedUsersList" style="margin-top: 0; border-top: none; padding-top: 0;">
+        <!-- Se llena dinámicamente -->
+      </div>
+    </div>
+
     <div class="card">
       <h2><svg class="ico"><use href="#i-lock"/></svg>Seguridad y Gestión de Datos</h2>
       <div class="row" style="border-top:1px dashed var(--glass-border-subtle);padding-top:20px;margin-top:22px">
@@ -944,7 +1006,6 @@ body.subapp-mode main { margin-left: 0 !important; padding: 0 !important; max-wi
   </div>
 </div>
 
-<!-- MODAL DE TÉRMINOS Y CONDICIONES -->
 <div class="modal-overlay" id="termsModal" style="display: none; z-index: 300;">
   <div class="modal-card" style="max-width: 500px; text-align: left;">
     <div class="modal-head" style="text-align: center;">
@@ -988,7 +1049,6 @@ function fmtFecha(iso){
   const p = soloFecha.split('-');
   return p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : iso;
 }
-
 function mesCorto(iso){
   const soloFecha = (iso || '').split(' ')[0];
   const m = ['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'];
@@ -1046,7 +1106,7 @@ async function loginAdmin(email, password) {
       return true;
     } else {
       pb.authStore.clear();
-      toast('❌ No tienes permisos');
+      toast('❌ No tienes permisos de administrador');
       return false;
     }
   } catch (e) {
@@ -1084,6 +1144,7 @@ function go(view, el){
   cerrarMenu();
   window.scrollTo({ top:0, behavior:'instant' in window ? 'instant' : 'auto' });
   if(view === 'chat') setTimeout(() => $('chatInput').focus(), 200);
+  if(view === 'intranet') checkIntranetAuth();
   
   actualizarGaleriaPersistente(view);
 
@@ -1411,6 +1472,9 @@ function reiniciarAutoplay(){
   iniciarAutoplay();
 }
 
+/* ============================================================
+   CHAT PÚBLICO
+   ============================================================ */
 const USER_KEY = 'mep_user_v3';
 const DEVICE_KEY = 'mep_device_id';
 
@@ -1434,46 +1498,6 @@ pb.collection('mensajes').subscribe('*', function (e) {
     renderChat();
   }
 });
-
-/* ============================================================
-   NOTIFICACIONES PUSH
-   ============================================================ */
-// Pedir permiso al cargar
-if ('Notification' in window && Notification.permission !== 'granted') {
-  Notification.requestPermission();
-}
-
-// Suscribirse a la colección de notificaciones en tiempo real
-pb.collection('notificaciones').subscribe('*', function (e) {
-  if (e.action === 'create') {
-    const data = e.record;
-    // Mostrar notificación nativa
-    if ('Notification' in window && Notification.permission === 'granted') {
-      new Notification(data.titulo, {
-        body: data.mensaje,
-        icon: 'logo.png',
-        vibrate: [200, 100, 200]
-      });
-    }
-    toast(`🔔 ${data.titulo}`);
-  }
-});
-
-$('n_send').onclick = async () => {
-  const titulo = $('n_titulo').value.trim();
-  const mensaje = $('n_mensaje').value.trim();
-  if (!titulo || !mensaje) { toast('Escribe título y mensaje'); return; }
-  
-  try {
-    await pb.collection('notificaciones').create({ titulo, mensaje });
-    $('n_titulo').value = '';
-    $('n_mensaje').value = '';
-    toast('✅ Notificación enviada con éxito');
-  } catch (err) {
-    console.error(err);
-    toast('❌ Error al enviar notificación');
-  }
-};
 
 async function renderChat(){
   const boxPublic = $('chatBox');
@@ -1566,8 +1590,49 @@ async function banearUsuario(deviceId, usuario) {
     for (let m of mensajesUser) {
       await pb.collection('mensajes').delete(m.id);
     }
+    renderBlockedUsers();
   } catch (e) {
     toast('❌ Error al suspender usuario');
+  }
+}
+
+// --- GESTIÓN DE USUARIOS BLOQUEADOS (ADMIN) ---
+async function renderBlockedUsers() {
+  const listContainer = $('blockedUsersList');
+  if(!listContainer) return;
+
+  try {
+    const bloqueados = await pb.collection('bloqueados').getFullList({ sort: '-created' });
+    
+    listContainer.innerHTML = bloqueados.length ? bloqueados.map(b => `
+      <div class="ad-row">
+        <div class="thumb" style="background: #7f1d1d; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 20px;">🚫</div>
+        <div class="ad-txt">
+          <b>${esc(b.usuario)}</b>
+          <small>ID: ${esc(b.deviceId)}</small>
+        </div>
+        <button class="btn sm primary" onclick="desbloquearUsuario('${esc(b.id)}', '${esc(b.usuario)}')" title="Desbloquear">
+          <svg class="ico"><use href="#i-check"/></svg> Desbloquear
+        </button>
+      </div>
+    `).join('') : '<p class="muted">No hay usuarios suspendidos actualmente.</p>';
+  } catch(e) {
+    console.error("Error cargando bloqueados:", e);
+    listContainer.innerHTML = '<p class="muted">Error al cargar la lista.</p>';
+  }
+}
+
+async function desbloquearUsuario(id, nombre) {
+  if(!confirm(`¿Estás seguro de desbloquear a ${nombre}? Volverá a tener acceso al chat.`)) return;
+  
+  try {
+    await pb.collection('bloqueados').delete(id);
+    toast(`✅ ${nombre} ha sido desbloqueado.`);
+    renderBlockedUsers(); 
+    renderChat(); 
+  } catch (e) {
+    console.error(e);
+    toast('❌ Error al desbloquear usuario');
   }
 }
 
@@ -1575,6 +1640,151 @@ setInterval(() => {
   if($('view-chat') && $('view-chat').classList.contains('active')) renderChat(); 
   if($('view-admin') && $('view-admin').classList.contains('active')) renderChat(); 
 }, 5000);
+
+/* ============================================================
+   INTRANET PRIVADA
+   ============================================================ */
+function checkIntranetAuth() {
+  const loginView = $('intranetLoginView');
+  const chatView = $('intranetChatView');
+  
+  if (pb.authStore.isValid) {
+    loginView.style.display = 'none';
+    chatView.style.display = 'block';
+    const userEmail = pb.authStore.model.email || 'Usuario';
+    $('intranetUserLabel').textContent = userEmail;
+    renderIntranetChat();
+  } else {
+    loginView.style.display = 'block';
+    chatView.style.display = 'none';
+  }
+}
+
+$('intranetLoginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = $('intranetEmail').value.trim();
+  const pass = $('intranetPass').value;
+  const btn = $('intranetLoginBtn');
+  
+  btn.disabled = true;
+  btn.textContent = 'Verificando...';
+  
+  try {
+    await pb.collection('users').authWithPassword(email, pass);
+    toast('✅ Acceso concedido a la Intranet');
+    $('intranetEmail').value = '';
+    $('intranetPass').value = '';
+    checkIntranetAuth();
+  } catch (error) {
+    toast('❌ Credenciales incorrectas');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Ingresar a la Intranet';
+  }
+});
+
+$('intranetLogoutBtn').onclick = () => {
+  pb.authStore.clear();
+  checkIntranetAuth();
+  toast('Sesión de intranet cerrada');
+};
+
+pb.collection('chat_intranet').subscribe('*', function (e) {
+  if (e.action === 'create' || e.action === 'delete') {
+    renderIntranetChat();
+  }
+});
+
+async function renderIntranetChat() {
+  const box = $('intranetChatBox');
+  if (!box || !pb.authStore.isValid) return;
+
+  try {
+    const msgs = await pb.collection('chat_intranet').getList(1, 100, { sort: 'created' });
+    const myId = pb.authStore.model.id;
+    const alFinal = box.scrollTop + box.clientHeight >= box.scrollHeight - 70;
+
+    box.innerHTML = msgs.items.length
+      ? msgs.items.map(m => `
+          <div class="msg ${m.user_id === myId ? 'mine' : ''}">
+            <div class="msg-head">
+              <b style="color: var(--gold-400);">${esc(m.usuario)}</b>
+              <span>${new Date(m.created).toLocaleString('es-VE',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</span>
+            </div>
+            <div class="msg-body">${esc(m.texto)}</div>
+          </div>`).join('')
+      : '<div class="empty" style="margin:auto;background:transparent;border:0"><h3>Sin mensajes</h3><p>Inicia la conversación interna.</p></div>';
+
+    if (alFinal) box.scrollTop = box.scrollHeight;
+  } catch (e) {
+    console.error("Error cargando intranet:", e);
+  }
+}
+
+$('intranetChatForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const inp = $('intranetChatInput');
+  const texto = inp.value.trim();
+  if (!texto || !pb.authStore.isValid) return;
+
+  const myId = pb.authStore.model.id;
+  const myName = pb.authStore.model.email || 'Dirigente';
+
+  try {
+    await pb.collection('chat_intranet').create({
+      usuario: myName,
+      texto: texto,
+      user_id: myId
+    });
+    inp.value = '';
+  } catch (error) {
+    console.error(error);
+    toast('❌ Error al enviar mensaje interno');
+  }
+});
+
+setInterval(() => { 
+  if($('view-intranet') && $('view-intranet').classList.contains('active')) {
+    renderIntranetChat();
+  }
+}, 5000);
+
+/* ============================================================
+   NOTIFICACIONES
+   ============================================================ */
+if ('Notification' in window && Notification.permission !== 'granted') {
+  Notification.requestPermission();
+}
+
+pb.collection('notificaciones').subscribe('*', function (e) {
+  if (e.action === 'create') {
+    const data = e.record;
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification(data.titulo, {
+        body: data.mensaje,
+        icon: 'logo.png',
+        vibrate: [200, 100, 200]
+      });
+    }
+    toast(`🔔 ${data.titulo}`);
+  }
+});
+
+$('n_send').onclick = async () => {
+  const titulo = $('n_titulo').value.trim();
+  const mensaje = $('n_mensaje').value.trim();
+  if (!titulo || !mensaje) { toast('Escribe título y mensaje'); return; }
+  
+  try {
+    await pb.collection('notificaciones').create({ titulo, mensaje });
+    $('n_titulo').value = '';
+    $('n_mensaje').value = '';
+    toast('✅ Notificación enviada con éxito');
+  } catch (err) {
+    console.error(err);
+    toast('❌ Error al enviar notificación');
+  }
+};
 
 /* ============================================================
    ADMIN LOGIN Y CRUD
@@ -1609,6 +1819,7 @@ $('adminLoginForm').addEventListener('submit', async e => {
   const ok = await loginAdmin(user, pass);
   if(ok){
     cerrarModalAdmin();
+    renderBlockedUsers();
   } else {
     $('modalErrorText').textContent = 'Credenciales incorrectas o sin permisos';
     $('adminError').classList.add('show');
@@ -1676,6 +1887,8 @@ function renderAdminListas(){
       <button class="btn sm icon" data-action="edit" data-type="subapps" data-id="${esc(s.id)}" title="Editar"><svg class="ico"><use href="#i-pencil"/></svg></button>
       <button class="btn sm icon danger" data-action="del" data-type="subapps" data-id="${esc(s.id)}" title="Eliminar"><svg class="ico"><use href="#i-trash"/></svg></button>
     </div>`).join('') : '<p class="muted">Sin sub-aplicaciones.</p>';
+
+  renderBlockedUsers();
 }
 
 let editando = { galeria:null, envivo:null, agenda:null, reglamentos:null, subapps:null };
@@ -1868,6 +2081,7 @@ function renderTodo(){
   renderEnVivo();
   renderAdminListas();
   renderChat();
+  if(pb.authStore.isValid) renderIntranetChat();
 }
 
 async function init() {
@@ -1879,14 +2093,12 @@ async function init() {
     $('adminNavWrap').style.display = 'block';
   }
 
-  // --- REGISTRAR SERVICE WORKER ---
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(err => {
       console.warn('Error al registrar SW:', err);
     });
   }
 
-  // --- LÓGICA DE TÉRMINOS Y CONDICIONES ---
   const termsModal = document.getElementById('termsModal');
   const acceptBtn = document.getElementById('acceptTermsBtn');
   const TERMS_KEY = 'mep_terms_accepted_v1';
@@ -1904,11 +2116,7 @@ async function init() {
 
 document.addEventListener('DOMContentLoaded', init);
 
-/* ============================================================
-   PWA INSTALL PROMPT
-   ============================================================ */
 let deferredPrompt = null;
-
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
@@ -1944,7 +2152,7 @@ window.addEventListener('load', () => {
   }
 });
 
-console.log('%c MEP · Notificaciones Push activadas ', 'color:#080212;background:linear-gradient(135deg,#ffd700,#f59e0b);padding:8px 14px;border-radius:8px;font-weight:900;font-size:14px');
+console.log('%c MEP · Intranet Privada Activada ', 'color:#080212;background:linear-gradient(135deg,#ffd700,#f59e0b);padding:8px 14px;border-radius:8px;font-weight:900;font-size:14px');
 </script>
 </body>
 </html>
