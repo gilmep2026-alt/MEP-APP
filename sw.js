@@ -1,22 +1,30 @@
-// Service Worker para PWA y Notificaciones
+const CACHE_NAME = 'mep-v1';
+const ASSETS = [
+  '/',
+  '/index.html',
+  '/manifest.json',
+  '/icon-192.png',
+  '/icon-512.png'
+];
+
 self.addEventListener('install', (e) => {
-    self.skipWaiting();
+  e.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
+  );
+  self.skipWaiting();
 });
 
 self.addEventListener('activate', (e) => {
-    e.waitUntil(self.clients.claim());
+  e.waitUntil(
+    caches.keys().then((keys) =>
+      Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
+    )
+  );
+  self.clients.claim();
 });
 
-// Escuchar notificaciones push (si se envían desde el servidor)
-self.addEventListener('push', function(e) {
-    const data = e.data ? e.data.json() : { title: 'MEP', body: 'Nueva notificación' };
-    const options = {
-        body: data.body,
-        icon: 'logo.png',
-        badge: 'logo.png',
-        vibrate: [200, 100, 200]
-    };
-    e.waitUntil(
-        self.registration.showNotification(data.title, options)
-    );
+self.addEventListener('fetch', (e) => {
+  e.respondWith(
+    caches.match(e.request).then((cached) => cached || fetch(e.request))
+  );
 });
