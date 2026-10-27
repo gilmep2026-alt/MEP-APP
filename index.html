@@ -800,9 +800,21 @@ body.subapp-mode main { margin-left: 0 !important; padding: 0 !important; max-wi
       </div>
       <div class="chat-wrap">
         <div class="chat-box" id="intranetChatBox"></div>
-        <form class="chat-form" id="intranetChatForm" autocomplete="off">
-          <input id="intranetChatInput" placeholder="Escribe un mensaje interno..." maxlength="600">
-          <button class="btn primary" type="submit"><svg class="ico"><use href="#i-chat"/></svg>Enviar</button>
+        <form class="chat-form" id="intranetChatForm" autocomplete="off" style="padding: 12px; align-items: center;">
+          
+          <!-- Botón de adjuntar archivo (oculto) -->
+          <input type="file" id="intranetFile" style="display: none;" accept=".pdf, application/pdf">
+          
+          <button type="button" class="btn icon" id="btnAttachFile" title="Adjuntar PDF" style="background: transparent; border: none; color: var(--gold-400); font-size: 20px; padding: 0 10px;">
+            📎
+          </button>
+
+          <div style="flex: 1; display: flex; flex-direction: column;">
+            <input id="intranetChatInput" placeholder="Escribe un mensaje interno..." maxlength="600">
+            <span id="intranetFileName" style="font-size: 10px; color: var(--gold-300); display: none; padding-left: 5px;"></span>
+          </div>
+
+          <button class="btn primary" type="submit" id="intranetSendBtn"><svg class="ico"><use href="#i-chat"/></svg>Enviar</button>
         </form>
       </div>
     </div>
@@ -1705,14 +1717,25 @@ async function renderIntranetChat() {
     const alFinal = box.scrollTop + box.clientHeight >= box.scrollHeight - 70;
 
     box.innerHTML = msgs.items.length
-      ? msgs.items.map(m => `
+      ? msgs.items.map(m => {
+          let archivoHTML = '';
+          if (m.archivo) {
+            const fileUrl = pb.files.getUrl(m, m.archivo);
+            archivoHTML = `<a href="${fileUrl}" target="_blank" class="btn sm" style="margin-top: 10px; display: inline-flex; background: var(--purple-800); border-color: var(--gold-400);"><svg class="ico"><use href="#i-download"/></svg> Descargar PDF</a>`;
+          }
+
+          return `
           <div class="msg ${m.user_id === myId ? 'mine' : ''}">
             <div class="msg-head">
               <b style="color: var(--gold-400);">${esc(m.usuario)}</b>
               <span>${new Date(m.created).toLocaleString('es-VE',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</span>
             </div>
-            <div class="msg-body">${esc(m.texto)}</div>
-          </div>`).join('')
+            <div class="msg-body">
+              ${m.texto ? esc(m.texto) : ''}
+              ${archivoHTML}
+            </div>
+          </div>`;
+      }).join('')
       : '<div class="empty" style="margin:auto;background:transparent;border:0"><h3>Sin mensajes</h3><p>Inicia la conversación interna.</p></div>';
 
     if (alFinal) box.scrollTop = box.scrollHeight;
@@ -1721,25 +1744,52 @@ async function renderIntranetChat() {
   }
 }
 
+$('btnAttachFile').onclick = () => $('intranetFile').click();
+
+$('intranetFile').onchange = () => {
+  const fileName = $('intranetFile').files[0]?.name;
+  const label = $('intranetFileName');
+  if (fileName) {
+    label.textContent = `Adjunto: ${fileName}`;
+    label.style.display = 'block';
+  } else {
+    label.style.display = 'none';
+  }
+};
+
 $('intranetChatForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   const inp = $('intranetChatInput');
+  const fileInput = $('intranetFile');
   const texto = inp.value.trim();
-  if (!texto || !pb.authStore.isValid) return;
+  const archivo = fileInput.files[0];
+
+  if ((!texto && !archivo) || !pb.authStore.isValid) return;
+
+  const btn = $('intranetSendBtn');
+  btn.disabled = true;
+  btn.textContent = 'Enviando...';
 
   const myId = pb.authStore.model.id;
   const myName = pb.authStore.model.email || 'Dirigente';
 
+  const formData = new FormData();
+  formData.append('usuario', myName);
+  formData.append('user_id', myId);
+  if (texto) formData.append('texto', texto);
+  if (archivo) formData.append('archivo', archivo);
+
   try {
-    await pb.collection('chat_intranet').create({
-      usuario: myName,
-      texto: texto,
-      user_id: myId
-    });
+    await pb.collection('chat_intranet').create(formData);
     inp.value = '';
+    fileInput.value = '';
+    $('intranetFileName').style.display = 'none';
   } catch (error) {
     console.error(error);
-    toast('❌ Error al enviar mensaje interno');
+    toast('❌ Error al enviar mensaje o archivo (puede ser muy pesado)');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<svg class="ico"><use href="#i-chat"/></svg>Enviar';
   }
 });
 
@@ -2152,7 +2202,7 @@ window.addEventListener('load', () => {
   }
 });
 
-console.log('%c MEP · Intranet Privada Activada ', 'color:#080212;background:linear-gradient(135deg,#ffd700,#f59e0b);padding:8px 14px;border-radius:8px;font-weight:900;font-size:14px');
+console.log('%c MEP · Intranet Privada y Subida de PDF Activada ', 'color:#080212;background:linear-gradient(135deg,#ffd700,#f59e0b);padding:8px 14px;border-radius:8px;font-weight:900;font-size:14px');
 </script>
 </body>
 </html>
