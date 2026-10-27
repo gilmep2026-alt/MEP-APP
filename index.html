@@ -794,12 +794,30 @@ body.subapp-mode main { margin-left: 0 !important; padding: 0 !important; max-wi
 
     <!-- Estado: Logueado -->
     <div id="intranetChatView" style="display: none;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-        <p style="margin: 0;">Conectado como: <b id="intranetUserLabel" style="color: var(--gold-400);"></b></p>
-        <button class="btn sm danger" id="intranetLogoutBtn">Cerrar Sesión</button>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+        <div>
+          <p style="margin: 0; font-size: 14px;">Conectado como: <b id="intranetUserLabel" style="color: var(--gold-400);"></b></p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button class="btn sm danger" id="intranetLogoutBtn">Cerrar Sesión</button>
+        </div>
       </div>
+
+      <!-- Selector de destinatario (Mensajería Privada) -->
+      <div class="card" style="padding: 15px; margin-bottom: 15px; display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+        <label style="margin: 0; white-space: nowrap;">Enviar mensaje a:</label>
+        <select id="intranetRecipient" style="flex: 1; min-width: 200px;">
+          <option value="">Cargando contactos...</option>
+        </select>
+      </div>
+
       <div class="chat-wrap">
-        <div class="chat-box" id="intranetChatBox"></div>
+        <div class="chat-box" id="intranetChatBox">
+          <div class="empty" style="margin:auto;background:transparent;border:0">
+            <h3>Selecciona un destinatario</h3>
+            <p>Elige a un dirigente de la lista para ver la conversación privada.</p>
+          </div>
+        </div>
         <form class="chat-form" id="intranetChatForm" autocomplete="off" style="padding: 12px; align-items: center;">
           
           <!-- Botón de adjuntar archivo (oculto) -->
@@ -810,11 +828,11 @@ body.subapp-mode main { margin-left: 0 !important; padding: 0 !important; max-wi
           </button>
 
           <div style="flex: 1; display: flex; flex-direction: column;">
-            <input id="intranetChatInput" placeholder="Escribe un mensaje interno..." maxlength="600">
+            <input id="intranetChatInput" placeholder="Escribe un mensaje privado..." maxlength="600" disabled>
             <span id="intranetFileName" style="font-size: 10px; color: var(--gold-300); display: none; padding-left: 5px;"></span>
           </div>
 
-          <button class="btn primary" type="submit" id="intranetSendBtn"><svg class="ico"><use href="#i-chat"/></svg>Enviar</button>
+          <button class="btn primary" type="submit" id="intranetSendBtn" disabled><svg class="ico"><use href="#i-chat"/></svg>Enviar</button>
         </form>
       </div>
     </div>
@@ -1654,8 +1672,10 @@ setInterval(() => {
 }, 5000);
 
 /* ============================================================
-   INTRANET PRIVADA
+   INTRANET PRIVADA (MENSAJERÍA 1 A 1)
    ============================================================ */
+let intranetContacts = [];
+
 function checkIntranetAuth() {
   const loginView = $('intranetLoginView');
   const chatView = $('intranetChatView');
@@ -1665,10 +1685,28 @@ function checkIntranetAuth() {
     chatView.style.display = 'block';
     const userEmail = pb.authStore.model.email || 'Usuario';
     $('intranetUserLabel').textContent = userEmail;
-    renderIntranetChat();
+    loadIntranetContacts(); 
   } else {
     loginView.style.display = 'block';
     chatView.style.display = 'none';
+  }
+}
+
+async function loadIntranetContacts() {
+  const select = $('intranetRecipient');
+  const currentUserId = pb.authStore.model.id;
+  
+  try {
+    const users = await pb.collection('users').getFullList({ sort: 'email' });
+    intranetContacts = users.filter(u => u.id !== currentUserId);
+    
+    select.innerHTML = '<option value="">Selecciona un destinatario...</option>' + 
+      intranetContacts.map(u => `<option value="${esc(u.id)}">${esc(u.email)}</option>`).join('');
+      
+    select.disabled = false;
+  } catch (e) {
+    console.error("Error cargando contactos:", e);
+    select.innerHTML = '<option value="">Error al cargar contactos</option>';
   }
 }
 
@@ -1701,19 +1739,50 @@ $('intranetLogoutBtn').onclick = () => {
   toast('Sesión de intranet cerrada');
 };
 
+$('intranetRecipient').onchange = () => {
+  const recipientId = $('intranetRecipient').value;
+  const input = $('intranetChatInput');
+  const btn = $('intranetSendBtn');
+  
+  if (recipientId) {
+    input.disabled = false;
+    btn.disabled = false;
+    input.focus();
+    renderIntranetChat();
+  } else {
+    input.disabled = true;
+    btn.disabled = true;
+    $('intranetChatBox').innerHTML = `
+      <div class="empty" style="margin:auto;background:transparent;border:0">
+        <h3>Selecciona un destinatario</h3>
+        <p>Elige a un dirigente de la lista para ver la conversación privada.</p>
+      </div>`;
+  }
+};
+
 pb.collection('chat_intranet').subscribe('*', function (e) {
   if (e.action === 'create' || e.action === 'delete') {
-    renderIntranetChat();
+    if($('view-intranet').classList.contains('active')) renderIntranetChat();
   }
 });
 
 async function renderIntranetChat() {
   const box = $('intranetChatBox');
-  if (!box || !pb.authStore.isValid) return;
+  const recipientId = $('intranetRecipient').value;
+  
+  if (!box || !pb.authStore.isValid || !recipientId) return;
+
+  const myId = pb.authStore.model.id;
 
   try {
-    const msgs = await pb.collection('chat_intranet').getList(1, 100, { sort: 'created' });
-    const myId = pb.authStore.model.id;
+    // Filtro: Mensajes donde YO soy el remitente y ÉL es el destinatario, O viceversa.
+    const filter = `(user_id="${myId}" && destinatario="${recipientId}") || (user_id="${recipientId}" && destinatario="${myId}")`;
+    
+    const msgs = await pb.collection('chat_intranet').getList(1, 100, { 
+      filter: filter,
+      sort: 'created' 
+    });
+    
     const alFinal = box.scrollTop + box.clientHeight >= box.scrollHeight - 70;
 
     box.innerHTML = msgs.items.length
@@ -1727,7 +1796,7 @@ async function renderIntranetChat() {
           return `
           <div class="msg ${m.user_id === myId ? 'mine' : ''}">
             <div class="msg-head">
-              <b style="color: var(--gold-400);">${esc(m.usuario)}</b>
+              <b style="color: var(--gold-400);">${m.user_id === myId ? 'Tú' : esc(m.usuario)}</b>
               <span>${new Date(m.created).toLocaleString('es-VE',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</span>
             </div>
             <div class="msg-body">
@@ -1736,7 +1805,7 @@ async function renderIntranetChat() {
             </div>
           </div>`;
       }).join('')
-      : '<div class="empty" style="margin:auto;background:transparent;border:0"><h3>Sin mensajes</h3><p>Inicia la conversación interna.</p></div>';
+      : '<div class="empty" style="margin:auto;background:transparent;border:0"><h3>Sin mensajes</h3><p>Inicia la conversación privada con este dirigente.</p></div>';
 
     if (alFinal) box.scrollTop = box.scrollHeight;
   } catch (e) {
@@ -1763,8 +1832,9 @@ $('intranetChatForm').addEventListener('submit', async (e) => {
   const fileInput = $('intranetFile');
   const texto = inp.value.trim();
   const archivo = fileInput.files[0];
+  const recipientId = $('intranetRecipient').value;
 
-  if ((!texto && !archivo) || !pb.authStore.isValid) return;
+  if ((!texto && !archivo) || !pb.authStore.isValid || !recipientId) return;
 
   const btn = $('intranetSendBtn');
   btn.disabled = true;
@@ -1776,6 +1846,8 @@ $('intranetChatForm').addEventListener('submit', async (e) => {
   const formData = new FormData();
   formData.append('usuario', myName);
   formData.append('user_id', myId);
+  formData.append('destinatario', recipientId); // <-- NUEVO CAMPO
+  
   if (texto) formData.append('texto', texto);
   if (archivo) formData.append('archivo', archivo);
 
@@ -1784,9 +1856,10 @@ $('intranetChatForm').addEventListener('submit', async (e) => {
     inp.value = '';
     fileInput.value = '';
     $('intranetFileName').style.display = 'none';
+    renderIntranetChat(); 
   } catch (error) {
     console.error(error);
-    toast('❌ Error al enviar mensaje o archivo (puede ser muy pesado)');
+    toast('❌ Error al enviar mensaje o archivo');
   } finally {
     btn.disabled = false;
     btn.innerHTML = '<svg class="ico"><use href="#i-chat"/></svg>Enviar';
@@ -2131,7 +2204,10 @@ function renderTodo(){
   renderEnVivo();
   renderAdminListas();
   renderChat();
-  if(pb.authStore.isValid) renderIntranetChat();
+  if(pb.authStore.isValid) {
+    loadIntranetContacts();
+    if($('intranetRecipient').value) renderIntranetChat();
+  }
 }
 
 async function init() {
@@ -2202,7 +2278,7 @@ window.addEventListener('load', () => {
   }
 });
 
-console.log('%c MEP · Intranet Privada y Subida de PDF Activada ', 'color:#080212;background:linear-gradient(135deg,#ffd700,#f59e0b);padding:8px 14px;border-radius:8px;font-weight:900;font-size:14px');
+console.log('%c MEP · Intranet de Mensajería Privada Activada ', 'color:#080212;background:linear-gradient(135deg,#ffd700,#f59e0b);padding:8px 14px;border-radius:8px;font-weight:900;font-size:14px');
 </script>
 </body>
 </html>
