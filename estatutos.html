@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estatutos Interactivos - MEP</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Alpine.js CDN + Plugins -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
+    
+    <style>
+        [x-cloak] { display: none !important; }
+        html { scroll-behavior: smooth; }
+        
+        /* Scrollbar Premium */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #4c1d95; border-radius: 5px; border: 2px solid #0f172a; }
+        ::-webkit-scrollbar-thumb:hover { background: #fbbf24; }
+
+        /* Animaciones personalizadas */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-up {
+            animation: fadeInUp 0.4s ease-out forwards;
+        }
+        
+        @keyframes pulse-border {
+            0% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(251, 191, 36, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); }
+        }
+        .highlight-pulse {
+            animation: pulse-border 1.5s ease-out;
+        }
+
+        mark { 
+            background-color: #fbbf24; 
+            color: #1e1b4b; 
+            padding: 0 4px; 
+            border-radius: 4px; 
+            font-weight: 700;
+        }
+        
+        /* Efecto Glassmorphism */
+        .glass-panel {
+            background: rgba(30, 27, 75, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Tipografía de lectura para artículos */
+        .article-text {
+            white-space: pre-line;
+            line-height: 1.75;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-200 font-sans antialiased min-h-screen flex flex-col selection:bg-amber-400 selection:text-purple-950 overflow-x-hidden" x-data="estatutosApp()" x-cloak>
+
+    <!-- Barra de Progreso de Lectura -->
+    <div class="fixed top-0 left-0 h-1 bg-gradient-to-r from-amber-400 to-amber-600 z-[60] transition-all duration-150 ease-out" :style="`width: ${scrollProgress}%`"></div>
+
+    <!-- Encabezado -->
+    <header class="bg-purple-950/80 backdrop-blur-lg border-b border-purple-800/50 sticky top-0 z-50 shadow-2xl">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-4 group cursor-pointer" @click="searchQuery = ''; window.scrollTo({top: 0, behavior: 'smooth'})">
+                <div class="relative">
+                    <div class="absolute inset-0 bg-amber-400 blur-md opacity-20 group-hover:opacity-40 transition-opacity duration-300"></div>
+                    <div class="relative bg-gradient-to-br from-amber-400 to-amber-500 text-purple-950 font-black p-2.5 rounded-xl text-lg tracking-wider shadow-lg transform group-hover:scale-105 transition-transform duration-300">MEP</div>
+                </div>
+                <div>
+                    <span class="text-[10px] uppercase tracking-widest text-amber-400 font-bold block mb-0.5">Documento Oficial · DPN 2023</span>
+                    <h1 class="text-xl sm:text-2xl font-black text-white leading-tight tracking-tight">Estatutos del Partido</h1>
+                </div>
+            </div>
+            
+            <!-- Buscador -->
+            <div class="w-full sm:w-96 relative group">
+                <div class="absolute inset-0 bg-amber-400 rounded-xl blur opacity-0 group-focus-within:opacity-20 transition-opacity duration-300"></div>
+                <div class="relative flex items-center bg-purple-900/60 border border-purple-700/60 rounded-xl overflow-hidden focus-within:border-amber-400 transition-colors duration-300 shadow-inner">
+                    <span class="pl-4 text-purple-400 group-focus-within:text-amber-400 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </span>
+                    <input type="text" x-model.debounce.250ms="searchQuery" placeholder="Buscar artículo, tema o palabra..." class="w-full bg-transparent px-4 py-3 text-sm text-white placeholder-purple-400/70 focus:outline-none">
+                    <button x-show="searchQuery" @click="searchQuery=''" class="pr-4 text-purple-400 hover:text-amber-400 transition-colors" title="Limpiar">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="max-w-6xl w-full mx-auto px-4 py-8 flex-grow">
+
+        <!-- ============ VISTA DE BÚSQUEDA ============ -->
+        <template x-if="searchQuery.trim() !== ''">
+            <div class="animate-fade-in-up">
+                <div class="flex flex-wrap justify-between items-center gap-3 mb-6 pb-4 border-b border-purple-800/50">
+                    <h2 class="text-lg font-bold text-amber-400 flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                        Resultados de Búsqueda
+                    </h2>
+                    <span class="text-xs font-medium bg-purple-900 text-purple-200 px-3 py-1 rounded-full border border-purple-700/50"><span x-text="searchResults.length"></span> coincidencias</span>
+                </div>
+                
+                <div class="grid grid-cols-1 gap-4">
+                    <template x-for="(art, index) in searchResults" :key="art.id">
+                        <div class="glass-panel rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden group border border-purple-800/50 hover:border-amber-400/30" x-data="{ open: false }">
+                            
+                            <!-- Cabecera del Resultado (Botón) -->
+                            <button @click="open = !open" class="w-full p-5 text-left flex flex-col gap-3 focus:outline-none">
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <span class="text-[10px] font-bold text-purple-950 bg-amber-400 px-2 py-0.5 rounded shadow-sm" x-text="art.numero"></span>
+                                    <span class="text-xs font-semibold text-purple-300 uppercase tracking-wider line-clamp-1" x-text="art.ubicacion"></span>
+                                </div>
+                                <div class="flex items-start justify-between w-full gap-4">
+                                    <h3 class="font-bold text-white text-base sm:text-lg leading-snug group-hover:text-amber-300 transition-colors" x-html="highlight(art.titulo, searchQuery)"></h3>
+                                    <div class="bg-purple-800/50 p-1.5 rounded-full shrink-0 group-hover:bg-amber-400 transition-colors">
+                                        <svg class="w-4 h-4 text-amber-400 group-hover:text-purple-950 transition-transform duration-300" :class="{'rotate-180': open}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    </div>
+                                </div>
+                            </button>
+
+                            <!-- Contenido Desplegable -->
+                            <div x-show="open" x-collapse>
+                                <div class="px-5 pb-5 pt-0">
+                                    <div class="h-px w-full bg-gradient-to-r from-purple-800/50 to-transparent mb-4"></div>
+                                    <p class="text-sm text-slate-300 article-text" x-html="highlight(art.texto, searchQuery)"></p>
+                                </div>
+                            </div>
+                            
+                            <!-- Texto resumido si está cerrado -->
+                            <div x-show="!open" class="px-5 pb-5 pt-0">
+                                <p class="text-sm text-slate-400 line-clamp-2 article-text" x-html="highlight(art.texto, searchQuery)"></p>
+                            </div>
+                        </div>
+                    </template>
+                    
+                    <!-- Sin resultados -->
+                    <div x-show="searchResults.length === 0" class="text-center py-16 glass-panel rounded-2xl border border-purple-800/50 animate-fade-in-up">
+                        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-purple-900/50 mb-4">
+                            <svg class="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <p class="text-purple-300 text-lg font-medium">No se encontraron artículos</p>
+                        <p class="text-purple-400/70 text-sm mt-1">Intenta con otras palabras clave.</p>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <!-- ============ VISTA NORMAL ============ -->
+        <template x-if="searchQuery.trim() === ''">
+            <div class="space-y-10 animate-fade-in-up">
+                
+                <!-- Índice Interactivo (Acordeón Global) -->
+                <div class="glass-panel rounded-3xl shadow-2xl overflow-hidden border border-purple-800/40 relative">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-600 via-amber-400 to-purple-600"></div>
+                    <div class="px-6 py-5 border-b border-purple-800/40 flex flex-wrap items-center justify-between gap-4 bg-purple-900/20">
+                        <div>
+                            <h2 class="text-lg font-black text-white uppercase tracking-widest flex items-center gap-3">
+                                <span class="text-amber-400">#</span> Índice General
+                            </h2>
+                            <p class="text-xs text-purple-300 mt-1">Explora la estructura completa del documento</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button @click="toggleAllIndex()" class="text-xs font-bold bg-purple-800/80 hover:bg-purple-700 text-purple-100 px-4 py-2 rounded-xl transition border border-purple-700/50 shadow-sm" x-text="expandAllInIndex ? '▲ Contraer Índice' : '▼ Expandir Índice'"></button>
+                            <button @click="toggleAllArticles()" class="text-xs font-bold bg-amber-400 hover:bg-amber-300 text-purple-950 px-4 py-2 rounded-xl transition shadow-[0_0_15px_rgba(251,191,36,0.3)] hover:shadow-[0_0_20px_rgba(251,191,36,0.5)]" x-text="allArticlesOpen ? '⊟ Cerrar Artículos' : '⊞ Abrir Artículos'"></button>
+                        </div>
+                    </div>
+                    
+                    <div class="p-4 sm:p-6 max-h-[60vh] overflow-y-auto custom-scrollbar">
+                        <div class="space-y-3">
+                            <template x-for="(titulo, tIndex) in titulos" :key="tIndex">
+                                <div class="border border-purple-800/40 rounded-2xl overflow-hidden bg-purple-950/30 transition-all duration-300 hover:border-purple-700/60">
+                                    <button @click="toggleIndexTitle(tIndex)" class="w-full text-left px-5 py-4 flex items-center justify-between gap-3 hover:bg-purple-900/40 transition-colors group">
+                                        <div class="flex items-center gap-3">
+                                            <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-purple-900 text-amber-400 font-black text-sm border border-purple-700/50 group-hover:bg-amber-400 group-hover:text-purple-950 transition-colors" x-text="tIndex + 1"></span>
+                                            <span class="text-sm sm:text-base font-bold text-slate-100 group-hover:text-white transition-colors" x-text="titulo.nombre"></span>
+                                        </div>
+                                        <svg class="w-5 h-5 text-purple-400 group-hover:text-amber-400 transition-transform duration-300" :class="{'rotate-180': openIndexTitles[tIndex]}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    </button>
+                                    
+                                    <div x-show="openIndexTitles[tIndex]" x-collapse>
+                                        <div class="px-5 pb-4 pt-1 space-y-2 bg-purple-950/50">
+                                            <template x-for="(cap, cIndex) in titulo.capitulos" :key="cIndex">
+                                                <div>
+                                                    <button @click="scrollToSection('titulo-' + tIndex + '-cap-' + cIndex)" class="w-full text-left text-sm text-purple-200 hover:text-amber-300 hover:bg-purple-800/40 px-4 py-2.5 rounded-xl transition-all flex items-center justify-between gap-3 border border-transparent hover:border-purple-700/50">
+                                                        <span class="flex items-center gap-2">
+                                                            <span class="w-1.5 h-1.5 rounded-full bg-amber-400/70"></span>
+                                                            <span x-text="cap.nombre"></span>
+                                                        </span>
+                                                        <span class="text-[10px] font-bold bg-purple-900 text-purple-300 px-2 py-0.5 rounded-md border border-purple-800 shrink-0" x-text="countArticles(cap) + ' arts.'"></span>
+                                                    </button>
+                                                    
+                                                    <!-- Sub-secciones del índice -->
+                                                    <template x-if="cap.secciones">
+                                                        <div class="ml-6 mt-1 space-y-1 border-l-2 border-purple-800/50 pl-3">
+                                                            <template x-for="(sec, sIndex) in cap.secciones" :key="sIndex">
+                                                                <button @click="scrollToSection('titulo-' + tIndex + '-cap-' + cIndex + '-sec-' + sIndex)" class="w-full text-left text-xs text-purple-400 hover:text-amber-300 hover:bg-purple-800/30 px-3 py-1.5 rounded-lg transition-all truncate" x-text="sec.nombre"></button>
+                                                            </template>
+                                                        </div>
+                                                    </template>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Listado de Títulos -->
+                <div class="space-y-12">
+                    <template x-for="(titulo, tIndex) in titulos" :key="tIndex">
+                        <section :id="'titulo-' + tIndex" class="scroll-mt-28 relative">
+                            
+                            <!-- Encabezado del Título -->
+                            <div class="flex items-center gap-4 mb-6">
+                                <div class="h-px flex-grow bg-gradient-to-r from-transparent via-purple-700 to-transparent"></div>
+                                <h3 class="text-center font-black text-2xl sm:text-3xl text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-200 tracking-tight px-4 drop-shadow-sm" x-text="titulo.nombre"></h3>
+                                <div class="h-px flex-grow bg-gradient-to-r from-transparent via-purple-700 to-transparent"></div>
+                            </div>
+
+                            <!-- Capítulos -->
+                            <div class="space-y-8">
+                                <template x-for="(capitulo, cIndex) in titulo.capitulos" :key="cIndex">
+                                    <div :id="'titulo-' + tIndex + '-cap-' + cIndex" class="scroll-mt-28">
+                                        
+                                        <!-- Cabecera del Capítulo -->
+                                        <div class="mb-4 flex items-center gap-3">
+                                            <div class="w-2 h-8 bg-amber-400 rounded-full shadow-[0_0_10px_rgba(251,191,36,0.5)]"></div>
+                                            <h4 class="font-bold text-base sm:text-lg text-white tracking-wide" x-text="capitulo.nombre"></h4>
+                                        </div>
+
+                                        <!-- Capítulo CON secciones -->
+                                        <template x-if="capitulo.secciones">
+                                            <div class="space-y-6 pl-2 sm:pl-5">
+                                                <template x-for="(sec, sIndex) in capitulo.secciones" :key="sIndex">
+                                                    <div :id="'titulo-' + tIndex + '-cap-' + cIndex + '-sec-' + sIndex" class="scroll-mt-28">
+                                                        <div class="mb-3 pl-3 border-l-2 border-purple-600">
+                                                            <h5 class="font-bold text-xs uppercase text-amber-300 tracking-widest" x-text="sec.nombre"></h5>
+                                                        </div>
+                                                        <div class="space-y-3">
+                                                            <template x-for="articulo in sec.articulos" :key="articulo.id">
+                                                                <!-- Componente de Artículo Individual -->
+                                                                <div class="bg-gradient-to-br from-purple-950 to-slate-900 border border-purple-800/60 rounded-xl overflow-hidden hover:border-amber-400/50 transition-all duration-300 shadow-lg group" x-data="{ open: false, copied: false }">
+                                                                    <button @click="open = !open" class="w-full p-4 text-left flex items-center justify-between gap-4 focus:outline-none relative">
+                                                                        <div class="flex items-center gap-3 relative z-10">
+                                                                            <span class="text-[11px] font-black text-purple-950 bg-amber-400 px-2.5 py-1 rounded-md shadow-sm shrink-0 uppercase tracking-wider" x-text="articulo.numero"></span>
+                                                                            <span class="text-sm font-bold text-slate-200 group-hover:text-white transition-colors" x-text="articulo.titulo"></span>
+                                                                        </div>
+                                                                        <svg class="w-5 h-5 text-amber-500 shrink-0 transition-transform duration-300 relative z-10" :class="{'rotate-180': open}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                                                    </button>
+                                                                    
+                                                                    <div x-show="open" x-collapse>
+                                                                        <div class="px-4 pb-5 pt-2 border-t border-purple-800/50 bg-purple-950/30 relative">
+                                                                            <!-- Botón Copiar -->
+                                                                            <button @click="copyText(articulo.texto); copied = true; setTimeout(() => copied = false, 2000)" class="absolute top-4 right-4 text-xs font-semibold bg-purple-800/80 hover:bg-purple-700 text-purple-200 px-2.5 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 opacity-0 group-hover:opacity-100 focus:opacity-100">
+                                                                                <svg x-show="!copied" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                                                                <svg x-show="copied" class="w-3.5 h-3.5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                                                                <span x-text="copied ? 'Copiado' : 'Copiar'"></span>
+                                                                            </button>
+                                                                            <p class="text-sm text-slate-300 article-text mt-2" x-text="articulo.texto"></p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </template>
+                                                        </div>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </template>
+
+                                        <!-- Capítulo SIN secciones -->
+                                        <template x-if="!capitulo.secciones">
+                                            <div class="space-y-3 pl-2 sm:pl-5">
+                                                <template x-for="articulo in capitulo.articulos" :key="articulo.id">
+                                                    <div class="bg-gradient-to-br from-purple-950 to-slate-900 border border-purple-800/60 rounded-xl overflow-hidden hover:border-amber-400/50 transition-all duration-300 shadow-lg group" x-data="{ open: false, copied: false }" :data-article-id="articulo.id">
+                                                        <button @click="open = !open" class="w-full p-4 text-left flex items-center justify-between gap-4 focus:outline-none relative">
+                                                            <div class="flex items-center gap-3 relative z-10">
+                                                                <span class="text-[11px] font-black text-purple-950 bg-amber-400 px-2.5 py-1 rounded-md shadow-sm shrink-0 uppercase tracking-wider" x-text="articulo.numero"></span>
+                                                                <span class="text-sm font-bold text-slate-200 group-hover:text-white transition-colors" x-text="articulo.titulo"></span>
+                                                            </div>
+                                                            <svg class="w-5 h-5 text-amber-500 shrink-0 transition-transform duration-300 relative z-10" :class="{'rotate-180': open}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                                        </button>
+                                                        
+                                                        <div x-show="open" x-collapse>
+                                                            <div class="px-4 pb-5 pt-2 border-t border-purple-800/50 bg-purple-950/30 relative">
+                                                                <button @click="copyText(articulo.texto); copied = true; setTimeout(() => copied = false, 2000)" class="absolute top-4 right-4 text-xs font-semibold bg-purple-800/80 hover:bg-purple-700 text-purple-200 px-2.5 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 opacity-0 group-hover:opacity-100 focus:opacity-100">
+                                                                    <svg x-show="!copied" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                                                    <svg x-show="copied" class="w-3.5 h-3.5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                                                    <span x-text="copied ? 'Copiado' : 'Copiar'"></span>
+                                                                </button>
+                                                                <p class="text-sm text-slate-300 article-text mt-2" x-text="articulo.texto"></p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </template>
+                            </div>
+                        </section>
+                    </template>
+
+                    <!-- Disposiciones -->
+                    <section id="disposiciones" class="scroll-mt-28 relative">
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="h-px flex-grow bg-gradient-to-r from-transparent via-purple-700 to-transparent"></div>
+                            <h3 class="text-center font-black text-xl sm:text-2xl text-amber-400 tracking-tight px-4 drop-shadow-sm">DISPOSICIONES TRANSITORIAS Y FINALES</h3>
+                            <div class="h-px flex-grow bg-gradient-to-r from-transparent via-purple-700 to-transparent"></div>
+                        </div>
+                        <div class="space-y-3 pl-2 sm:pl-5">
+                            <template x-for="(d, dIndex) in disposiciones" :key="dIndex">
+                                <div class="bg-gradient-to-br from-purple-950 to-slate-900 border border-purple-800/60 rounded-xl overflow-hidden hover:border-amber-400/50 transition-all duration-300 shadow-lg group" x-data="{ open: false }">
+                                    <button @click="open = !open" class="w-full p-4 text-left flex items-center justify-between gap-4 focus:outline-none">
+                                        <span class="text-sm font-bold text-amber-300" x-text="d.titulo"></span>
+                                        <svg class="w-5 h-5 text-amber-500 shrink-0 transition-transform duration-300" :class="{'rotate-180': open}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                    </button>
+                                    <div x-show="open" x-collapse>
+                                        <div class="px-4 pb-5 pt-2 border-t border-purple-800/50 bg-purple-950/30">
+                                            <p class="text-sm text-slate-300 article-text" x-text="d.texto"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </template>
+    </main>
+
+    <!-- Botón Volver Arriba -->
+    <button x-show="showBackTop" @click="window.scrollTo({top:0, behavior:'smooth'})" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-10" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 translate-y-10" class="fixed bottom-8 right-8 bg-amber-400 hover:bg-amber-300 text-purple-950 p-3.5 rounded-full shadow-[0_0_20px_rgba(251,191,36,0.4)] hover:shadow-[0_0_30px_rgba(251,191,36,0.6)] z-40 transition-all transform hover:-translate-y-1" title="Volver arriba">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
+    </button>
+
+    <!-- Pie de página -->
+    <footer class="bg-[#0a0520] border-t border-purple-900/50 text-center py-8 text-sm text-purple-300 mt-auto relative overflow-hidden">
+        <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDUiLz4KPC9zdmc+')] opacity-20 pointer-events-none"></div>
+        <div class="max-w-5xl mx-auto px-4 space-y-2 relative z-10">
+            <p class="font-black text-amber-400 tracking-wider text-base">MOVIMIENTO ELECTORAL DEL PUEBLO (MEP)</p>
+            <p class="text-xs uppercase tracking-widest text-purple-400">Partido Socialista de Venezuela</p>
+            <p class="text-xs text-purple-500 mt-2">Estatutos aprobados por la Dirección Política Nacional (DPN) — Caracas, 27 y 28 de mayo de 2023.</p>
+            <div class="mt-4 inline-block bg-purple-900/50 px-4 py-1.5 rounded-full border border-purple-800/50 text-[11px] font-semibold text-amber-200">
+                ¡Con el Pueblo hacia el Triunfo! · Liberación Nacional y Democracia Socialista
+            </div>
+        </div>
+    </footer>
+
+    <!-- ============ LÓGICA ============ -->
+    <script>
+        function estatutosApp() {
+            return {
+                searchQuery: '',
+                expandAllInIndex: false,
+                openIndexTitles: {},
+                allArticlesOpen: false,
+                showBackTop: false,
+                scrollProgress: 0,
+
+                init() {
+                    window.addEventListener('scroll', () => {
+                        this.showBackTop = window.scrollY > 400;
+                        
+                        // Calcular barra de progreso
+                        const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                        const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                        this.scrollProgress = height > 0 ? (winScroll / height) * 100 : 0;
+                    });
+                },
+
+                toggleIndexTitle(i) {
+                    this.openIndexTitles[i] = !this.openIndexTitles[i];
+                },
+
+                toggleAllIndex() {
+                    this.expandAllInIndex = !this.expandAllInIndex;
+                    this.titulos.forEach((_, i) => {
+                        this.openIndexTitles[i] = this.expandAllInIndex;
+                    });
+                },
+
+                countArticles(cap) {
+                    if (cap.secciones) return cap.secciones.reduce((acc, s) => acc + s.articulos.length, 0);
+                    return cap.articulos ? cap.articulos.length : 0;
+                },
+
+                toggleAllArticles() {
+                    this.allArticlesOpen = !this.allArticlesOpen;
+                    document.querySelectorAll('[data-article-id]').forEach(el => {
+                        const component = Alpine.$data(el);
+                        if (component && 'open' in component) component.open = this.allArticlesOpen;
+                    });
+                },
+
+                scrollToSection(id) {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        const header = document.querySelector('header');
+                        const offset = header ? header.offsetHeight + 24 : 100;
+                        const y = el.getBoundingClientRect().top + window.pageYOffset - offset;
+                        window.scrollTo({ top: y, behavior: 'smooth' });
+                        
+                        // Efecto visual de destino
+                        el.classList.add('highlight-pulse');
+                        setTimeout(() => el.classList.remove('highlight-pulse'), 1500);
+                    }
+                },
+
+                copyText(text) {
+                    navigator.clipboard.writeText(text).catch(err => console.error('Error al copiar: ', err));
+                },
+
+                highlight(text, query) {
+                    if (!query || !query.trim()) return text;
+                    const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                    const regex = new RegExp(`(${escaped})`, 'gi');
+                    return text.replace(regex, '<mark>$1</mark>');
+                },
+
+                get allArticles() {
+                    const out = [];
+                    this.titulos.forEach((t, tIdx) => {
+                        t.capitulos.forEach((c, cIdx) => {
+                            const lists = c.secciones ? c.secciones.flatMap(s => s.articulos) : (c.articulos || []);
+                            lists.forEach(a => {
+                                out.push({ ...a, ubicacion: `${t.nombre} > ${c.nombre}`, tIdx, cIdx });
+                            });
+                        });
+                    });
+                    return out;
+                },
+
+                get searchResults() {
+                    if (!this.searchQuery.trim()) return [];
+                    const q = this.searchQuery.toLowerCase().trim();
+                    return this.allArticles.filter(a =>
+                        (a.numero || '').toLowerCase().includes(q) ||
+                        (a.titulo || '').toLowerCase().includes(q) ||
+                        (a.texto || '').toLowerCase().includes(q)
+                    );
+                },
+
+                // ==================== DATOS COMPLETOS ====================
+                titulos: [
+                    {
+                        nombre: "TÍTULO I: DISPOSICIONES FUNDAMENTALES",
+                        capitulos: [
+                            {
+                                nombre: "Capítulo I: De la Definición Ideológica",
+                                articulos: [
+                                    { id: 1, numero: "Artículo 1", titulo: "Definición y Objetivos", texto: "El Movimiento Electoral del Pueblo (MEP), Partido Socialista de Venezuela, constituye la vanguardia de la clase obrera y demás trabajadores manuales e intelectuales de la ciudad y del campo, al servicio de los cuales estará en la lucha revolucionaria por la Liberación Nacional y la Democracia Socialista. Se propone movilizar, organizar y orientar al pueblo venezolano, y particularmente a la clase trabajadora, con el fin de lograr una aceptación cada vez mayor de sus principios y actuaciones y hacer posible su ascenso al poder, de conformidad con el sistema institucional. Utiliza como método de análisis el materialismo histórico y el materialismo dialéctico.\n\nPara el MEP la Liberación Nacional es instrumento para erradicar la explotación imperialista y oligárquica; y la Democracia Socialista es base para la superación de las contradicciones y diferencias de clases y naciones y para el desarrollo integral de la personalidad humana.\n\nEl partido para conquistar estas metas trabajará para la unidad de los sectores democráticos, de la lucha de masa hasta alcanzar nuestra plena independencia y soberanía nacional." },
+                                    { id: 2, numero: "Artículo 2", titulo: "Centralismo Democrático", texto: "La estructura orgánica del partido se asienta en el principio del centralismo democrático, es decir, la dirección colectiva y centralizada, con el carácter electivo de todos los organismos de dirección del partido, la participación efectiva de la militancia en la formación de las decisiones conforme a sus derechos y deberes, la obligación de los organismos inferiores de cumplir los acuerdos de los superiores, la observancia de la disciplina del partido y la subordinación de la minoría a la mayoría, el respeto a todas las ideas, por minoritarias que sean, la obligación de la dirección del partido de rendir cuenta de su gestión ante los organismos correspondientes, el uso elevado de la crítica y la autocrítica desprovista de toda desviación referida al centralismo democrático, el caudillismo, la falta de iniciativa política y la restricción de la plena democracia interna." },
+                                    { id: 3, numero: "Artículo 3", titulo: "Declaración de Objetivos", texto: "Para el logro de sus objetivos el MEP declara:\n\n1) Utilizar los sistemas, métodos y procedimientos democráticos en la orientación y acción política y electoral.\n\n2) Promover el desarrollo más elevado de la libertad del hombre, como esencial a su personalidad.\n\n3) Acatar la manifestación de la soberanía popular.\n\n4) Promover en atención a lo establecido en el artículo 1 de estos estatutos, la afiliación sin discriminación de raza, sexo, credo religioso o condición social.\n\n5) Reconocer a sus afiliados el pleno derecho a la participación directa o representativa en el gobierno de la organización y la fiscalización de su actuación." }
+                                ]
+                            },
+                            {
+                                nombre: "Capítulo II: Disposiciones Generales",
+                                articulos: [
+                                    { id: 4, numero: "Artículo 4", titulo: "Asiento y Domicilio", texto: "El MEP Partido Socialista de Venezuela, tiene su asiento principal y su domicilio en Caracas. En razón de su acción política permanente tendrá estructuras políticas en el Distrito Capital, los estados, y funcionará en todos los municipios, parroquias y centros poblados del país, de acuerdo con la estructura organizativa que determinen estos Estatutos y la Dirección Política Nacional o DPN.\n\nEl MEP tendrá también en las ciudades donde funcionen sus Direcciones Políticas Regionales o DPR, respecto a los hechos, actos y contratos que ejecuten o deban ejecutar los correspondientes Secretarios o Secretarias Generales o quienes hagan sus veces." },
+                                    { id: 5, numero: "Artículo 5", titulo: "Símbolos e Himno", texto: "El MEP Partido Socialista de Venezuela, utilizará entre sus símbolos de combate y como distintivo electoral la figura de la oreja humana izquierda. El Himno del partido se denominará 'A luchar y vencer, combatientes'. La bandera y Escudo, así como cualquier otro símbolo, serán determinados por el Comando Político Nacional (CPN).\n\nPárrafo Primero: El presidente honorario y vitalicio de nuestro partido MEP, es y será el Maestro Luis Beltrán Prieto Figueroa." },
+                                    { id: 6, numero: "Artículo 6", titulo: "Día Nacional", texto: "Se establece como Día Nacional del MEP, Partido Socialista de Venezuela, el 10 de Diciembre, fecha de su constitución." },
+                                    { id: 7, numero: "Artículo 7", titulo: "Uso Obligatorio", texto: "Es de uso obligatorio en los documentos oficiales de la organización el tratamiento de 'combatiente', el postulado 'Liberación Nacional' y 'Democracia Socialista' y la consigna 'Con el Pueblo hacia el Triunfo, Venceremos', así como la colocación, en las sedes del partido, las imágenes de nuestro Presidente fundador, Luís Beltrán Prieto Figueroa, del Comandante Hugo Chávez y del Presidente de la República revolucionario del momento." },
+                                    { id: 8, numero: "Artículo 8", titulo: "Glosario de Términos", texto: "A los objetos de los presentes estatutos, se entiende por:\n\n1.- Combatiente: Militante del primer partido socialista de Venezuela Movimiento Electoral del Pueblo que de manera voluntaria acepta cumplir y hacer cumplir los estatutos, seguir la línea política partidista, acatar lo establecido en circulares y demás disposiciones legales establecidas por las diferentes instancias del partido.\n\n2.- Asamblea Nacional, Regional, Municipal o Parroquial: La Asamblea es el órgano máximo de dirección partidista en el territorio. En los presentes estatutos se identificarán con las siglas AN, AR, AM y AP respectivamente.\n\n3.- Dirección Política Nacional y Regional: es el órgano máximo de dirección y conducción del partido, después de la Asamblea. En los presentes estatutos se identificarán con las siglas DPN y DPR respectivamente." }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        nombre: "TÍTULO II: DE LOS Y LAS MILITANTES DEL PARTIDO",
+                        capitulos: [
+                            {
+                                nombre: "Capítulo I: De los Deberes y Derechos",
+                                articulos: [
+                                    { id: 9, numero: "Artículo 9", titulo: "Requisitos de Militancia", texto: "Para ser militante del MEP, Partido Socialista de Venezuela, se requiere ser venezolano o venezolana, hábil en derecho, tener buena conducta pública y privada, haber manifestado adhesión a la Doctrina, los Estatutos, el Programa y la Línea Política del Partido, comprometerse a pagar la cotización correspondiente y haber sido aceptado como tal por la Organización.\n\nPárrafo Único: Los reglamentos establecerán diversas formas de participación en el MEP, Partido Socialista de Venezuela, dirigida a estimular y facilitar la incorporación de los y las independientes que están dispuestos para la lucha social, según nuestros postulados." },
+                                    { id: 10, numero: "Artículo 10", titulo: "Ingreso al Partido", texto: "Quien exprese su voluntad de ingresar al MEP, Partido Socialista de Venezuela, lo hará en forma individual y por escrito, o por vía digital, ante cualquier autoridad partidista o por intermedio de un militante.\n\nPárrafo Único: El Reglamento establecerá el procedimiento administrativo correspondiente para el ingreso al Partido." },
+                                    { id: 11, numero: "Artículo 11", titulo: "Deberes de los Militantes", texto: "1) Acatar y cumplir la disciplina del Partido.\n2) Elevar permanentemente su formación ideológica, política y mantener posición de vanguardia en la lucha por la Liberación Nacional y la Democracia Socialista.\n3) Practicar la autocrítica revolucionaria, siempre de manera constructiva.\n4) Participar en la lucha societaria de su comunidad y promover y militar en su organismo partidista de base, según lo determine la correspondiente normativa.\n5) Cumplir con el activismo partidista donde le sea requerido.\n6) Estudiar y divulgar la doctrina, los Estatutos, la Línea Política y el programa del Partido.\n7) Cumplir con mística y disciplina las normas, consignas, directrices y resoluciones del Partido.\n8) Estrechar los vínculos con las masas y explicarles la Línea Política, con preocupación permanente por sus necesidades, y luchar junto con ellas para que logren sus reivindicaciones sociopolíticas.\n9) Pagar puntualmente la cuota ordinaria de militantes, así como aportar cualquier cuota especial que defina el Comando Político Nacional, y contribuir con los demás planes y programas de finanzas del Partido.\n10) Conformar su vida pública acorde con los principios establecidos en el Código de Ética del Militante Mepista.\n11) Adquirir y divulgar las publicaciones y literatura del partido.\n12) Captar militantes simpatizantes y amigos.\n13) Estimular el trabajo y las decisiones colectivas, para impedir toda manifestación de autocratismo, burocratismo, liberalismo, igualitarismo pequeño burgués, fraccionalismo y toda otra clase de desviación.\n14) Estudiar la realidad nacional e internacional, a fin de conocerlas en sus dimensiones e interpretarla científicamente y poner este conocimiento al servicio de la lucha revolucionaria.\n15) Conservar la unidad doctrinaria y orgánica del Partido, como condición esencial para el cumplimiento de su misión histórica.\n16) Velar porque en la designación de cargos de dirección se cumplan las normas referentes a una correcta selección, tomando como base las cualidades generales y específicas para el desempeño de un cargo determinado.\n17) Cultivar la solidaridad entre los y las mepistas.\n18) Presentar copia de la declaración jurada de patrimonio al ejercer funciones públicas.\n19) Tolerar la crítica sana y constructiva formulada por los órganos internos competentes." },
+                                    { id: 12, numero: "Artículo 12", titulo: "Brigada de Voluntarios", texto: "Los o las militantes que manifiesten expresamente su decisión de pertenecer a la Brigada de Voluntarios del MEP adquirirán deberes complementarios y se someterán a lo que establezca el respectivo Reglamento." },
+                                    { id: 13, numero: "Artículo 13", titulo: "Movimiento Juvenil", texto: "A los efectos de la legalización de la militancia en el movimiento juvenil, el Partido dictará el correspondiente Reglamento, donde se establezcan las condiciones para la misma y así adecuarla a las exigencias que la ley respectiva establezca." },
+                                    { id: 14, numero: "Artículo 14", titulo: "Derechos de los Militantes", texto: "Son derechos de los y las militantes:\n\n1) Ser adoctrinado por la organización.\n2) Elegir y ser elegidos para los cargos de representación de la organización.\n3) Examinar y discutir los asuntos del Partido dentro de los órganos correspondientes y participar en la elaboración de la Línea política y otros documentos fundamentales, conforme con los mecanismos de participación que a tales efectos creare el Partido.\n4) Emitir libremente sus opiniones y ser respetados en su disentimiento, siempre que las mismas sean formuladas adecuadamente ante los órganos partidistas correspondientes.\n5) Ejercer la crítica con sentido positivo y creador.\n6) Participar en las jornadas de reflexión y formación política que el partido organice, cumpliendo previamente los requisitos establecidos.\n7) Promoverse para aspirar a cargos de autoridad o representación partidista, dentro de lo establecido por estos Estatutos, los reglamentos y demás normas.\n8) Ser informado de las finanzas y la administración de los recursos económicos del partido, de acuerdo a las normas reglamentarias.\n9) Tener derecho al acceso de la documentación del partido, doctrina, Estatutos, Reglamentos, programas, Estructura organizativa, Resoluciones Políticas, gremiales y de las resoluciones de la DPN y del CPN. El Reglamento establecerá el órgano competente y las formas y condiciones para ejercer este derecho.\n10) Discrepar Internamente, de forma adecuada, en los órganos colectivos partidistas, con la doble idea de enriquecer los canales de discusión y resguardar a la vez la cohesión y disciplina partidista.\n\nPárrafo Único: El Reglamento establecerá los requisitos de militancia, activismo, condiciones personales, presentación de programas, necesarios para ser postulados o postuladas y elegidos o elegidas, así como los mecanismos de evaluación permanente del militante." }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        nombre: "TÍTULO III: DE LA ESTRUCTURA Y FUNCIONAMIENTO DEL PARTIDO",
+                        capitulos: [
+                            {
+                                nombre: "Capítulo I: De la Estructura General",
+                                articulos: [
+                                    { id: 15, numero: "Artículo 15", titulo: "Estructura General", texto: "El MEP Partido Socialista de Venezuela, establece el principio de la Dirección colectiva, democrática y participativa. Su estructura estará formada por los órganos siguientes:\n\n1) Asamblea Nacional, Dirección Política Nacional, Comando Político Nacional, Comisión Nacional de Ética y Disciplina, Comisión Electoral Nacional, Contraloría Interna, Convenciones Sectoriales y Burós Sectoriales Nacionales, Fracción Parlamentaria Nacional, Departamentos Nacionales.\n2) Asamblea Regional, Dirección Política Regional, Comando Político Regional, Comisión Regional de Ética y Disciplina, Comisión Electoral Regional, Convenciones Sectoriales, Burós Sectoriales Regionales, Fracción Parlamentaria Regional, Colegios Electorales Regionales, Departamentos Regionales.\n3) Asambleas Municipales, Comandos Políticos Municipales, Convenciones Sectoriales y Burós Sectoriales Municipales, Fracciones Edilicias, Comisión Electoral Municipal.\n4) Asambleas Parroquiales de militancia.\n5) Comités Locales.\n\nPárrafo Primero: La Dirección Política Nacional podrá, cuando lo considere conveniente, crear y poner a funcionar según las normas que a tal efecto ella determine, zonas regionales, con la debida jerarquización de quienes las coordinen.\n\nPárrafo Segundo: Los órganos de dirección del partido entrarán en receso, en el momento en el cual, por razones no atribuibles a la voluntad partidista, se impida la realización de sus reuniones ordinarias, tal como está establecido en los presentes estatutos." }
+                                ]
+                            },
+                            {
+                                nombre: "Capítulo II: De las Asambleas",
+                                secciones: [
+                                    {
+                                        nombre: "Sección I: De su Constitución y Reuniones",
+                                        articulos: [
+                                            { id: 16, numero: "Artículo 16", titulo: "Naturaleza de la Asamblea", texto: "La Asamblea es el órgano máximo de dirección partidista en su nivel respectivo (nacional, regional, municipal y local). Cada Asamblea estará formada por delegados o delegadas electos o electas directamente por la militancia, de acuerdo al Reglamento electoral interno y por delegadas o delegados natos conforme a lo establecido en estos estatutos." },
+                                            { id: 17, numero: "Artículo 17", titulo: "Ordinarias y Extraordinarias", texto: "Las Asambleas serán Ordinarias y Extraordinarias.\n\nLas Ordinarias se realizarán cada tres años, salvo que por razones debidamente justificadas sean anticipadas o diferidas. En este último caso, el lapso no será mayor de seis meses. La convocatoria se hará con no menos de treinta (30) días de anticipación para la Asamblea Nacional y de quince (15) días de anticipación para las otras.\n\nLas Asambleas se reunirán extraordinariamente:\n1) Por iniciativa de la propia Asamblea.\n2) Por convocatoria de la Dirección Política Nacional o del Comando Político correspondiente.\n3) A solicitud de: a) La mayoría de las Direcciones Políticas, o de los Comandos Políticos Regionales hecha por ante la Dirección Política Nacional, cuando se trate de la Asamblea Nacional. b) La mayoría de los Comandos Políticos Municipales de la regional en funcionamiento, hecha por ante el Comando Político Regional, cuando se trate de las Asambleas Regionales o Municipales.\n\nLas Asambleas se efectuarán en las fechas fijadas en las respectivas convocatorias. En ellas se discutirán las materias objeto de la misma, y en caso de no poder considerarlas todas, las restantes podrán ser discutidas por el órgano que señale la propia Asamblea. La solicitud señalará el objeto de la reunión sin perjuicio de que la Asamblea convocada incorpore nuevas materias por propias iniciativas, si se tratare de asuntos de interés nacional, de emergencia o de interés partidista. En los casos de la inclusión de nuevas materias, requerirá la aprobación de las dos terceras partes de los delegados o delegadas asistentes.\n\nPárrafo Único: Lo relacionado con el funcionamiento de los Comandos Políticos Regionales, Municipales, Parroquiales y Comités Locales será determinado por el órgano superior correspondiente. De esta decisión podrá apelarse ante el Comando Político Nacional en conformidad con lo previsto en estos Estatutos y el Reglamento Electoral Interno." }
+                                        ]
+                                    },
+                                    {
+                                        nombre: "Sección II: De la Asamblea Nacional",
+                                        articulos: [
+                                            { id: 18, numero: "Artículo 18", titulo: "Integración de la Asamblea Nacional", texto: "La Asamblea Nacional es el órgano superior de la Dirección partidista, y estará integrada por:\n\n1) Los miembros de la Dirección Política Nacional, DPN.\n2) Diputados y diputadas nacionales principales y suplentes militantes.\n3) Representaciones manifestas en organizaciones públicas y privadas, según lo determine el reglamento.\n4) El Secretario o Secretaria General y un (01) delegado o delegada electo por los integrantes del Comando Político Municipal, por cada uno de los tres (03) municipios con mejor desempeño en votación en el último evento electoral realizado en el país.\n5) Un (01) delegado o delegada que sea directivo principal en organizaciones de masas para el momento de la actualización de la nómina de la Asamblea.\n6) Los Gobernadores, Gobernadoras, Alcaldes o Alcaldesas militantes.\n7) Podrán también ser delegados o delegadas los y las independientes que en su acción política coincidían con la Línea política del MEP, previa calificación del Comando Político Nacional.\n\nPárrafo Primero: El Comando Político Nacional, CPN, podrá invitar, con derecho a voz en número no mayor de veinte (20), a dirigentes y militantes no miembros de la Asamblea Nacional.\n\nPárrafo Segundo: El Comando Político Nacional, CPN, podrá, cuando lo juzgue conveniente, invitar a personalidades representativas de partidos aliados, y/u otras organizaciones nacionales y/o internacionales, para la Asamblea Nacional, en la forma y condiciones que él mismo determine." },
+                                            { id: 19, numero: "Artículo 19", titulo: "Atribuciones de la Asamblea Nacional", texto: "La Asamblea Nacional tendrá las siguientes atribuciones:\n\n1) Sancionar la Doctrina, los Estatutos, el Programa y la Línea Política del Partido, pudiendo delegar esta facultad cuando lo estime necesario y con las limitaciones que ella establezca a la Dirección Política Nacional.\n2) Resolver los asuntos que le sean sometidos por la Dirección Política Nacional, el Comando Político Nacional, la Comisión Nacional de Ética y Disciplina, la Comisión Electoral Nacional, la Contraloría Interna del Partido y los de su propia iniciativa.\n3) Sancionar la gestión cumplida por el Comando Político Nacional, CPN, y los demás órganos y funcionarios sometidos a su autoridad. A tal efecto, el Comando Político Nacional, CPN, rendirá cuenta de su gestión, por órgano de su Presidente o Presidenta, en informe de cuyo contenido serán solidarios todos los que no hubieren salvado su voto, y el cual deberá ser aprobado por la mayoría simple. A los efectos anteriores todos los órganos que tiene representación en el Comando Político Nacional entregarán oportunamente a la Secretaria General el informe escrito correspondiente a su gestión.\n4) Conocer en apelación las decisiones del Comando Político Nacional, CPN, de la Comisión Nacional de Ética y Disciplina, de la Comisión Electoral Nacional y del Contralor o Contralora Interno Nacional.\n5) Designar su Junta Directiva." }
+                                        ]
+                                    },
+                                    {
+                                        nombre: "Sección III: De las Asambleas Regionales",
+                                        articulos: [
+                                            { id: 20, numero: "Artículo 20", titulo: "Integración de la Asamblea Regional", texto: "La Asamblea Regional es el órgano superior del partido en los estados y estará integrada por:\n\n1) Las y los miembros de la Dirección Política Regional, DPR.\n2) Diputados o diputadas regionales a la Asamblea Nacional, legisladores o legisladoras regionales, principales y suplentes, concejales o concejalas principales y suplentes, alcaldes o alcaldesas, gobernador o gobernadora militantes.\n3) Un (01) delegado o delegada principal en organizaciones regionales de masas.\n4) El Secretario o Secretaria General y un (01) delegado o delegada electa por los integrantes del Comando Político Municipal, por cada uno de los tres (03) municipios de mejor desempeño en votos, en el último evento electoral realizado en el país.\n5) También podrán ser delegados o delegadas los y las independientes que en su acción Política coincidan con la Línea Política del MEP, previa calificación de CPR.\n\nPárrafo Primero: El Comando Político Regional, CPR, podrá invitar, con derecho a voz y en número no mayor a diez (10), a dirigentes y militantes no miembros de la Asamblea Regional. Igualmente determinará el número de observadores.\n\nPárrafo Segundo: El Comando Político Regional, CPR, podrá, cuando lo juzgue conveniente, invitar a personalidades representativas de partidos aliados y otras organizaciones regionales, para la Asamblea Regional en la forma y condiciones que él mismo determine." },
+                                            { id: 21, numero: "Artículo 21", titulo: "Atribuciones de la Asamblea Regional", texto: "La Asamblea Regional tendrá las siguientes atribuciones:\n\n1) Estudiar y resolver los asuntos remitidos por los órganos de Dirección Regional y los de su propia iniciativa.\n2) Fijar la línea frente a los acontecimientos regionales de carácter político, económico social y cultural, conforme a la Doctrina, Estatutos, el programa y la Línea Política del Partido.\n3) Sancionar la gestión cumplida por el Comando Político Regional y los demás órganos y funcionarios sometidos a su autoridad. A tal efecto, el Comando Político Regional rendirá cuenta de su gestión por órgano del Secretario o Secretaria General, en informe de cuyo contenido son solidarios todos los que no hubieren salvado su voto y el cual deberá ser aprobado por la mayoría simple. A los efectos anteriores todos los órganos que tienen representación en el Comando Político Regional entregarán oportunamente al Secretario o Secretaria General el informe escrito correspondiente a su gestión.\n4) Conocer en apelación o de oficio las decisiones del Comando Político Regional, de la Comisión Regional de la Ética y Disciplina, de la Comisión Electoral.\n5) Discutir documentos y/o planteamientos que considere de vital importancia para el desarrollo político del partido, de intereses nacional, regional o local, y darlos a conocer al Comando Político Nacional, CPN.\n\nPárrafo Único: Los acuerdos y resoluciones de la Asamblea Regional deberán ajustarse a la Línea Política del Partido." }
+                                        ]
+                                    },
+                                    {
+                                        nombre: "Sección IV: De las Asambleas Municipales y Parroquiales",
+                                        articulos: [
+                                            { id: 22, numero: "Artículo 22", titulo: "Integración de Asambleas Municipales y Parroquiales", texto: "La Asamblea Municipal y Parroquial es el órgano de dirección Superior del Partido en escala municipal y parroquial y estará integrada por:\n\n1) Los miembros del Comando Político Municipal.\n2) El Secretario o Secretaria General de cada Comando Político Parroquial.\n3) Un (01) coordinador o coordinadora de cada Comité Local.\n4) Un (01) delegado principal de organizaciones de masas, a nivel municipal, no partidista conforme lo establezca la respectiva reglamentación.\n5) Los y las militantes diputados o diputadas nacionales principales y suplentes; legisladores o legisladoras regionales, principales y suplentes; concejales y concejalas principales y suplentes que hagan vida activa o residan en el municipio respectivo, Alcaldes o Alcaldesas.\n\nPárrafo Único: A las deliberaciones de las Asambleas Municipales podrán asistir con derecho a voz los dirigentes a quienes invite el Comando Político Municipal en número no mayor de cinco (05). Así mismo determinará el número de observadores a invitar." },
+                                            { id: 23, numero: "Artículo 23", titulo: "Atribuciones de Asambleas Municipales y Parroquiales", texto: "Las Asambleas Municipales o Parroquiales tendrán las mismas atribuciones de las Asambleas Regionales, establecidas en el artículo 21 de estos Estatutos, en el ámbito de aplicación de su jurisdicción." }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                nombre: "Capítulo III: De las Direcciones Políticas Nacionales y Regionales",
+                                secciones: [
+                                    {
+                                        nombre: "Sección I: De la Dirección Política Nacional",
+                                        articulos: [
+                                            { id: 24, numero: "Artículo 24", titulo: "Integración de la DPN", texto: "La Dirección Política Nacional es el órgano máximo de dirección y conducción del partido, sometido sólo a la autoridad de la Asamblea Nacional, y estará integrada por:\n\n1) Las y los miembros del Comando Político Nacional, CPN.\n2) Los coordinadores y/o coordinadoras de las comisiones nacionales de Ética y Disciplina, y Electoral.\n3) El Contralor o Contralora Interna.\n4) Los Diputados o Diputadas nacionales principales y suplentes militantes.\n5) Los Secretarios o Secretarias Generales y los Secretarios o Secretarias de Organización de los Comandos Políticos Regionales.\n6) Dos (02) delegados o delegadas de los Burós Nacionales, electos dentro de su propio seno.\n7) Los Directores o Directoras Nacionales de Departamentos.\n\nPárrafo Primero: La Dirección Política Nacional se reunirá en forma ordinaria una (01) vez al año y extraordinariamente cuando la convoque el Comando Político Nacional, por propia iniciativa o por solicitud motivada de la mayoría calificada de los Comandos Políticos Regionales." },
+                                            { id: 25, numero: "Artículo 25", titulo: "Atribuciones de la DPN", texto: "1) Fijar la línea política, electoral y organizativa del partido, en concordancia con lo trazado por la Asamblea Nacional.\n2) Evaluar el funcionamiento del Partido en todos sus niveles.\n3) Sancionar la gestión de los órganos ejecutivos del Partido, a cuyo efecto recibirá informe de las ordenadas en cada reunión ordinaria.\n4) Modificar, con excepción de las Disposiciones Fundamentales, los Estatutos del Partido durante el receso de la Asamblea Nacional, cuando sea requerido por las dos (2) terceras partes de los y las integrantes de la Dirección Política Nacional o de las Direcciones Políticas Regionales.\n5) Diferir o anticipar las reuniones ordinarias de la Asamblea Nacional en lapso no mayor de seis (06) meses.\n6) Tratar lo relacionado con alianzas, coaliciones o acuerdos coyunturales y autorizar planchas integradas para cuerpos deliberantes, cuerpos deliberantes en coalición con otras organizaciones, cuando ella lo juzgue pertinente.\n7) Convocar las Asambleas Nacionales Extraordinarias.\n8) Conocer y decidir lo conducente por apelación de las decisiones adoptadas por la Comisión Nacional de Ética y Disciplina, la Comisión Electoral Nacional, el Comando Político Nacional, el Contralor o Contralora Interno Nacional y las Direcciones Políticas Regionales. Todas las decisiones de carácter disciplinario que adopte el Comando Político Nacional deberá estudiarlas la Dirección Política Nacional, previo el procesamiento de la Comisión Nacional de Ética y Disciplina.\n9) Revocar el mandato de cualquiera de sus miembros por causas debidamente justificadas. Para estos efectos se requerirá el voto favorable de las dos (2) terceras partes de sus integrantes, previo expediente o informe razonado, permitiendo el ejercicio del derecho a la defensa del o la afectada.\n10) Cubrir las vacantes que se produzcan en su propio seno.\n11) Mantenerse enterada de los hechos y cambios en el pensamiento político universal y formular por ante los órganos competentes los planteamientos para acrecentar y mejorar el acervo ideológico y doctrinario del partido y en particular de su militancia.\n12) Sancionar, a proposición del Comando Político Nacional y de la Comisión Electoral Nacional, las normas y el mecanismo de elección de pre-candidatos y/o pre-candidatas y/o candidato y/o candidata a la Presidencia de la República, los pre-candidatos y/o pre-candidatas a los cuerpos deliberantes y los candidatos y/o candidatas a las nuevas autoridades del Partido, en conformidad con la Legislación venezolana, los Estatutos y el Reglamento Electoral.\n13) Determinar las características de la Bandera y del Escudo del partido, así como cualquier otro símbolo y distintivo que no sea competencia exclusiva de la Asamblea Nacional.\n14) Proclamar el candidato o candidata del partido a la Presidencia de la República y a las nuevas autoridades nacionales del MEP electos o electas según lo determine la Legislación Venezolana y en conformidad con estos Estatutos, el Reglamento Electoral Interno y lo que decida la Dirección Política Nacional." }
+                                        ]
+                                    },
+                                    {
+                                        nombre: "Sección II: De las Direcciones Políticas Regionales",
+                                        articulos: [
+                                            { id: 26, numero: "Artículo 26", titulo: "Integración de la DPR", texto: "La Dirección Política Regional es el órgano máximo de dirección y conducción partidista a nivel estadal, sometido a la autoridad de los órganos nacionales del Partido y a la Asamblea Regional. Estará integrada por:\n\n1) Las y los miembros del Comando Político Regional.\n2) Los coordinadores o coordinadoras regionales de las Comisiones de Ética y Disciplina y Comisión Electoral.\n3) El Secretario o secretaria General y el Secretario o secretaria de Organización de los Comandos Políticos Municipales.\n4) Los legisladores o las legisladoras principales y suplentes militantes de la regional.\n5) Los concejales y las concejalas principales y suplentes militantes de fracciones Municipales de la regional.\n6) Los alcaldes o alcaldesas militantes de la regional.\n7) Dos (02) delegados o delegadas de los Burós regionales, electos o electas dentro de su seno.\n8) Los Directores o Directoras de los Departamentos regionales.\n\nPárrafo Primero: La Dirección Política Regional se reunirá en forma ordinaria cada seis (06) meses y extraordinariamente cuando la convoque el Comando Político Regional, de propia iniciativa o a solicitud de la mayoría de los Comandos Políticos Municipales.\n\nPárrafo Segundo: A las reuniones de las Direcciones Políticas Regionales podrán asistir con derecho a voz aquellos a quienes, en número expresamente limitado, invite el Comando Político Regional. Este podrá también, en determinadas ocasiones, invitar a un número expresamente limitado de observadores." },
+                                            { id: 27, numero: "Artículo 27", titulo: "Atribuciones de la DPR", texto: "La Dirección Política Regional tendrá las mismas atribuciones y deberes que los Estatutos asignan a la Dirección Política Nacional, en todo cuanto sea aplicable a su nivel y jurisdicción." }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                nombre: "Capítulo IV: Del Comando Político Nacional, de los Comandos Políticos Regionales, de los Comandos Políticos Municipales, Parroquiales y de los Comités Locales",
+                                secciones: [
+                                    {
+                                        nombre: "Sección I: Del Comando Político Nacional",
+                                        articulos: [
+                                            { id: 28, numero: "Artículo 28", titulo: "Composición del CPN", texto: "El Comando Político Nacional, CPN, es el órgano ejecutivo de la Dirección Política Nacional, DPN, y responderá de su gestión ante esta. Estará integrado por trece (13) miembros, de la siguiente manera: un Presidente o Presidenta, un Secretario o Secretaria General, un Secretario o Secretaria de Organización, dos (02) Secretarios o Secretarias Sectoriales: Mujer y Juventud, el Coordinador o Coordinadora del Consejo Consultivo Nacional, y siete (07) Secretarios Políticos Ejecutivos o Secretarias Políticas Ejecutivas, con funciones específicas asignadas por el Comando Político Nacional.\n\nPárrafo Primero: El Comando Político Nacional, CPN, se reunirá ordinariamente una vez al mes, en día y hora fijados, y extraordinariamente cuando lo convoque el Presidente o Presidenta o a petición de por lo menos la mitad más uno de sus integrantes. Para el logro de estos objetivos y toma de decisiones, el Comando Político Nacional podrá convocar y realizar reuniones ordinarias o extraordinarias utilizando las diferentes tecnologías de la información, medios electrónicos y redes telemáticas tales como videoconferencias, videos llamadas entre otras. De las mismas se levantará el acta respectiva o la grabación de ser posible.\n\nPárrafo Segundo: El Comando Político Nacional, los Comandos Políticos Regionales y Municipales deberán crear sus diferentes correos electrónicos y redes sociales para el intercambio de información oficial y difusión de las actividades políticos partidistas del MEP así como también diferentes espacios telemáticos o informáticos (Grupos de chats o comunicación) entre sus integrantes, con el propósito de intercambiar información vinculada con el funcionamiento del partido, dejando muy claro que estos espacios telemáticos o informáticos jamás podrán sustituir a los órganos de base o de dirección de nuestro partido. Las opiniones emitidas por quienes integran estos espacios telemáticos o informáticos, serán responsabilidad de los y las participantes y podrán acarrear sanciones, de acuerdo a lo establecido en estos Estatutos. El Comando Político Nacional aprobará un Reglamento para tal fin.\n\nPárrafo Tercero: Tanto el Presidente o Presidenta como el Secretario o Secretaria General del Comando Político Nacional asegurará una gestión democrática y colectiva, conforme con el espíritu de los presentes Estatutos y sus Reglamentos.\n\nPárrafo Cuarto: Todos los miembros del Comando Político Nacional están obligados a asistir con puntualidad y permanencia a todas las reuniones y cumplir con las actividades de su competencia específica, las de carácter general y las asignadas por el cuerpo. En caso de no poder hacerlo, deberán justificarlo previamente a la reunión.\n\nPárrafo Quinto: Cuando el Comando Político Nacional lo considere necesario, los ex-Presidentes o ex-Presidentas y ex-Secretarios o ex-Secretarias Generales podrán ser invitados con voz al Comando Político Nacional.\n\nPárrafo Sexto: El Comando Político Nacional elegirá de su propio seno una Comisión Política Ejecutiva, cuya composición y atribuciones serán determinadas por este cuerpo de dirección.\n\nPárrafo Séptimo: La Dirección Política Nacional, DPN, podrá, cuando lo considere conveniente y necesario, y mediante votación calificada de por lo menos dos (2) tercios de sus integrantes, incorporar al Comando Político Nacional dos (2) o cuatro (4) nuevos miembros, con las funciones que el mismo CPN asigne a cada uno.\n\nPárrafo Octavo: El Comando Político Nacional podrá, cuando existan razones suficientes justificadas, reubicar en cuanto a funciones a cualquier Secretaria o Secretario Político de su seno.\n\nPárrafo Noveno: Todos los temas tratados o discutidos en reuniones ordinarias o extraordinarias del Comando Político Nacional son de carácter confidencial y sólo podrán ser divulgados por los canales acordados por esta instancia." },
+                                            { id: 29, numero: "Artículo 29", titulo: "Atribuciones del CPN", texto: "El Comando Político Nacional tendrá las siguientes atribuciones:\n\n1) Cumplir y hacer cumplir las decisiones de la Dirección Política Nacional y de la Asamblea Nacional.\n2) Ejercer la Dirección Ejecutiva del Partido con un criterio colectivo, armónico, democrático y coherente en toda la jurisdicción nacional dentro del concepto del centralismo democrático.\n3) Representar oficialmente al partido y mantener relaciones con otras organizaciones y demás entidades y organismos públicos y privados, nacionales e internacionales.\n4) Decidir sobre la construcción u otorgamiento de apoderados judiciales y señalarles sus facultades.\n5) Acopiar, para el análisis sistemático, todos aquellos elementos de juicio que permitan planificar en forma permanente la estrategia, la táctica y las actuaciones electorales del partido.\n6) Aprobar el presupuesto de ingresos y gastos del partido a nivel nacional, y vigilar su ejecución, así como la de cualquier erogación de carácter extraordinario.\n7) Establecer formas efectivas que permitan recaudar ingresos para cubrir el presupuesto de gastos ordinarios y constituir el fondo electoral nacional.\n8) Dirigir la gestión de la fracción Parlamentaria Nacional, así como también de las representaciones sindicales o gremiales y las de cualquier representación ejercida, a nombre del Partido, ante organismos públicos o privados.\n9) Aprobar modificaciones a los reglamentos de funcionamiento de la Comisión Electoral, de la Comisión de Ética y Disciplina así como también elaborar y aprobar, el Reglamento Electoral interno, del Consejo Consultivo Nacional; los reglamentos de funcionamiento de los Burós, Departamentos, Contraloría Interna, finanzas, formación y demás reglamentos, todo en concordancia con estos Estatutos. Estas modificaciones totales o parciales a los reglamentos respectivos se informará en la inmediata reunión de la Dirección Política Nacional.\n10) Aprobar y supervisar la aplicación de planes y programas de capacitación y adiestramiento de militantes y activistas del Partido.\n11) Aplicar sanciones ejecutivas, a cualquier militante, desde llamados de atención hasta la suspensión de actividades partidistas o de militancia, con carácter temporal, de acuerdo al nivel de gravedad y notoriedad del acto violatorio a la disciplina o la ética del Partido que se cometa, con el obligante pase a la Comisión Nacional de Ética y Disciplina, sin menoscabo del legítimo derecho a la defensa.\n12) Supervisar y evaluar la gestión de las y los miembros de la organización en el ejercicio de funciones de carácter público.\n13) Someter a la Asamblea Nacional o a la Dirección Política Nacional, según de lo que se trate, las modificaciones que considere conveniente hacer a estos Estatutos.\n14) Supervisar la formación y capacitación política, doctrinaria e ideológica de la militancia, la cual estará a cargo de los órganos partidistas definidos para tal fin.\n15) Supervisar permanentemente la buena marcha de la organización, velar por el cumplimiento de estos Estatutos, acuerdos y resoluciones de los organismos superiores y de los emanados de su propio seno.\n16) Sustituir internamente, mientras se reúna la Dirección Política Nacional, a cualquier miembro de los Comandos Políticos Regionales.\n17) Intervenir y/o reorganizar temporalmente, hasta tanto se reúna la Dirección Política Nacional, DPN, cualquier estructura Regional o sector partidista, cuando las circunstancias así lo exijan. Tal decisión será conocida y considerada en la inmediata reunión de la Dirección Política Nacional, DPN, a los efectos de la resolución definitiva. Si esta fuera la ratificatoria de la decisión del Comando Político Nacional, ella deberá ser comunicada a la Comisión Electoral Nacional, cuando afecte a la mayoría del órgano intervenido y/o reorganizado, a los efectos de que se dictamine si se procede a convocar a las correspondientes elecciones para llenar las vacantes habidas.\n18) Crear zonas regionales, fusionar municipios, adscribir municipios de una Regional a otra, en caso que sea necesario.\n19) Tratar, en primera instancia, y autorizar provisionalmente, todo lo relacionado con la participación del partido en alianzas, coaliciones o acuerdos coyunturales, así como autorizar, planchas integradas para cuerpos deliberantes, cuerpos deliberantes en coalición con otras organizaciones, cuando las circunstancias así lo obliguen.\n20) El Comando Político Nacional en su condición de órgano de dirección ejecutivo del partido, aprobará el método electoral interno, de acuerdo a las condiciones políticas y económicas del MEP y del país, para la realización de los procesos electorales del partido, el cual deberá aplicarse en concordancia con el Reglamento Electoral interno.\n21) Designar representantes del Partido ante los organismos públicos o privados, nacionales y Sectoriales, no sometidos a procesos electorales partidistas y extra partidistas.\n22) A los efectos de su funcionamiento administrativo, designar a su Secretario o Secretaria Ejecutivo.\n23) Cubrir interinamente, mientras no se reúna la Dirección Política Nacional, las vacantes que se produzcan en su propio seno.\n24) Asignar a las Secretarias o Secretarios Políticos sus ámbitos de responsabilidad y trabajo; crear los Departamentos Nacionales y asignar a sus titulares las funciones correspondientes.\n25) Aplicar en cualquier nivel o sector de la actividad partidista el mecanismo de consulta popular, a través del referéndum, en los términos y condiciones que establezca la Dirección Política Nacional.\n26) Convocar a la Asamblea Nacional.\n27) Designar al Jefe de la Fracción Parlamentaria del partido, oída la opinión de sus integrantes.\n28) Las demás atribuciones que le asignen la Asamblea Nacional o la Dirección Política Nacional." },
+                                            { id: 30, numero: "Artículo 30", titulo: "Deberes y Atribuciones del Presidente", texto: "El Presidente o Presidenta del partido es la máxima autoridad ejecutiva de la organización y tendrá los siguientes deberes y atribuciones:\n\n1) Presidir las reuniones de los órganos nacionales.\n2) Ejercer la representación oficial del Partido o puede delegarla, de manera expresa, en cualquiera de los integrantes del Comando Político Nacional.\n3) Ejercer la representación jurídica del Partido, y constituir o sustituir apoderados.\n4) Mantener las relaciones con los Partidos y organizaciones respectivas del país y del exterior.\n5) Cumplir y hacer cumplir las decisiones de la Asamblea Nacional y la Dirección Política Nacional.\n6) Dirigir, de conformidad con las decisiones de la Dirección Política Nacional y el Comando Político Nacional, y con la cooperación de la Secretaría General, las iniciativas y actividades legislativas del Partido a nivel nacional.\n7) Propiciar, conjuntamente con la Secretaría General y con el asesoramiento respectivo, los estudios que el Partido requiera a los fines de su organización interna y de su gestión política.\n8) Acopiar para su análisis sistemático todos aquellos elementos de juicio que permitan planificar en forma permanente la estrategia, la táctica y las actuaciones que el Partido debe realizar en el ámbito político, social y electoral.\n9) Velar conjuntamente con la Secretaría General, por el mantenimiento de la disciplina interna del partido.\n10) Cualquier otra función que le asigne el Comando Político Nacional." },
+                                            { id: 31, numero: "Artículo 31", titulo: "Deberes y Atribuciones del Secretario General", texto: "Son deberes y atribuciones del Secretario o Secretaria General:\n\n1) Ejercer la representación del partido en todos aquellos actos y eventos especiales que acuerde el Comando Político Nacional o que le señale el Presidente o Presidenta del partido.\n2) Velar por el funcionamiento del Comando Político Nacional, como cuerpo colegiado.\n3) Actuar como órgano regular ante la Dirección Política Nacional, el Comando Político Nacional, los Comandos Políticos Regionales, la Comisión Nacional de Ética y Disciplina, la Comisión Electoral Nacional, la Contraloría Interna, los Burós Sectoriales Nacionales y demás órganos partidistas.\n4) Velar porque todos los órganos del MEP, cumplan los estatutos y reglamentos del Partido, las decisiones emanadas de la Asamblea Nacional, de la Dirección Política Nacional y del Comando Político Nacional.\n5) Servir de órgano de comunicación en el cumplimiento de las instrucciones emanadas del Comando Político Nacional.\n6) Asegurar y garantizar la eficiencia del trabajo político y administrativo inherente a los órganos de dirección en todos los niveles y sectoriales.\n7) Cuando así lo defina el Comando Político Nacional o el Presidente o Presidenta del partido, realizar visitas periódicas de inspección a las dependencias del Partido en sus diversos niveles y sectores.\n8) Establecer, con la aprobación de la Dirección Política Nacional o del Comando Político Nacional, según el caso, los mecanismos políticos, administrativos y organizativos que se requieran para auxiliar la gestión de la Secretaría General.\n9) Mantener informados permanentemente a los diversos órganos de dirección partidista, sobre la situación política del país y la gestión del Partido.\n10) Reunirse periódicamente con los diferentes responsables de los Burós y Departamentos con el objeto de coordinar acciones y planes de trabajo tendientes al fortalecimiento de los mismos.\n11) Cualquier otra función que le asigne el Comando Político Nacional." },
+                                            { id: 32, numero: "Artículo 32", titulo: "Deberes y Atribuciones del Secretario de Organización", texto: "Son deberes y atribuciones del Secretario o Secretaria de Organización:\n\n1) Elaborar los mecanismos estructurales, funcionales y de procedimiento para garantizar la vigencia de la organización del Partido prevista en estos estatutos y en los Reglamentos, y vigilar su implantación y funcionamiento en todos sus niveles y sectores.\n2) Llevar actualizado el registro y control de la militancia en todo el país, para lo cual deberá hacer efectiva la aplicación uniforme de las normas, sistemas y procedimientos acordados por el Comando Político Nacional para todos los niveles y sectores del Partido.\n3) Realizar en las oportunidades que acuerde el Comando Político Nacional, evaluaciones especiales o generales sobre el funcionamiento de los mecanismos, sistemas y procedimientos implantados.\n4) Coordinar y supervisar la gestión organizativa de los Departamentos Nacionales y de los Burós Sectoriales, en armonía con la organización general del partido y los programas elaborados por esta Secretaría y trazados por el Comando Político Nacional.\n5) Crear mecanismos ágiles que garanticen permanente acción proselitista en los diversos sectores y comunidades de la vida de desarrollo comunal y los servicios sociales o asistenciales y la promoción de organizaciones civiles pro-defensa de la comunidad, a nivel local.\n6) Organizar técnicamente los diversos eventos de carácter nacional del Partido, especialmente las reuniones de la Asamblea Nacional y Dirección Política Nacional." },
+                                            { id: 33, numero: "Artículo 33", titulo: "Deberes y Atribuciones de los Secretarios Políticos", texto: "Son deberes y atribuciones de las Secretarias o Secretarios Políticos:\n\n1) Cumplir las tareas que les asigne el Comando Político Nacional.\n2) Mantener el buen funcionamiento del ámbito de responsabilidades y trabajo asignado.\n3) Velar porque en su ámbito de responsabilidad y trabajo se cumplan los Estatutos y Reglamentos del Partido y se hagan efectivas las decisiones emanadas de la Asamblea Nacional, de la Dirección Política Nacional y del Comando Político Nacional.\n4) Servir de órgano de comunicación de las instrucciones emanadas del Comando Político Nacional para los órganos y funcionarios adscritos a su ámbito de responsabilidad y trabajo.\n5) Mantener debidamente informados y orientados a los y las integrantes del respectivo equipo de trabajo.\n6) Planificar, coordinar y supervisar las tareas específicas asignadas, según lo determine el Comando Político Nacional y/o la Dirección Política Nacional.\n7) Cooperar en las demás funciones y actividades, para cuyo cumplimiento se requiera su colaboración." }
+                                        ]
+                                    },
+                                    {
+                                        nombre: "Sección II: De los Comandos Políticos Regionales",
+                                        articulos: [
+                                            { id: 34, numero: "Artículo 34", titulo: "Composición del CPR", texto: "El Comando Político Regional (CPR) es el órgano ejecutivo de la Dirección Política Regional y responderá de su gestión ante esta.\n\nEstará integrado un Secretario o Secretaria General, un Secretario o Secretaria de Organización, de dos (02) Secretarios o Secretarias Sectoriales: Juventud y Mujer, y de tres (03) a cinco (05) o más Secretarias o Secretarios Políticos, tomando en cuenta las exigencias de desarrollo partidista y el elemento poblacional de cada región, según lo determine el Reglamento. Las o los Secretarios Políticos tendrán las tareas y funciones específicas que le asigne el Comando Político Regional.\n\nPárrafo Único: El Comando Político Regional se reunirá de manera ordinaria quincenalmente, en día y hora fijados, en su sede natural, con el debido control de la asistencia y permanencia de sus miembros. Se reunirá de manera extraordinaria, cuando la mayoría de sus integrantes así lo considere necesario." },
+                                            { id: 35, numero: "Artículo 35", titulo: "Estructura de los CPR", texto: "Los Comandos Políticos Regionales tendrán una estructura similar a la existente a nivel nacional; que será administrada de acuerdo a la realidad de cada Región, y tendrá los mismos deberes y atribuciones que estos Estatutos señalan al Comando Político Nacional en todo cuanto sea aplicable a su nivel jurisdicción." }
+                                        ]
+                                    },
+                                    {
+                                        nombre: "Sección III: De los Comandos Políticos Municipales y Parroquiales",
+                                        articulos: [
+                                            { id: 36, numero: "Artículo 36", titulo: "Composición del CPM", texto: "El Comando Político Municipal es el órgano de dirección de Municipio, sujeto a la autoridad y supervisión del órgano ejecutivo inmediato superior. Estará integrado por un (01) Secretario o Secretaria General y de dos (02) a cuatro (04) Secretarias o Secretarios Políticos, según lo determine el Comando Político Regional." },
+                                            { id: 37, numero: "Artículo 37", titulo: "Jurisdicción Municipal", texto: "La jurisdicción municipal y local queda determinada por la división político-territorial del país." },
+                                            { id: 38, numero: "Artículo 38", titulo: "Reuniones Semanales", texto: "El Comando Político Municipal y el Local se reunirán ordinariamente cada semana, en el día y hora fijados. Las sesiones reglamentarias deberán ser convocadas mediante notificaciones escritas, cursadas con no menos de (24) veinticuatro horas de anticipación." },
+                                            { id: 39, numero: "Artículo 39", titulo: "Asambleas de Base", texto: "Los Comandos Políticos Municipales y Locales están obligados a realizar semanalmente Asambleas de base y a estimular en la militancia el espíritu de participación integral en la vida de las comunidades de su jurisdicción. El respectivo Comando Político Regional deberá supervisar y asegurar permanentemente esta importante tarea, incluyendo la participación de todos los dirigentes de los diversos niveles y sectores en la promoción y realización partidista y societaria de los Comités Locales y de los y las dirigentes del MEP.\n\nLos Comandos Políticos Municipales y Parroquiales están obligados a promover y dirigir la constitución de Comandos o Comités Políticos en su nivel inferior, atendiendo a la realidad territorial y población de su jurisdicción, previa consulta con el Comando Político Regional respectivo." },
+                                            { id: 40, numero: "Artículo 40", titulo: "Atribuciones del CPM", texto: "El Comando Político Municipal tendrá los mismos deberes y atribuciones que estos Estatutos atribuyen al Comando Político Regional, en todo cuanto sea aplicable a su nivel jurisdicción." }
+                                        ]
+                                    },
+                                    {
+                                        nombre: "Sección IV: De los Comités Locales",
+                                        articulos: [
+                                            { id: 41, numero: "Artículo 41", titulo: "Comité Local", texto: "El Comité Local es la organización primaria del Partido. Para su constitución se tomará en cuenta, otras orientaciones, la organización electoral de los militantes y las características específicas de la población y corresponderá al Comando Político Municipal verificar y registrar su constitución, previa consulta con el Comando Político inmediato superior.\n\nPárrafo Primero: El Comité Local tendrá una directiva compuesta por tres (03) miembros entre los cuales se designará un (01) Coordinador o Coordinadora, y cuya responsabilidad será la de dirigir el trabajo político y organizativo del comité.\n\nPárrafo Segundo: El Comité Local hará reuniones semanales e informará quincenalmente al Comando Político Municipal respectivo, sobre las actividades desarrolladas." },
+                                            { id: 42, numero: "Artículo 42", titulo: "Funciones de los Comités Locales", texto: "Las funciones de los Comités Locales son:\n\n1) Actuar como órgano ágil y de acción política permanente, a los fines de dar cumplimiento a las tareas partidistas y societarias de su propia iniciativa y a las que los órganos superiores les asignen.\n2) Presentar por los canales regulares, a la consideración del respectivo Comité Local, proposiciones y planteamientos de su competencia.\n3) Difundir la Línea Política del Partido, así como sus publicaciones, literatura y propaganda.\n4) Reunirse ordinariamente una (01) vez por semana para que su responsable político informe sobre los problemas de la comunidad y la situación político local, regional y nacional, cobrar la cotización ordinaria, distribuir la propaganda y material partidista; leer y discutir la literatura del partido y en general la que le permita elevar el nivel ideológico de sus integrantes; incorporar nuevos militantes y capacitarlos políticamente, haciéndoles conocer la tesis política, los Estatutos, la Línea Política y el programa del partido; y mantener entre sus componentes contactos diarios que permitan evaluar el cumplimiento de las tareas partidistas y societarias asignadas a cada militante.\n5) Trabajar por las reivindicaciones de las masas y en la lucha social de estas en el sitio donde les corresponda actuar, ayudándolas a organizarse e incorporarse a la lucha por la Liberación Nacional y la Democracia Socialista.\n6) Reunirse extraordinariamente cuando lo exijan las circunstancias, a juicio de sus propios directivos o del respectivo Comité Local.\n7) Realizar las elecciones internas que determine el Reglamento.\n8) Cualquier otra que establezcan estos Estatutos y los Reglamentos.\n9) Las que les asignen los organismos superiores." }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                nombre: "Capítulo V: Del Quórum de los Órganos Partidistas",
+                                articulos: [
+                                    { id: 43, numero: "Artículo 43", titulo: "Quórum de Instalación", texto: "El quórum de instalación de los órganos colectivos del Partido será la mitad más uno de sus integrantes y sus decisiones las tomará con el voto favorable de la mayoría simple de los y las asistentes, sin perjuicio de las disposiciones establecidas en estos mismos Estatutos y los Reglamentos." },
+                                    { id: 44, numero: "Artículo 44", titulo: "Quórum Especial", texto: "Cuando los órganos ejecutivos del Partido hayan fijado lugar, fecha y hora para sus sesiones, podrán constituirse y funcionar con los presentes, cualquiera sea el número de estos, transcurrida media hora a la fijada para iniciar la reunión; tomarán sus decisiones de acuerdo con el artículo anterior, salvo en las materias siguientes, para cuya decisión se requerirá que el órgano respectivo cuente con el quórum ordinario de la mitad más uno de sus miembros:\n\n1) Asuntos de carácter disciplinario.\n2) Intervenciones a órganos.\n3) Designaciones, nombramientos o postulaciones y cuestiones de alta política nacional o partidista.\n\nPárrafo Único: Estas reuniones serán dirigidas en todo caso por el Presidente o Presidenta, o en su defecto por el Secretario o Secretaria General cuando se trate de reuniones de la DPN, y por los Secretarios o Secretarias Generales de las DPR, o CPR; y cuando se trate de los Burós Sectoriales o Departamentos, por el Secretario titular o Director del Departamento." },
+                                    { id: 45, numero: "Artículo 45", titulo: "Órganos Deliberantes", texto: "Cuando se trate de órganos deliberantes (Asambleas y Direcciones Políticas Nacional y regional), al no haber mayoría una hora (01) después de la hora fijada es válido como quórum la mayoría de los o las representantes regionales en las personas del Presidente o Presidenta y/o Secretario o Secretaria General (o Secretario o Secretaria General y/o Secretario o Secretaria de Organización de acuerdo sea el caso) respectivamente, y la mayoría de los burós nacionales, representados por lo menos por uno (01) de sus miembros respectivos." }
+                                ]
+                            },
+                            {
+                                nombre: "Capítulo VI: De las Comisiones de Ética y Disciplina",
+                                articulos: [
+                                    { id: 46, numero: "Artículo 46", titulo: "Composición de las Comisiones", texto: "Las Comisiones de Ética y Disciplina funcionaran en los niveles nacionales y regionales. Estarán integradas así: la Nacional por cinco (05) miembros principales y cinco (05) suplentes, la regional por tres (03) miembros principales y tres (03) suplentes. Una y otra serán electas por el mecanismo electoral establecido en estos Estatutos y la reglamentación respectiva. Las y los miembros de las Comisiones de Ética y Disciplina elegirán, por mayoría simple de su seno, un Coordinador o Coordinadora ante la Dirección Política Nacional o regional, según sea el caso, esta decisión será informada, por escrito, al Comando Político Nacional o Comando Político Regional respectivo." },
+                                    { id: 47, numero: "Artículo 47", titulo: "Atribuciones de las Comisiones de Ética", texto: "Las Comisiones de Ética y Disciplina tendrán las siguientes atribuciones:\n\n1) Realizar las investigaciones dirigidas a garantizar el más cabal cumplimiento de estos Estatutos y del Código de Ética Mepista.\n2) Conocer y decidir los actos violatorios de la disciplina y de la ética partidista por parte de sus militantes previa sustanciación del caso, en la cuales garantizará el derecho de defensa.\n3) Ejercer supervisión y control de las Comisiones Regionales, con facultades para aplicar los correctivos del caso, incluida la sustitución de las o los miembros de estos órganos que incurran en faltas o actúen con negligencia en el desempeño de sus funciones, caso en el cual se convocará al suplente respectivo con el orden de su elección. Estas remociones o sustituciones podrán hacerse por propia iniciativa o a solicitud del Comando Político correspondiente.\n4) Exhortar o comisionar a organismos disciplinarios de jerarquía igual o inferior para cumplir funciones de sustanciación.\n5) Designar subcomisiones de orden disciplinarias, con funciones de sustanciación, cuando a su juicio lo requiera. Tales subcomisiones cesarán en sus funciones una vez hayan cumplido su cometido." }
+                                ]
+                            },
+                            {
+                                nombre: "Capítulo VII: De las Faltas y Sanciones",
+                                articulos: [
+                                    { id: 48, numero: "Artículo 48", titulo: "Faltas a la Disciplina o Ética", texto: "Son faltas a la disciplina o a la ética del Partido, por parte de los o las militantes:\n\na) Incumplir cualquiera de los deberes establecidos en estos Estatutos o a las líneas de comportamiento establecidos en el Código de Ética Mepista.\nb) Realizar actos públicos o privados contrarios a los principios de la honestidad y lealtad partidista.\nc) Incumplir las tareas encomendadas.\nd) Abandonar los cargos asignados, sin motivo justificado.\ne) Infringir o incumplir las normas establecidas en los Reglamentos del Partido.\nf) Cometer irregularidades en el desempeño de cargos públicos y privados.\ng) Apropiarse indebidamente de bienes, tanto del Partido como de cualquier persona u organización pública o privada.\nh) Criticar la Doctrina, la Tesis Política, los Estatutos, la Línea Política, al programa y a los y las dirigentes o militantes del partido, fuera de los correspondientes órganos de base o de dirección. Ello será considerado como faltas graves a la disciplina del Partido.\ni) Divulgar fuera de los canales acordados los temas tratados en reuniones ordinarias o extraordinarias de los Comandos Políticos Nacionales, Regionales o Municipales, los cuales son considerados de carácter confidencial. Esto será considerado una falta grave.\n\nTodos los temas tratados o discutidos en reuniones ordinarias o extraordinarias del Comando Político Nacional son de carácter confidencial y sólo podrán ser divulgados por los canales acordados por esta instancia." },
+                                    { id: 49, numero: "Artículo 49", titulo: "Abandono de Cargo", texto: "El o la militante que abandone o renuncie injustificadamente a un cargo, a juicio del órgano ejecutivo inmediato superior, o quien haya sido objeto de mandato revocable, no podrá optar para el periodo inmediato siguiente, a un cargo de igual o superior jerarquía. El órgano ejecutivo informara del caso a la Comisión Electoral de la jurisdicción, a fin de que se aplique la norma mencionada." },
+                                    { id: 50, numero: "Artículo 50", titulo: "Competencia de la CNED", texto: "La Comisión Nacional de Ética y Disciplina conocerá en primera instancia de todas las causas incoadas contra las o los miembros de los órganos nacionales, de los Comandos Políticos Regionales, de las Comisiones de Ética y Disciplina regionales y municipales, y la Electoral Nacional, así como de las causas que ella misma radique." },
+                                    { id: 51, numero: "Artículo 51", titulo: "Competencia de la CRED", texto: "La Comisión Regional de Ética y Disciplina conocerá y decidirá en primera instancia de todas las causas incoadas contra los o las militantes de la respectiva región, con la excepción en él artículo anterior." },
+                                    { id: 52, numero: "Artículo 52", titulo: "Apelaciones", texto: "Las decisiones dictadas en primera instancia por la Comisión Regional de Ética y Disciplina, serán apelables para ante la Comisión Nacional de Ética y Disciplina; y las dictadas por esta, igualmente en primera instancia, serán apelables por ante la Asamblea Nacional o en su defecto la Dirección Política Nacional." },
+                                    { id: 53, numero: "Artículo 53", titulo: "Sanciones", texto: "Las Comisiones de Ética y Disciplina podrán aplicar, de acuerdo con el grado de gravedad de la falta, las siguientes sanciones:\n\n1) Amonestación privada o pública.\n2) Censura privada o pública.\n3) Suspensión de militancia o de actividad partidista.\n4) Suspensión temporal de cargos, dentro del partido o fuera de este, si los ha obtenido por vía partidista o los ejercen en su representación, e inhabilitación temporal para ejercerlos.\n5) Retiro del ejercicio de cargos, dentro del partido o fuera de este, si los ejerce en su representación o si los hubiere obtenido con votos o el respaldo del Partido.\n6) Expulsión temporal.\n7) Expulsión definitiva.\n\nPárrafo Primero: A los efectos de los numerales 1 y 2, si el o la combatiente objeto de la sanción ha sido antes amonestado o censurado por un órgano de dirección, la amonestación o censura de la Comisión tendrá carácter de severa.\n\nPárrafo Segundo: A los efectos de los numerales 4 y 5, el Comando Político Nacional determinará cuales son los cargos que los o las militantes del MEP ejercen en representación del Partido." }
+                                ]
+                            },
+                            {
+                                nombre: "Capítulo VIII: De la Comisión Electoral",
+                                articulos: [
+                                    { id: 54, numero: "Artículo 54", titulo: "Comisión Electoral Nacional", texto: "⚠️ Nota: El texto original de los artículos 54 al 56 presenta problemas de codificación en el PDF oficial. A continuación se transcriben los fragmentos legibles:\n\nPárrafo Primero: La Comisión Electoral Nacional podrá designar Comisiones en todos los sectores, y donde juzgue necesario para reforzar o complementar su propio trabajo.\n\nPárrafo Segundo: El Reglamento Electoral Interno establecerá los mecanismos que aseguren la necesaria equidad en la participación de las estructuras partidistas en los procesos electorales internos, de tal forma que no se desdibuje la expresión de la soberanía mepista." }
+                                ]
+                            },
+                            {
+                                nombre: "Capítulo IX: De la Contraloría Interna",
+                                articulos: [
+                                    { id: 57, numero: "Artículo 57", titulo: "Responsabilidad de la Contraloría", texto: "La Contraloría Interna tendrá la responsabilidad de vigilar el funcionamiento de los sistemas y procedimientos que el Partido adopte para la obtención y manejo de recursos materiales y financieros, a fin de garantizar la sinceridad y honestidad de los ingresos y gastos, así como la forma regular y correcta en el registro del patrimonio." },
+                                    { id: 58, numero: "Artículo 58", titulo: "Obligación de Informar", texto: "Todos los órganos, dirigentes y miembros de la Organización están obligados a suministrar a la Contraloría Interna la información que esta les requiera para el mejor cumplimiento de sus fines." },
+                                    { id: 59, numero: "Artículo 59", titulo: "Comisiones Especiales", texto: "El Contralor Interno o Contralora Interna podrá designar Comisiones o Comisionados especiales para realizar investigaciones en el campo de sus funciones." },
+                                    { id: 60, numero: "Artículo 60", titulo: "Acceso a Registros", texto: "El Contralor Interno o Contralora Interna tendrá libre acceso a los registros administrativos y contables del Partido que tengan relación con los Ingresos, egresos, compromisos y bienes patrimoniales de la Organización." },
+                                    { id: 61, numero: "Artículo 61", titulo: "Informes al CPN", texto: "El Contralor Interno o Contralora Interna deberá informar al Comando Político Nacional sobre el resultado de las averiguaciones que practique, y este tomará las medidas que estime pertinente. Si el Contralor o Contralora no está de acuerdo con las medidas tomadas por el Comando Político Nacional o este no cumple con sus atribuciones, podrá recurrir a la Comisión de la Ética y Disciplina, o a la Dirección Política Nacional más próxima y finalmente a la Asamblea Nacional." },
+                                    { id: 62, numero: "Artículo 62", titulo: "Informe de Gestión", texto: "El Contralor Interno o Contralora Interna presentará un informe por escrito, sobre el resultado de su gestión a las reuniones Ordinarias de la Dirección Política Nacional y de la Asamblea Nacional, o a las Extraordinarias, cuando fuere necesario en conformidad con el objeto de la convocatoria." },
+                                    { id: 63, numero: "Artículo 63", titulo: "Derecho a Voz", texto: "El Contralor Interno o Contralora Interna podrá asistir con derecho a voz a las reuniones del Comando Político Nacional." },
+                                    { id: 64, numero: "Artículo 64", titulo: "Servicios y Funcionarios", texto: "La Contraloría Interna contará con los servicios y funcionarios que determine el respectivo Reglamento." }
+                                ]
+                            },
+                            {
+                                nombre: "Capítulo X: De la Fracción Parlamentaria Nacional, Regionales y Municipales",
+                                articulos: [
+                                    { id: 65, numero: "Artículo 65", titulo: "Fracción Parlamentaria Nacional", texto: "Los y las militantes del Partido elegidos diputados o diputadas, principales y suplentes, a la Asamblea Nacional de la República, integrarán la Fracción Parlamentaria Nacional del MEP. El Comando Político Nacional podrá admitir la incorporación a la Fracción Parlamentaria Nacional de diputados o diputadas independientes." },
+                                    { id: 66, numero: "Artículo 66", titulo: "Fracciones Parlamentarias Regionales", texto: "Las y los miembros del Partido elegidos legisladores o legisladoras, principales y suplentes, al Consejo Legislativo de los estados, integran las Fracciones Parlamentarias Regionales del MEP. Los Comandos Políticos Regionales podrán admitir la incorporación a las Fracciones Parlamentarias Regionales de Diputados o diputadas independientes." },
+                                    { id: 67, numero: "Artículo 67", titulo: "Fracciones Municipales", texto: "Las y los miembros del Partido elegidos Concejales o Concejales y Alcaldes o Alcaldesas forman, a nivel regional la Fracción Municipal del MEP. Los Comandos Políticos Regionales podrán admitir, previa opinión del Comando Político Municipal respectivo, la incorporación a la fracción Municipal de concejales, concejalas, alcaldes o alcaldesas independientes.\n\nPárrafo Único: La Política parlamentaria y municipal, a nivel nacional, regional o municipal, la dirigirá el Comando Político Nacional y los mecanismos de consulta y participación necesarios." }
+                                ]
+                            },
+                            {
+                                nombre: "Capítulo XI: De las Convenciones Sectoriales",
+                                articulos: [
+                                    { id: 68, numero: "Artículo 68", titulo: "Definición", texto: "Se denomina Convención Sectorial el órgano que reúne un determinado sector del Partido a nivel nacional, regional, municipal y parroquial." },
+                                    { id: 69, numero: "Artículo 69", titulo: "Integración de Convenciones Nacionales", texto: "Las Convenciones Sectoriales Nacionales estarán integrados por las y los miembros de los Burós Sectoriales Nacionales y Regionales, por los militantes directivos nacionales correspondientes a los respectivos sectores y por los demás delegados que determine el Reglamento." },
+                                    { id: 70, numero: "Artículo 70", titulo: "Participación con Voz", texto: "A la Convención Sectorial asistirán con voz una o un representante del Comando Político y uno del Buró Sectorial Superior y los dirigentes que señale el Reglamento." },
+                                    { id: 71, numero: "Artículo 71", titulo: "Atribuciones de la Convención Sectorial", texto: "Son atribuciones de la Convención Sectorial:\n\n1) Elaborar y sancionar planes y programas de acción concreta que faciliten el cumplimiento de los deberes y atribuciones que estos Estatutos asignan al correspondiente sector, de acuerdo con las instrucciones emanadas de los organismos políticos superiores.\n2) Evaluar la gestión cumplida por los organismos sectoriales del nivel correspondiente y por los y las dirigentes y funcionarios que lo integren.\n3) Trazar la táctica y la estrategia específica del sector, en su lucha como Frente de Masas, dentro de la política y orientación general del partido.\n4) Cualquier otra que le asigne estos Estatutos y los Reglamentos." }
+                                ]
+                            },
+                            {
+                                nombre: "Capítulo XII: De los Burós Sectoriales",
+                                articulos: [
+                                    { id: 72, numero: "Artículos 72 al 76", titulo: "Burós Sectoriales", texto: "⚠️ Nota: El texto original de los artículos 72 al 76 (De los Burós Sectoriales) presenta problemas severos de codificación en el PDF oficial y no pudo ser transcrito. Se recomienda consultar el documento físico original para completar esta sección." }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        nombre: "TÍTULO IV: DEL SISTEMA ELECTORAL INTERNO",
+                        capitulos: [
+                            {
+                                nombre: "Capítulo I: Bases Generales",
+                                articulos: [
+                                    { id: 77, numero: "Artículo 77", titulo: "Soberanía y Métodos", texto: "La Soberanía del MEP reside en su militancia, la cual se ejerce libremente en elecciones internas. A los efectos de la elección de los y las combatientes a cargos de elección popular, el partido podrá utilizar diversos métodos a saber:\n\na) La elección directa, universal y secreta,\nb) La cooptación,\nc) Las elecciones de primer, segundo o tercer grado,\nd) Las asambleas,\ne) Por opinión y/o Consenso,\nf) Por aclamación,\ng) Por procedimientos y mecanismos virtuales,\nlos cuáles serán determinados por el Comando Político Nacional en su condición de órgano de dirección ejecutiva del partido, de acuerdo a las condiciones políticas y económicas internas del partido y del país. Todo esto de conformidad con los presentes Estatutos y el Reglamento Electoral Interno.\n\nPárrafo Primero: El Comando Político Nacional, órgano ejecutivo de la Dirección Política Nacional, podrá establecer, cuando lo considere, alguna otra forma de toma de decisiones o elecciones." },
+                                    { id: 78, numero: "Artículo 78", titulo: "Regulación de la Votación", texto: "Toda votación en el MEP, destinada a cualquier elección de cargos de autoridad, de representación partidista y de elección popular se regirá por establecido en artículo 77 de estos estatutos." },
+                                    { id: 79, numero: "Artículo 79", titulo: "Duración en el Ejercicio", texto: "Quienes hayan sido elegidos o elegidas para ejercer funciones de autoridad y representación partidista interna durarán en su ejercicio seis (06) años." },
+                                    { id: 80, numero: "Artículo 80", titulo: "Candidatos No Militantes", texto: "En relación con los candidatos o candidatas no militantes del MEP (independientes o militantes de otras organizaciones políticas), por acuerdos o alianzas, el CPN establecerá las normas que lo rigen e informará oportunamente a la DPN." },
+                                    { id: 81, numero: "Artículo 81", titulo: "Postulación Nominal", texto: "La postulación, elección y escrutinio se realizarán en forma nominal y los o las integrantes de los cuerpos colegiados se elegirán por mayoría simple.\n\nPárrafo Único: A los efectos de la postulación se requiere la aceptación del postulado o la postulada." },
+                                    { id: 82, numero: "Artículo 82", titulo: "Mayoría Simple", texto: "Para ser electos o electas en cargos y representaciones partidistas, bastará la mayoría simple." },
+                                    { id: 83, numero: "Artículo 83", titulo: "Pertenencia de los Cargos", texto: "Los cargos desempeñados por militantes de la organización, como diputados o diputadas nacionales, legisladores o legisladoras regionales, concejales o concejalas, representantes laborales y de asociaciones gremiales ante institutos autónomos y demás órganos públicos, así como de otra naturaleza que hayan sido obtenidos con el voto o el respaldo del MEP, pertenecen al partido. Sus titulares ejercerán los cargos, no a título personal, sino que se considerarán como personas al servicio de la organización, y deberán cumplir sus deberes partidistas, siempre de acuerdo con las líneas políticas dictadas por la organización y ser eficientes en el ejercicio de tales cargos.\n\nPárrafo Primero: Antes de ser postulados o postuladas para dichos cargos, los y las militantes asumirán mediante la firma de los documentos e instrumentos del Comando Político Nacional, las siguientes obligaciones:\n\na) Aceptar que el partido le asigne una cuota de aporte económico, de acuerdo a su salario, el cual deberá aportar mensualmente.\nb) Aceptar que el cargo de elección popular que ejerce es de representación exclusiva del partido, razón por la cual, el partido se reserva el derecho de solicitar su cese de representación partidista cuando lo considere necesario.\nc) En los cargos que se asuman en instituciones públicas o privadas en representación del partido, el partido se reserva el derecho de solicitar su destitución, en caso de ser necesario.\nd) Firmar la renuncia del cargo con fecha abierta, la cual se hará efectiva cuando el partido lo determine." },
+                                    { id: 84, numero: "Artículo 84", titulo: "Prohibición de Postulación Simultánea", texto: "Ningún o ninguna militante podrá postularse simultáneamente a diversos órganos de dirección, ni ejercer más de un cargo de dirección, ni tener más de una representación partidista, salvo expresa autorización dada, por el Comando Político Nacional." },
+                                    { id: 85, numero: "Artículo 85", titulo: "Requisitos de Candidatura", texto: "Todo candidato o candidata a cargo partidista o de elección popular por el MEP deberá presentar su programa de gestión para la cual ha sido postulado, además de las solvencias de cotización expedida por la Secretaría de Finanzas respectiva, y llenar los otros requisitos que determinen estos Estatutos, el Reglamento Electoral Interno y el Comando Político Nacional." },
+                                    { id: 86, numero: "Artículo 86", titulo: "Candidato Presidencial", texto: "Las normas, procedimientos y mecanismos para la elección del candidato o candidata del Partido a la Presidencia de la República serán determinados por la Dirección Política Nacional, en conformidad con la legislación venezolana, los Estatutos y el Reglamento Electoral Interno." },
+                                    { id: 87, numero: "Artículo 87", titulo: "Comisión Electoral Nacional", texto: "La Comisión Electoral Nacional del Partido tendrá a su cargo, con los demás órganos electorales, la responsabilidad de preparar, coordinar, dirigir, realizar y supervisar los procesos electorales internos." },
+                                    { id: 88, numero: "Artículo 88", titulo: "Campaña Electoral", texto: "El Reglamento Electoral Interno regulará suficientemente la campaña electoral mepista, interna y externa, para los diversos cargos de autoridad y representación partidista, debiendo caracterizarlas con la necesaria claridad y concreción, especialmente en cuanto al financiamiento, la publicidad y propaganda, así como el referente al programa de gestiones." },
+                                    { id: 89, numero: "Artículo 89", titulo: "Encuestas", texto: "Los órganos ejecutivos del Partido, en sus diversos niveles, podrán adoptar el mecanismo de la encuesta en la comunidad, en relación con los o las aspirantes a los cuerpos deliberantes, Alcaldes o Alcaldesas, Gobernadores o Gobernadoras, Presidente o Presidenta de la República y otras representaciones." },
+                                    { id: 90, numero: "Artículo 90", titulo: "Reelección", texto: "En el MEP se permite la reelección para cargos de autoridad y representación partidista. El Reglamento Electoral Interno la regulará." }
+                                ]
+                            },
+                            {
+                                nombre: "Capítulo II: De las Finanzas del Partido",
+                                articulos: [
+                                    { id: 91, numero: "Artículo 91", titulo: "Sistema Financiero", texto: "Las finanzas del Partido estarán constituidas por los ingresos y egresos del mismo y serán organizadas y controladas en un sistema unificado, cuyo régimen será en el correspondiente Reglamento." },
+                                    { id: 92, numero: "Artículo 92", titulo: "Clasificación", texto: "Las finanzas del Partido serán ordinarias y extraordinarias." },
+                                    { id: 93, numero: "Artículo 93", titulo: "Finanzas Ordinarias", texto: "Las finanzas ordinarias corresponden a los presupuestos ordinarios de ingresos y egresos. El Comando Político respectivo podrá destinarlas a gastos extraordinarios." },
+                                    { id: 94, numero: "Artículo 94", titulo: "Finanzas Extraordinarias", texto: "Las finanzas extraordinarias corresponden a los presupuestos extraordinarios de ingresos, y serán aplicadas a los presupuestos extraordinarios de gastos, salvo que el Comando Político respectivo resuelva destinarlas como gastos ordinarios. Estas finanzas podrán ser destinadas a crear un fondo Electoral, en coyunturas electorales, o cualquier otro fondo que sea necesario de acuerdo a requerimientos urgentes." },
+                                    { id: 95, numero: "Artículo 95", titulo: "Ingresos Ordinarios", texto: "Las Finanzas ordinarias comprenden:\n\n1) La contribución ordinaria y obligatoria de los y las militantes.\n2) El aporte especial que defina el Comando Político Nacional.\n3) Las contribuciones de los y las simpatizantes y amigos del Partido.\n4) Los ingresos legales provenientes del financiamiento del Estado." },
+                                    { id: 96, numero: "Artículo 96", titulo: "Ingresos Extraordinarios", texto: "Las finanzas extraordinarias están integradas por:\n\n1) Las contribuciones extraordinarias o especiales que obtenga el Partido de militantes, simpatizantes y amigos.\n2) Los ingresos provenientes de programas especiales promovidos por el partido." },
+                                    { id: 97, numero: "Artículo 97", titulo: "Administración de Fondos", texto: "Todos los ingresos y egresos de la organización serán administrados por órgano de quienes tengan asignada la actividad de finanzas, y tendrán a su cargo establecer adecuados sistemas de control para el manejo de los fondos.\n\nPárrafo Primero: El Comando Político Nacional designará un Secretario o Secretaria Nacional de Finanzas del partido, quien también será miembro de ese órgano de dirección, a fin de asegurar la debida conexión entre ambos organismos del Partido.\n\nPárrafo Segundo: Para un funcionamiento eficiente y buen manejo de todos los ingresos y egresos de la organización el Secretario o Secretaria Nacional de Finanzas designará una Comisión de Finanzas conformada por tres (03) militantes, la cual presidirá, en consulta con el Comando Político Nacional. Lo mismo hará regionalmente, pero en este caso por dos (02) combatientes, en coordinación con los Secretarios o Secretarias de Finanzas Regionales. De todas estas decisiones deberá informar al Comando Político Nacional." },
+                                    { id: 98, numero: "Artículo 98", titulo: "Facultades del Secretario de Finanzas", texto: "Las facultades o atribuciones del Secretario o Secretaria Nacional de Finanzas para solicitar, ordenar, autorizar y aprobar gastos, así como para recabar ingresos, serán determinadas por el reglamento respectivo o por instructivos elaborados al efecto por el Comando Político Nacional, de acuerdo con las normas establecidas." },
+                                    { id: 99, numero: "Artículo 99", titulo: "Contribución Mínima", texto: "La contribución mínima y obligatoria de los militantes será establecida por el Comando Político Nacional, en función de su ingreso total." }
+                                ]
+                            },
+                            {
+                                nombre: "Capítulo III: De la Formación Ideológica del Partido",
+                                articulos: [
+                                    { id: 100, numero: "Artículo 100", titulo: "Sistema de Formación", texto: "Se establece el Sistema de Formación Político-Ideológico del MEP como órgano adscrito al Comando Político Nacional del partido, encargado de la formación obligatoria político e ideológica de toda la militancia, el cual se organizará en el ámbito regional, municipal y local. Las modalidades de formación serán: la autoformación, la formación y la Escuela de Cuadros." },
+                                    { id: 101, numero: "Artículo 101", titulo: "Secretaría de Formación", texto: "El Comando Político Nacional designará un secretario o secretaria nacional de Formación e Ideología del MEP, quien también será miembro del Comando Político Nacional, a fin de asegurar la debida conexión entre ambos organismos del Partido. El secretario o secretaria nacional de Formación e Ideología del MEP contará con un Departamento Nacional para tal fin, el cual estará conformado por cinco (05) militantes, el cual presidirá y nombrará, en consulta con el Comando Político Nacional. En coordinación con los Comandos Políticos Regionales, deberá tener responsables en cada estado.\n\nPárrafo Primero: El secretario o secretaria nacional de Formación e Ideología del MEP, deberá presentar, en un lapso de noventa (90) días posteriores a su designación, ante el Comando Político Nacional, los planes de acción, programas y proyectos de formación a ejecutar en su gestión, para la debida aprobación de los mismos.\n\nPárrafo Segundo: La Secretaría Nacional de Formación e Ideología del partido contará como herramienta de formación al Centro de Formación Política Maestro Prieto, en sus siglas CEFOMP, a través del cual se desarrollarán los cursos y talleres de formación, los cuales deberán otorgar la debida certificación.\n\nPárrafo Tercero: ningún militante del partido podrá optar a cargos de dirección interna o a cargos de elección popular, sin haber cumplido con los respectivos planes de formación establecidos dentro del Sistema de Formación Político-Ideológico del partido." },
+                                    { id: 102, numero: "Artículo 102", titulo: "Atribuciones", texto: "Las facultades o atribuciones del Secretario o Secretaria Nacional de Formación Política Ideológica del partido, serán determinados por los reglamentos o instructivos respectivos. En su defecto será el Comando Político Nacional quien los asigne." }
+                                ]
+                            },
+                            {
+                                nombre: "Capítulo IV: Del Consejo Consultivo Nacional",
+                                articulos: [
+                                    { id: 103, numero: "Artículo 103", titulo: "Creación del CCN", texto: "Se crea el Consejo Consultivo Nacional o CCN, el cual estará integrado por un conjunto de mepistas, con edad a partir de los sesenta (60) años y de una militancia comprobada no menor a veinticinco (25) años dentro del partido, de reconocida experiencia y trayectoria política en la organización, a nivel nacional, regional y municipal, que cultiven los principios y valores de la doctrina mepista, y que hayan realizado meritorios aportes en diferentes áreas de nuestra organización política, así como al Proceso Revolucionario venezolano. El número de integrantes del Consejo Consultivo Nacional, así como su designación, será una decisión del Comando Político Nacional, de acuerdo a las circunstancias del momento." },
+                                    { id: 104, numero: "Artículo 104", titulo: "Coordinación del CCN", texto: "El Consejo Consultivo Nacional, CCN, actuará bajo la conducción de un Coordinador o Coordinadora, el cual será electo o electa por mayoría simple de quienes integran este cuerpo. El Coordinador o Coordinadora del Consejo Consultivo Nacional será miembro del Comando Político Nacional con derecho a voz y voto, a fin de asegurar la debida conexión entre ambos organismos superiores del Partido, uno de dirección política y el otro de consulta. El Coordinador o Coordinadora del Consejo mantendrá vinculación permanente con el Presidente o Presidenta y demás integrantes del CPN, y será responsable de garantizar la necesaria asesoría en materias de interés para el partido." },
+                                    { id: 105, numero: "Artículo 105", titulo: "Estructuras del CCN", texto: "El Consejo Consultivo Nacional, deberá tener estructuras a cada nivel de organización Regional y Municipal, igualmente con su coordinador o coordinadora como parte de dichos comandos políticos, con derecho a voz y voto." },
+                                    { id: 106, numero: "Artículo 106", titulo: "Funciones del CCN", texto: "1. Asesorar, emitir opiniones y recomendaciones, así como propuestas de carácter técnico y político sobre temas, situaciones y problemas de naturaleza tanto tácita como estratégica del partido, a solicitud del Presidente o Presidenta del Partido o del Comando Político Nacional; así como sobre aquellos temas que el Consejo considere de interés particular para la buena marcha del partido o del Proceso Revolucionario.\n\n2. Hacer seguimiento y producir alertas tempranas y recomendaciones dirigidas al Presidente o Presidenta del partido o al Comando Político Nacional, relacionadas con asuntos de interés estratégico para nuestro pueblo, el Partido y/o el Proceso Revolucionario.\n\n3. Todas las demás funciones o tareas que asigne el CPN del Partido." }
+                                ]
+                            },
+                            {
+                                nombre: "Capítulo V: Del Ejercicio de Cargos Públicos",
+                                articulos: [
+                                    { id: 107, numero: "Artículo 107", titulo: "Autorización para Cargos", texto: "Ningún militante puede aceptar cargos de responsabilidad gubernamental sin la autorización expresa de los órganos del partido a que corresponda." },
+                                    { id: 108, numero: "Artículo 108", titulo: "Regímenes Especiales", texto: "El régimen parlamentario y régimen protocolar del MEP serán objeto de reglamentación especial." },
+                                    { id: 109, numero: "Artículo 109", titulo: "Mandato Revocable", texto: "El mandato revocable, que deberá aplicarse a los y las dirigentes a quienes se les asigne por vía ejecutiva o electoral alguna responsabilidad partidista y la abandonen, incumplan o violen en su esencia normativa, será objeto de reglamentación especial." }
+                                ]
+                            }
+                        ]
+                    }
+                ],
+
+                disposiciones: [
+                    { titulo: "DISPOSICIÓN TRANSITORIA ÚNICA", texto: "Posterior a la fecha de aprobación, por parte de la Dirección Política Nacional de los presentes estatutos, los diferentes Comandos Políticos Regionales procederán a la adecuación de su estructura organizativa de conformidad con lo aquí dispuesto, en un lapso de ciento veinte (120) días calendario, esta decisión será informada al CPN; de igual manera, el Comando Político Nacional, si lo considera conveniente, podrá realizar tal adecuación en los Comandos Políticos durante ese tiempo." },
+                    { titulo: "DISPOSICIÓN FINAL PRIMERA", texto: "Cualquier disposición de estos Estatutos que colide o contravenga con la Constitución de la República Bolivariana de Venezuela, Ley Orgánica de Procesos Electorales, la Ley de Partidos Políticos, la Ley Orgánica del Poder Público Municipal y leyes afines será nula, debiéndose proceder inmediatamente a la convocatoria de la DPN con el propósito de aprobar y sancionar la nueva Reforma Estatutaria del caso." },
+                    { titulo: "DISPOSICIÓN FINAL SEGUNDA", texto: "Imprímase estos Estatutos con las modificaciones aprobadas y en un texto único, adáptese algunos términos a las disposiciones legales de la Constitución de la República Bolivariana de Venezuela y leyes afines, aplíquese el lenguaje de género en los artículos que corresponda, agréguese epígrafes a los artículos que no lo tengan, y corríjase la numeración de artículos y capítulos donde corresponda, publíquese estos estatutos dándole la mayor difusión entre los y las militantes del Movimiento Electoral del Pueblo en todas sus instancias e infórmese del mismo a las autoridades del Consejo Nacional Electoral." },
+                    { titulo: "DISPOSICIÓN FINAL TERCERA", texto: "Estos Estatutos entrarán en vigencia a partir del mismo momento de ser aprobado por la Dirección Política Nacional del Movimiento Electoral del Pueblo realizada en fecha del 27 y 28 de mayo de 2023." }
+                ]
+            };
+        }
+    </script>
+</body>
+</html>
