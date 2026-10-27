@@ -762,7 +762,7 @@ body.subapp-mode main { margin-left: 0 !important; padding: 0 !important; max-wi
   <section id="view-admin" class="view">
     <div class="page-head">
       <h1><span class="accent">Panel</span> de Administración</h1>
-      <p>Gestión completa de contenidos, agenda, transmisiones y accesos directos. Los cambios se guardan automáticamente en la nube.</p>
+      <p>Gestión completa de contenidos, agenda, transmisiones y accesos directos.</p>
     </div>
 
     <div class="card">
@@ -868,11 +868,23 @@ body.subapp-mode main { margin-left: 0 !important; padding: 0 !important; max-wi
       <div class="admin-list" id="s_list"></div>
     </div>
 
+    <!-- CHAT INTEGRADO EN EL ADMIN -->
+    <div class="card" id="adminChatCard">
+      <h2><svg class="ico"><use href="#i-chat"/></svg>Monitoreo de Chat en Vivo</h2>
+      <p style="font-size:14px;color:var(--text-dim);margin-bottom:20px;">Puedes ver todos los mensajes y suspender usuarios que incumplan las normas.</p>
+      
+      <div class="chat-wrap" style="height: calc(100vh - 200px); min-height: 500px; border-radius: var(--r-lg);">
+        <div class="chat-box" id="adminChatBox" style="padding: 16px;"></div>
+        <form class="chat-form" id="adminChatForm" autocomplete="off" style="padding: 12px;">
+          <input id="adminChatInput" placeholder="Responde oficialmente como Administrador..." maxlength="600">
+          <button class="btn primary" type="submit"><svg class="ico"><use href="#i-chat"/></svg>Enviar</button>
+        </form>
+      </div>
+    </div>
+
     <div class="card">
       <h2><svg class="ico"><use href="#i-lock"/></svg>Seguridad y Gestión de Datos</h2>
-      <p style="font-size:14px;color:var(--text-dim);margin-bottom:20px;">La contraseña de administrador se gestiona de forma segura directamente en el panel de control de PocketBase (Railway). Este frontend no almacena credenciales.</p>
       <div class="row" style="border-top:1px dashed var(--glass-border-subtle);padding-top:20px;margin-top:22px">
-        <button class="btn danger" id="clearChat"><svg class="ico"><use href="#i-trash"/></svg>Vaciar Chat</button>
         <button class="btn danger" id="logoutBtn"><svg class="ico"><use href="#i-signout"/></svg>Cerrar Sesión Admin</button>
       </div>
     </div>
@@ -901,7 +913,7 @@ body.subapp-mode main { margin-left: 0 !important; padding: 0 !important; max-wi
     <div class="modal-head">
       <div class="modal-logo">MEP</div>
       <h2>Acceso Administrador</h2>
-      <p>Ingresa tus credenciales asignadas por el Superusuario</p>
+      <p>Ingresa tus credenciales asignadas</p>
     </div>
     <div class="modal-error" id="modalError">
       <svg class="ico"><use href="#i-warn"/></svg>
@@ -936,10 +948,10 @@ body.subapp-mode main { margin-left: 0 !important; padding: 0 !important; max-wi
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-// CORRECCIÓN 1: Formato de fecha para PocketBase
+// CORRECCIÓN DE FECHA
 function fmtFecha(iso){
   if(!iso) return '';
-  const soloFecha = iso.split(' ')[0]; // Toma "2026-10-05"
+  const soloFecha = iso.split(' ')[0]; 
   const p = soloFecha.split('-');
   return p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : iso;
 }
@@ -986,7 +998,7 @@ async function cargarDatos() {
     DB.subapps = subapps.map(r => ({ id: r.id, ...r }));
   } catch (e) {
     console.error('Error cargando datos:', e);
-    toast('⚠️ Error de conexión con el servidor');
+    toast('⚠️ Error de conexión');
   }
 }
 
@@ -997,11 +1009,11 @@ async function loginAdmin(email, password) {
       isAdmin = true;
       $('adminNavWrap').style.display = 'block';
       go('admin');
-      toast('✅ Sesión de administrador iniciada');
+      toast('✅ Bienvenido, administrador');
       return true;
     } else {
       pb.authStore.clear();
-      toast('❌ No tienes permisos de administrador');
+      toast('❌ No tienes permisos');
       return false;
     }
   } catch (e) {
@@ -1028,7 +1040,6 @@ document.querySelectorAll('.nav-head').forEach(head => {
   head.onclick = () => head.parentElement.classList.toggle('open');
 });
 
-// CORRECCIÓN 2: Manejo de Modo Pantalla Completa para Sub-apps
 function go(view, el){
   document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === 'view-' + view));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -1040,9 +1051,9 @@ function go(view, el){
   cerrarMenu();
   window.scrollTo({ top:0, behavior:'instant' in window ? 'instant' : 'auto' });
   if(view === 'chat') setTimeout(() => $('chatInput').focus(), 200);
+  
   actualizarGaleriaPersistente(view);
 
-  // Activar/desactivar modo inmersivo (oculta menús)
   if(view === 'subapp') {
     document.body.classList.add('subapp-mode');
   } else {
@@ -1103,7 +1114,7 @@ function renderInicio(){
     ? prox.map(a => `
         <div class="ag-item" style="margin-bottom:12px">
           <div class="ag-date">
-            <b>${esc((a.fecha||'').split('-')[2] || '--')}</b>
+            <b>${esc((a.fecha||'').split(' ')[0].split('-')[2] || '--')}</b>
             <small>${mesCorto(a.fecha)}</small>
           </div>
           <div class="ag-body">
@@ -1114,7 +1125,7 @@ function renderInicio(){
             </div>
           </div>
         </div>`).join('')
-    : '<p class="muted">No hay actividades programadas próximamente.</p>';
+    : '<p class="muted">No hay actividades próximas.</p>';
 }
 
 function renderAgenda(){
@@ -1135,7 +1146,7 @@ function renderAgenda(){
             ${a.descripcion ? `<p>${esc(a.descripcion)}</p>` : ''}
           </div>
         </div>`).join('')
-    : '<div class="empty"><span class="em"><svg class="ico ico-2xl"><use href="#i-calendar"/></svg></span><h3>Sin actividades</h3><p>Aún no se han registrado actividades en la agenda institucional.</p></div>';
+    : '<div class="empty"><span class="em"><svg class="ico ico-2xl"><use href="#i-calendar"/></svg></span><h3>Sin actividades</h3><p>Aún no se han registrado actividades.</p></div>';
 }
 
 function renderReglamentos(){
@@ -1145,15 +1156,15 @@ function renderReglamentos(){
           <h3><svg class="ico ico-lg"><use href="#i-scroll"/></svg>${esc(r.titulo)}</h3>
           ${r.descripcion ? `<p style="color:var(--text-dim);margin-bottom:12px">${esc(r.descripcion)}</p>` : ''}
           ${r.texto ? `<p>${esc(r.texto)}</p>` : ''}
-          ${r.url ? `<div class="row"><a class="btn sm primary" href="${esc(r.url)}" target="_blank" rel="noopener"><svg class="ico"><use href="#i-external"/></svg>Ver o Descargar Documento</a></div>` : ''}
+          ${r.url ? `<div class="row"><a class="btn sm primary" href="${esc(r.url)}" target="_blank" rel="noopener"><svg class="ico"><use href="#i-external"/></svg>Ver Documento</a></div>` : ''}
         </div>`).join('')
-    : '<div class="empty"><span class="em"><svg class="ico ico-2xl"><use href="#i-scroll"/></svg></span><h3>Sin reglamentos</h3><p>Aún no se han publicado reglamentos oficiales.</p></div>';
+    : '<div class="empty"><span class="em"><svg class="ico ico-2xl"><use href="#i-scroll"/></svg></span><h3>Sin reglamentos</h3><p>Aún no se han publicado reglamentos.</p></div>';
 }
 
 function renderEnVivo(){
   const l = $('liveList');
   if(!DB.envivo.length){
-    l.innerHTML = '<div class="empty"><span class="em"><svg class="ico ico-2xl"><use href="#i-broadcast"/></svg></span><h3>Sin transmisiones activas</h3><p>No hay transmisiones registradas en este momento.</p></div>';
+    l.innerHTML = '<div class="empty"><span class="em"><svg class="ico ico-2xl"><use href="#i-broadcast"/></svg></span><h3>Sin transmisiones</h3><p>No hay transmisiones en este momento.</p></div>';
     return;
   }
   l.innerHTML = DB.envivo.map(v => `
@@ -1169,7 +1180,7 @@ function renderEnVivo(){
       </div>
       <a class="btn ${v.activo ? 'primary' : 'purple'}" href="${esc(v.url)}" target="_blank" rel="noopener">
         <svg class="ico"><use href="#i-${v.activo ? 'eye' : 'external'}"/></svg>
-        ${v.activo ? 'Ver Transmisión' : 'Abrir Enlace'}
+        ${v.activo ? 'Ver Ahora' : 'Abrir Enlace'}
       </a>
     </div>`).join('');
 }
@@ -1178,8 +1189,8 @@ function construirGaleriaHTML(){
   if(!DB.galeria.length){
     return `<div class="empty" style="grid-column:1/-1">
       <span class="em"><svg class="ico ico-2xl"><use href="#i-images"/></svg></span>
-      <h3>La galería está vacía</h3>
-      <p>El administrador puede agregar imágenes y videos desde el panel de control.</p>
+      <h3>Galería vacía</h3>
+      <p>El administrador puede agregar contenido.</p>
     </div>`;
   }
   return DB.galeria.map((it, i) => {
@@ -1229,8 +1240,8 @@ function construirCarruselHTML(){
   if(!DB.galeria.length){
     return `<div class="carousel-empty">
       <span class="em"><svg class="ico"><use href="#i-images"/></svg></span>
-      <h3>No hay contenido en la galería</h3>
-      <p>El administrador puede agregar imágenes y videos desde el panel de control.</p>
+      <h3>No hay contenido</h3>
+      <p>El administrador puede agregar imágenes y videos.</p>
     </div>`;
   }
   return DB.galeria.map((it, i) => {
@@ -1367,64 +1378,139 @@ function reiniciarAutoplay(){
   iniciarAutoplay();
 }
 
-const CHAT_KEY = 'mep_chat_v2';
-const USER_KEY = 'mep_user_v2';
-let bc = null;
-try{ if('BroadcastChannel' in window) bc = new BroadcastChannel('mep_chat_channel'); }catch(e){}
+/* ============================================================
+   CHAT EN TIEMPO REAL CON POCKETBASE
+   ============================================================ */
+const USER_KEY = 'mep_user_v3';
+const DEVICE_KEY = 'mep_device_id';
 
-function cargarChat(){ try{ return JSON.parse(localStorage.getItem(CHAT_KEY) || '[]'); }catch(e){ return []; } }
-function guardarChat(msgs){ try{ localStorage.setItem(CHAT_KEY, JSON.stringify(msgs.slice(-250))); }catch(e){} }
+// Generar un ID único para este dispositivo si no existe
+let myDeviceId = localStorage.getItem(DEVICE_KEY);
+if (!myDeviceId) {
+  myDeviceId = 'dev_' + Math.random().toString(36).substr(2, 9);
+  localStorage.setItem(DEVICE_KEY, myDeviceId);
+}
+
 function nombreUsuario(){
   let u = localStorage.getItem(USER_KEY);
   if(!u){
-    u = (prompt('¿Cómo te llamas? (nombre para el chat del movimiento)', '') || '').trim().slice(0,24) || 'Militante MEP';
+    u = (prompt('¿Cómo te llamas? (nombre para el chat)', '') || '').trim().slice(0,24) || 'Militante MEP';
     localStorage.setItem(USER_KEY, u);
   }
   return u;
 }
-function renderChat(){
-  const msgs = cargarChat();
-  const yo = localStorage.getItem(USER_KEY);
-  const box = $('chatBox');
-  const alFinal = box.scrollTop + box.clientHeight >= box.scrollHeight - 70;
 
-  box.innerHTML = msgs.length
-    ? msgs.map(m => `
-        <div class="msg ${m.user === yo ? 'mine' : ''}">
-          <div class="msg-head">
-            <b>${esc(m.user)}</b>
-            <span>${new Date(m.ts).toLocaleString('es-VE',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</span>
-          </div>
-          <div class="msg-body">${esc(m.texto)}</div>
-        </div>`).join('')
-    : '<div class="empty" style="margin:auto;background:transparent;border:0"><span class="em"><svg class="ico ico-2xl"><use href="#i-chat"/></svg></span><h3>Inicia la conversación</h3><p>Envía el primer mensaje para la militancia.</p></div>';
+// Suscribirse a los cambios en tiempo real
+pb.collection('mensajes').subscribe('*', function (e) {
+  if (e.action === 'create' || e.action === 'delete') {
+    renderChat();
+  }
+});
 
-  if(alFinal) box.scrollTop = box.scrollHeight;
-  $('chatUserLabel').textContent = localStorage.getItem(USER_KEY) || 'Anónimo';
+async function renderChat(){
+  const boxPublic = $('chatBox');
+  const boxAdmin = $('adminChatBox');
+  
+  if(!boxPublic && !boxAdmin) return;
+
+  try {
+    const msgs = await pb.collection('mensajes').getList(1, 100, { sort: 'created' });
+    const yo = localStorage.getItem(USER_KEY);
+
+    const htmlMsgs = msgs.items.length
+      ? msgs.items.map(m => `
+          <div class="msg ${m.deviceId === myDeviceId ? 'mine' : ''}">
+            <div class="msg-head">
+              <b>${esc(m.usuario)}</b>
+              <span>${new Date(m.created).toLocaleString('es-VE',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</span>
+              ${isAdmin ? `<button class="btn sm danger" style="padding:2px 8px; margin-left:8px; font-size:10px;" onclick="banearUsuario('${esc(m.deviceId)}', '${esc(m.usuario)}')">Suspender</button>` : ''}
+            </div>
+            <div class="msg-body">${esc(m.texto)}</div>
+          </div>`).join('')
+      : '<div class="empty" style="margin:auto;background:transparent;border:0"><h3>Sin mensajes</h3><p>Envía el primer mensaje.</p></div>';
+
+    if(boxPublic) {
+      const alFinal = boxPublic.scrollTop + boxPublic.clientHeight >= boxPublic.scrollHeight - 70;
+      boxPublic.innerHTML = htmlMsgs;
+      if(alFinal) boxPublic.scrollTop = boxPublic.scrollHeight;
+    }
+    
+    if(boxAdmin) {
+      boxAdmin.innerHTML = htmlMsgs;
+      boxAdmin.scrollTop = boxAdmin.scrollHeight;
+    }
+    
+    const lbl = $('chatUserLabel');
+    if(lbl) lbl.textContent = yo || 'Anónimo';
+    
+  } catch(e) {
+    console.error("Error chat:", e);
+  }
+}
+
+async function enviarMensaje(texto, inputElement) {
+  if(!texto) return;
+  
+  try {
+    const bloqueado = await pb.collection('bloqueados').getFirstListItem(`deviceId="${myDeviceId}"`).catch(() => null);
+    if (bloqueado) {
+      toast('❌ Has sido suspendido del chat por un administrador.');
+      inputElement.value = '';
+      return;
+    }
+
+    const user = nombreUsuario();
+    await pb.collection('mensajes').create({
+      usuario: user,
+      texto: texto,
+      deviceId: myDeviceId
+    });
+    inputElement.value = '';
+  } catch (e) {
+    toast('❌ Error al enviar mensaje');
+  }
 }
 
 $('chatForm').addEventListener('submit', e => {
   e.preventDefault();
-  const inp = $('chatInput');
-  const texto = inp.value.trim();
-  if(!texto) return;
-  const user = nombreUsuario();
-  const msgs = cargarChat();
-  msgs.push({ id: Date.now().toString(36), user, texto, ts: Date.now() });
-  guardarChat(msgs);
-  inp.value = '';
-  renderChat();
-  $('chatBox').scrollTop = $('chatBox').scrollHeight;
-  if(bc) bc.postMessage({ type:'chat_update' });
+  enviarMensaje($('chatInput').value.trim(), $('chatInput'));
 });
+
 $('btnChangeName').onclick = () => {
   const n = prompt('Nuevo nombre para el chat:', localStorage.getItem(USER_KEY) || '');
   if(n && n.trim()){ localStorage.setItem(USER_KEY, n.trim().slice(0,24)); renderChat(); toast('Nombre actualizado'); }
 };
-if(bc) bc.onmessage = () => renderChat();
-window.addEventListener('storage', e => { if(e.key === CHAT_KEY) renderChat(); });
-setInterval(() => { if($('view-chat').classList.contains('active')) renderChat(); }, 4000);
 
+const adminChatForm = $('adminChatForm');
+if(adminChatForm) {
+  adminChatForm.addEventListener('submit', e => {
+    e.preventDefault();
+    enviarMensaje($('adminChatInput').value.trim(), $('adminChatInput'));
+  });
+}
+
+async function banearUsuario(deviceId, usuario) {
+  if(!confirm(`¿Suspender a ${usuario} del chat permanentemente?`)) return;
+  try {
+    await pb.collection('bloqueados').create({ deviceId, usuario });
+    toast(`🚫 ${usuario} ha sido suspendido.`);
+    const mensajesUser = await pb.collection('mensajes').getFullList({ filter: `deviceId="${deviceId}"` });
+    for (let m of mensajesUser) {
+      await pb.collection('mensajes').delete(m.id);
+    }
+  } catch (e) {
+    toast('❌ Error al suspender usuario');
+  }
+}
+
+setInterval(() => { 
+  if($('view-chat') && $('view-chat').classList.contains('active')) renderChat(); 
+  if($('view-admin') && $('view-admin').classList.contains('active')) renderChat(); 
+}, 5000);
+
+/* ============================================================
+   ADMIN LOGIN Y CRUD
+   ============================================================ */
 function abrirModalAdmin(){
   if(isAdmin){ go('admin'); return; }
   $('adminModal').classList.add('show');
@@ -1540,7 +1626,7 @@ async function eliminarItem(type, id){
     await pb.collection(type).delete(id);
     await cargarDatos();
     renderTodo();
-    toast('🗑 Elemento eliminado exitosamente');
+    toast('🗑 Elemento eliminado');
   } catch (e) {
     console.error(e);
     toast('❌ Error al eliminar');
@@ -1555,7 +1641,7 @@ function cargarParaEditar(type, id){
   if(type === 'galeria'){
     $('g_tipo').value = it.tipo || 'imagen';
     $('g_titulo').value = it.titulo || '';
-    $('g_fecha').value = it.fecha ? it.fecha.split(' ')[0] : ''; // Extrae solo el YYYY-MM-DD
+    $('g_fecha').value = it.fecha ? it.fecha.split(' ')[0] : '';
     $('g_desc').value = it.descripcion || '';
     $('g_url').value = it.url || '';
     $('g_save').innerHTML = '<svg class="ico"><use href="#i-check"/></svg>Guardar Cambios';
@@ -1612,8 +1698,8 @@ $('g_save').onclick = async () => {
   const titulo = $('g_titulo').value.trim();
   let url = $('g_url').value.trim();
   const archivo = $('g_file').files[0];
-  if(!titulo){ toast('Escribe un título para la galería'); return; }
-  if(!url && !archivo){ toast('Indica una URL o carga un archivo multimedia'); return; }
+  if(!titulo){ toast('Escribe un título'); return; }
+  if(!url && !archivo){ toast('Indica una URL o carga un archivo'); return; }
 
   const formData = new FormData();
   formData.append('titulo', titulo);
@@ -1641,8 +1727,8 @@ $('g_cancel').onclick = () => { limpiarForm('galeria'); toast('Edición cancelad
 $('e_save').onclick = async () => {
   const titulo = $('e_titulo').value.trim();
   const url = $('e_url').value.trim();
-  if(!titulo){ toast('Escribe un título para la transmisión'); return; }
-  if(!url){ toast('Indica el enlace de transmisión'); return; }
+  if(!titulo){ toast('Escribe un título'); return; }
+  if(!url){ toast('Indica el enlace'); return; }
   const payload = { titulo, url, plataforma: $('e_plat').value.trim(), activo: $('e_activo').value === 'si', descripcion: $('e_desc').value.trim() };
   try {
     if(editando.envivo) await pb.collection('envivo').update(editando.envivo, payload);
@@ -1658,8 +1744,8 @@ $('e_cancel').onclick = () => { limpiarForm('envivo'); toast('Edición cancelada
 $('a_save').onclick = async () => {
   const titulo = $('a_titulo').value.trim();
   const fecha = $('a_fecha').value;
-  if(!titulo){ toast('Escribe un título para la actividad'); return; }
-  if(!fecha){ toast('Selecciona la fecha de la actividad'); return; }
+  if(!titulo){ toast('Escribe un título'); return; }
+  if(!fecha){ toast('Selecciona una fecha'); return; }
   const payload = { titulo, fecha, hora: $('a_hora').value, lugar: $('a_lugar').value.trim(), descripcion: $('a_desc').value.trim() };
   try {
     if(editando.agenda) await pb.collection('agenda').update(editando.agenda, payload);
@@ -1674,7 +1760,7 @@ $('a_cancel').onclick = () => { limpiarForm('agenda'); toast('Edición cancelada
 
 $('r_save').onclick = async () => {
   const titulo = $('r_titulo').value.trim();
-  if(!titulo){ toast('Escribe el título del reglamento'); return; }
+  if(!titulo){ toast('Escribe el título'); return; }
   const payload = { titulo, descripcion: $('r_desc').value.trim(), enlace: $('r_url').value.trim(), texto: $('r_texto').value };
   try {
     if(editando.reglamentos) await pb.collection('reglamentos').update(editando.reglamentos, payload);
@@ -1690,8 +1776,8 @@ $('r_cancel').onclick = () => { limpiarForm('reglamentos'); toast('Edición canc
 $('s_save').onclick = async () => {
   const nombre = $('s_nombre').value.trim();
   const url = $('s_url').value.trim();
-  if(!nombre){ toast('Escribe el nombre de la sub-app'); return; }
-  if(!url){ toast('Indica la URL de destino'); return; }
+  if(!nombre){ toast('Escribe el nombre'); return; }
+  if(!url){ toast('Indica la URL'); return; }
   const payload = { nombre, url, icono: $('s_icono').value.trim() || '🔗' };
   try {
     if(editando.subapps) await pb.collection('subapps').update(editando.subapps, payload);
@@ -1703,14 +1789,6 @@ $('s_save').onclick = async () => {
   } catch (e) { console.error(e); toast('❌ Error al guardar'); }
 };
 $('s_cancel').onclick = () => { limpiarForm('subapps'); toast('Edición cancelada'); };
-
-$('clearChat').onclick = () => {
-  if(!confirm('¿Estás seguro de vaciar todo el historial del chat?')) return;
-  localStorage.removeItem(CHAT_KEY);
-  renderChat();
-  if(bc) bc.postMessage({ type:'chat_update' });
-  toast('🗑 Chat vaciado');
-};
 
 function renderTodo(){
   renderNavSubapps();
@@ -1772,7 +1850,7 @@ window.addEventListener('load', () => {
   }
 });
 
-console.log('%c MEP · Producción ', 'color:#080212;background:linear-gradient(135deg,#ffd700,#f59e0b);padding:8px 14px;border-radius:8px;font-weight:900;font-size:14px');
+console.log('%c MEP · Chat en tiempo real activado ', 'color:#080212;background:linear-gradient(135deg,#ffd700,#f59e0b);padding:8px 14px;border-radius:8px;font-weight:900;font-size:14px');
 </script>
 </body>
 </html>
