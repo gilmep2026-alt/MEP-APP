@@ -1128,7 +1128,11 @@ async function cargarDatos() {
 async function loginAdmin(email, password) {
   try {
     const authData = await pb.collection('users').authWithPassword(email, password);
-    if (authData.record.role === 'admin') {
+    
+    // Compatibilidad con versiones modernas de PocketBase
+    const userRecord = authData.record || authData.admin;
+
+    if (userRecord.role === 'admin' || userRecord.role === 'staff') {
       isAdmin = true;
       $('adminNavWrap').style.display = 'block';
       go('admin');
@@ -1683,8 +1687,11 @@ function checkIntranetAuth() {
   if (pb.authStore.isValid) {
     loginView.style.display = 'none';
     chatView.style.display = 'block';
-    const userEmail = pb.authStore.model.email || 'Usuario';
-    $('intranetUserLabel').textContent = userEmail;
+    
+    // Compatibilidad de modelos
+    const currentUser = pb.authStore.record || pb.authStore.model;
+    const nombreMostrar = currentUser.name || currentUser.email || 'Usuario';
+    $('intranetUserLabel').textContent = nombreMostrar;
     loadIntranetContacts(); 
   } else {
     loginView.style.display = 'block';
@@ -1694,19 +1701,32 @@ function checkIntranetAuth() {
 
 async function loadIntranetContacts() {
   const select = $('intranetRecipient');
-  const currentUserId = pb.authStore.model.id;
-  
+  if (!select) return;
+
+  const currentUser = pb.authStore.record || pb.authStore.model;
+  if (!currentUser) return;
+
   try {
-    const users = await pb.collection('users').getFullList({ sort: 'email' });
-    intranetContacts = users.filter(u => u.id !== currentUserId);
+    const users = await pb.collection('users').getFullList({ sort: 'name' });
+    intranetContacts = users.filter(u => u.id !== currentUser.id);
     
+    if (intranetContacts.length === 0) {
+      select.innerHTML = '<option value="">No hay otros usuarios disponibles</option>';
+      return;
+    }
+
     select.innerHTML = '<option value="">Selecciona un destinatario...</option>' + 
-      intranetContacts.map(u => `<option value="${esc(u.id)}">${esc(u.email)}</option>`).join('');
+      intranetContacts.map(u => {
+        // Usamos el campo 'name' que sí es público. Si no tiene nombre, usamos el email.
+        const nombreVisible = u.name || u.email || 'Usuario sin nombre';
+        return `<option value="${esc(u.id)}">${esc(nombreVisible)}</option>`;
+      }).join('');
       
     select.disabled = false;
+    console.log("Contactos cargados con éxito:", intranetContacts);
   } catch (e) {
     console.error("Error cargando contactos:", e);
-    select.innerHTML = '<option value="">Error al cargar contactos</option>';
+    select.innerHTML = '<option value="">Error al cargar contactos (Revisa la consola)</option>';
   }
 }
 
@@ -1772,10 +1792,10 @@ async function renderIntranetChat() {
   
   if (!box || !pb.authStore.isValid || !recipientId) return;
 
-  const myId = pb.authStore.model.id;
+  const currentUser = pb.authStore.record || pb.authStore.model;
+  const myId = currentUser.id;
 
   try {
-    // Filtro: Mensajes donde YO soy el remitente y ÉL es el destinatario, O viceversa.
     const filter = `(user_id="${myId}" && destinatario="${recipientId}") || (user_id="${recipientId}" && destinatario="${myId}")`;
     
     const msgs = await pb.collection('chat_intranet').getList(1, 100, { 
@@ -1840,8 +1860,9 @@ $('intranetChatForm').addEventListener('submit', async (e) => {
   btn.disabled = true;
   btn.textContent = 'Enviando...';
 
-  const myId = pb.authStore.model.id;
-  const myName = pb.authStore.model.email || 'Dirigente';
+  const currentUser = pb.authStore.record || pb.authStore.model;
+  const myId = currentUser.id;
+  const myName = currentUser.name || currentUser.email || 'Dirigente';
 
   const formData = new FormData();
   formData.append('usuario', myName);
@@ -2214,7 +2235,8 @@ async function init() {
   await cargarDatos();
   renderTodo();
   
-  if (pb.authStore.isValid && pb.authStore.model?.role === 'admin') {
+  const currentUser = pb.authStore.record || pb.authStore.model;
+  if (pb.authStore.isValid && currentUser?.role === 'admin') {
     isAdmin = true;
     $('adminNavWrap').style.display = 'block';
   }
