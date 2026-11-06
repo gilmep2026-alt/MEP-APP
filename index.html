@@ -17,7 +17,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/pocketbase@0.21.1/dist/pocketbase.umd.js"></script>
 <style>
-/* ... (Los estilos CSS se mantienen exactamente igual que en tu versión anterior) ... */
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
   color-scheme:dark;
@@ -62,6 +61,7 @@ a{color:inherit;text-decoration:none} img,video,iframe{display:block;max-width:1
 @media(min-width:961px){ .sidebar-collapse{display:flex} body.sidebar-collapsed .sidebar{width:var(--sidebar-w-collapsed);padding-left:12px;padding-right:12px} body.sidebar-collapsed .sidebar .label, body.sidebar-collapsed .sidebar .caret, body.sidebar-collapsed .sidebar .nav-head span:not(.ico){opacity:0;width:0;pointer-events:none} body.sidebar-collapsed .sidebar .nav-head{justify-content:center;padding:12px} body.sidebar-collapsed .sidebar .nav-item{justify-content:center;padding:14px} body.sidebar-collapsed .sidebar .nav-body{max-height:0!important;opacity:0!important} body.sidebar-collapsed .sidebar .nav-group:hover .nav-body{max-height:1500px!important;opacity:1!important;padding-top:4px} }
 .overlay{position:fixed;inset:var(--topbar-h) 0 0 0;z-index:54;background:rgba(4, 1, 10, 0.8);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity var(--dur) var(--ease);} .overlay.show{opacity:1;pointer-events:auto}
 main{padding:32px 24px 120px;max-width:1380px;margin:0 auto;transition:margin-left var(--dur) var(--ease);} .view{display:none} .view.active{display:block;animation:viewIn var(--dur-slow) var(--ease-out)} @keyframes viewIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.back-btn-wrap { margin-bottom: 20px; display: none; } .back-btn-wrap.show { display: block; animation: fadeIn var(--dur) var(--ease); } .btn-back { background: rgba(255, 215, 0, 0.1); border: 1px solid var(--glass-border); color: var(--gold-300); padding: 8px 16px; border-radius: var(--r-md); cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 13px; transition: all 0.2s; } .btn-back:hover { background: var(--gold-500); color: var(--purple-950); transform: translateX(-4px); }
 #view-galeria{padding:0} #view-galeria .carousel-wrap{border-radius:0;border:0;margin-bottom:28px; height: calc(100vh - var(--topbar-h)); min-height: 480px;} #view-galeria .gal-grid{padding:0 24px 30px}
 .page-head{margin-bottom:32px} .page-head h1{font-size:32px;font-weight:900;letter-spacing:-0.8px;line-height:1.15;margin-bottom:10px;background:linear-gradient(180deg,#fff 30%,var(--gold-300) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;} .page-head h1 .accent{background:linear-gradient(180deg, var(--gold-400) 20%, var(--gold-600) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;} .page-head p{color:var(--text-dim);font-size:15px;max-width:680px} .muted{color:var(--text-mute);font-size:14.5px;text-align:center;padding:36px 16px}
 .hero-banner{position:relative;overflow:hidden;background:linear-gradient(135deg, rgba(51, 11, 105, 0.75), rgba(18, 5, 38, 0.9));border:1px solid var(--glass-border);border-radius:var(--r-xl);padding:40px;margin-bottom:32px;box-shadow:var(--shadow-card), var(--shadow-neon);} .hero-banner::before{content:'';position:absolute;top:-100px;right:-100px;width:320px;height:320px;background:radial-gradient(circle, rgba(255, 183, 0, 0.25), transparent 70%);border-radius:50%;filter:blur(20px);pointer-events:none;} .hero-content{position:relative;z-index:2;max-width:700px} .hero-tag{display:inline-flex;align-items:center;gap:8px;background:rgba(255, 183, 0, 0.12);border:1px solid var(--glass-border);color:var(--gold-300);padding:6px 14px;border-radius:var(--r-full);font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:18px;} .hero-content h2{font-size:28px;font-weight:900;color:#fff;letter-spacing:-0.5px;margin-bottom:12px;line-height:1.2;} .hero-content p{font-size:15px;color:var(--text-dim);line-height:1.6;margin-bottom:24px;}
@@ -113,7 +113,6 @@ body.subapp-mode { padding-top: 0 !important; overflow: hidden; } body.subapp-mo
 </head>
 <body>
 
-<!-- ICONOS SVG (se mantienen igual) -->
 <svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
   <symbol id="i-menu" viewBox="0 0 256 256"><path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z" fill="currentColor"/></symbol>
   <symbol id="i-download" viewBox="0 0 256 256"><path d="M224,144v64a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V144a8,8,0,0,1,16,0v56H208V144a8,8,0,0,1,16,0ZM93.66,122.34a8,8,0,0,1,0-11.32l24-24a8,8,0,0,1,11.32,0l24,24a8,8,0,0,1-11.32,11.32L136,117.66V48a8,8,0,0,1,16,0v69.66l5.66-5.66a8,8,0,0,1,11.32,11.32l-24,24a8,8,0,0,1-11.32,0Z" fill="currentColor"/></symbol>
@@ -1316,8 +1315,8 @@ async function renderChat(){
   if(!boxPublic && !boxAdmin) return;
 
   try {
-    // Filtro de fecha eliminado temporalmente para evitar errores 400 de PocketBase
-    const msgs = await pb.collection('mensajes').getList(1, 100, { sort: 'created', expand: 'user_id' });
+    // Sin expand ni filtro de fecha para evitar errores 400
+    const msgs = await pb.collection('mensajes').getList(1, 100, { sort: 'created' });
     
     const htmlMsgs = msgs.items.length
       ? msgs.items.map(m => {
@@ -1560,7 +1559,162 @@ function checkIntranetAuth() {
   }
 }
 
-// (Omito loadIntranetContacts y el form de intranet por brevedad ya que estaban bien)
+// NUEVO: Corregir la búsqueda de contactos en la Intranet
+async function loadIntranetContacts() {
+  const select = $('intranetRecipient');
+  if (!select) return;
+
+  if (!currentUser || currentUser.role !== 'admin') return;
+
+  try {
+    const users = await pb.collection('users').getFullList({ 
+      sort: 'nombre_completo', // <-- Corregido aquí, antes decía 'name'
+      filter: `role = "admin" && id != "${currentUser.id}"`
+    });
+    
+    if (users.length === 0) {
+      select.innerHTML = '<option value="">No hay otros administradores disponibles</option>';
+      return;
+    }
+
+    select.innerHTML = '<option value="">Selecciona un destinatario...</option>' + 
+      users.map(u => {
+        const nombreVisible = u.nombre_completo || u.email || 'Admin';
+        return `<option value="${esc(u.id)}">${esc(nombreVisible)}</option>`;
+      }).join('');
+      
+    select.disabled = false;
+  } catch (e) {
+    console.error("Error cargando contactos:", e);
+    select.innerHTML = '<option value="">Error al cargar contactos</option>';
+  }
+}
+
+$('intranetLogoutBtn').onclick = () => {
+  cerrarSesion(); // Cierra sesión globalmente
+  toast('Sesión de intranet cerrada');
+};
+
+$('intranetRecipient').onchange = () => {
+  const recipientId = $('intranetRecipient').value;
+  const input = $('intranetChatInput');
+  const btn = $('intranetSendBtn');
+  
+  if (recipientId) {
+    input.disabled = false;
+    btn.disabled = false;
+    input.focus();
+    renderIntranetChat();
+  } else {
+    input.disabled = true;
+    btn.disabled = true;
+    $('intranetChatBox').innerHTML = `
+      <div class="empty" style="margin:auto;background:transparent;border:0">
+        <h3>Selecciona un destinatario</h3>
+        <p>Elige a otro administrador de la lista para ver la conversación privada.</p>
+      </div>`;
+  }
+};
+
+async function renderIntranetChat() {
+  const box = $('intranetChatBox');
+  const recipientId = $('intranetRecipient').value;
+  
+  if (!box || !currentUser || !recipientId) return;
+
+  const myId = currentUser.id;
+
+  try {
+    const filter = `(user_id="${myId}" && destinatario="${recipientId}") || (user_id="${recipientId}" && destinatario="${myId}")`;
+    
+    const msgs = await pb.collection('chat_intranet').getList(1, 100, { 
+      filter: filter,
+      sort: 'created' 
+    });
+    
+    const alFinal = box.scrollTop + box.clientHeight >= box.scrollHeight - 70;
+
+    box.innerHTML = msgs.items.length
+      ? msgs.items.map(m => {
+          let archivoHTML = '';
+          if (m.archivo) {
+            const fileUrl = pb.files.getUrl(m, m.archivo);
+            archivoHTML = `<a href="${fileUrl}" target="_blank" class="btn sm" style="margin-top: 10px; display: inline-flex; background: var(--purple-800); border-color: var(--gold-400);"><svg class="ico"><use href="#i-download"/></svg> Descargar PDF</a>`;
+          }
+
+          return `
+          <div class="msg ${m.user_id === myId ? 'mine' : ''}">
+            <div class="msg-head">
+              <b style="color: var(--gold-400);">${m.user_id === myId ? 'Tú' : esc(m.usuario)}</b>
+              <span>${new Date(m.created).toLocaleString('es-VE',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</span>
+            </div>
+            <div class="msg-body">
+              ${m.texto ? esc(m.texto) : ''}
+              ${archivoHTML}
+            </div>
+          </div>`;
+      }).join('')
+      : '<div class="empty" style="margin:auto;background:transparent;border:0"><h3>Sin mensajes</h3><p>Inicia la conversación privada con este dirigente.</p></div>';
+
+    if (alFinal) box.scrollTop = box.scrollHeight;
+  } catch (e) {
+    console.error("Error cargando intranet:", e);
+    box.innerHTML = '<p class="muted">Error al cargar el chat privado.</p>';
+  }
+}
+
+$('btnAttachFile').onclick = () => $('intranetFile').click();
+
+$('intranetFile').onchange = () => {
+  const fileName = $('intranetFile').files[0]?.name;
+  const label = $('intranetFileName');
+  if (fileName) {
+    label.textContent = `Adjunto: ${fileName}`;
+    label.style.display = 'block';
+  } else {
+    label.style.display = 'none';
+  }
+};
+
+$('intranetChatForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const inp = $('intranetChatInput');
+  const fileInput = $('intranetFile');
+  const texto = inp.value.trim();
+  const archivo = fileInput.files[0];
+  const recipientId = $('intranetRecipient').value;
+
+  if ((!texto && !archivo) || !currentUser || !recipientId) return;
+
+  const btn = $('intranetSendBtn');
+  btn.disabled = true;
+  btn.textContent = 'Enviando...';
+
+  const myId = currentUser.id;
+  const myName = currentUser.nombre_completo || currentUser.email || 'Dirigente';
+
+  const formData = new FormData();
+  formData.append('usuario', myName);
+  formData.append('user_id', myId);
+  formData.append('destinatario', recipientId);
+  
+  if (texto) formData.append('texto', texto);
+  if (archivo) formData.append('archivo', archivo);
+
+  try {
+    await pb.collection('chat_intranet').create(formData);
+    inp.value = '';
+    fileInput.value = '';
+    $('intranetFileName').style.display = 'none';
+    renderIntranetChat(); 
+  } catch (error) {
+    console.error(error);
+    toast('❌ Error al enviar mensaje o archivo');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<svg class="ico"><use href="#i-chat"/></svg>Enviar';
+  }
+});
 
 function renderTodo(){
   renderNavSubapps();
@@ -1582,7 +1736,7 @@ async function init() {
     if (currentUser.role === 'admin') {
       isAdmin = true;
       $('adminNavWrap').style.display = 'block';
-      $('navItemIntranet').style.display = 'flex'; // MOSTRAR INTRANET AL CARGAR SI ES ADMIN
+      $('navItemIntranet').style.display = 'flex';
     } else {
       $('navItemIntranet').style.display = 'none';
     }
