@@ -1,4 +1,4 @@
-// 1. Subimos la versión a v7 para forzar la actualización en los navegadores de los usuarios
+// 1. Subimos la versión a v9 para forzar la actualización en los navegadores de los usuarios
 const CACHE_NAME = 'mep-v9'; 
 const ASSETS = [
   '/',
