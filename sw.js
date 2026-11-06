@@ -1,53 +1,88 @@
-// 1. Subimos la versión a v6 para forzar la actualización
-const CACHE_NAME = 'mep-v6'; 
+// 1. Subimos la versión a v7 para forzar la actualización en los navegadores de los usuarios
+const CACHE_NAME = 'mep-v7'; 
 const ASSETS = [
   '/',
   '/index.html',
   '/manifest.json',
-  '/logo.png',
-  '/icon-192.png',
-  '/icon-512.png'
+  '/logo.png'
+  // Nota: He quitado icon-192 e icon-512 de aquí por seguridad. 
+  // Si no los tienes creados aún, la instalación del SW fallaría por completo.
+  // Si ya los tienes, puedes volver a agregarlos a esta lista.
 ];
 
+// INSTALACIÓN: Guardar el "App Shell" en caché
 self.addEventListener('install', (e) => {
   e.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
+    caches.open(CACHE_NAME).then((cache) => {
+      // Usamos un bucle para que si un archivo falla, no rompa toda la instalación
+      return Promise.all(
+        ASSETS.map((url) => {
+          return cache.add(url).catch((err) => {
+            console.warn(`No se pudo cachear el archivo: ${url}`, err);
+          });
+        })
+      );
+    })
   );
-  self.skipWaiting();
+  self.skipWaiting(); // Fuerza a que el nuevo SW tome el control de inmediato
 });
 
+// ACTIVACIÓN: Limpiar cachés antiguas
 self.addEventListener('activate', (e) => {
   e.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
-    )
+    caches.keys().then((keys) => {
+      return Promise.all(
+        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
+      );
+    })
   );
-  self.clients.claim();
+  self.clients.claim(); // Toma el control de las pestañas abiertas
 });
 
+// FETCH: Interceptar peticiones
 self.addEventListener('fetch', (e) => {
   // Solo procesar peticiones GET
   if (e.request.method !== 'GET') return;
 
-  // 2. MUY IMPORTANTE: No interceptar las peticiones a la API de PocketBase
-  // ni conexiones en tiempo real (SSE). Deja que fluyan directo a la red.
-  if (e.request.url.includes('/api/')) {
-    return; 
+  const url = new URL(e.request.url);
+
+  // 2. CRUCIAL: Ignorar peticiones a PocketBase (API, Realtime, etc.)
+  // Esto evita que el chat o las notificaciones en vivo se congelen.
+  if (url.pathname.includes('/api/') || url.pathname.includes('/_/')) {
+    return; // Deja que el navegador maneje la petición directamente a la red
   }
 
-  // Para el resto de archivos (html, imágenes, etc), intenta red primero, luego caché
+  // Ignorar peticiones que no sean HTTP/HTTPS (ej. extensiones de Chrome)
+  if (!url.protocol.startsWith('http')) {
+    return;
+  }
+
+  // 3. Estrategia: Network First (Red primero), Cache Fallback (Caché de respaldo)
   e.respondWith(
     fetch(e.request)
       .then((networkResponse) => {
-        // Solo guardar en caché si la respuesta es exitosa (status 200)
-        if (networkResponse.status === 200) {
+        // Si la respuesta es exitosa y es un archivo local, actualizamos la caché
+        if (networkResponse.status === 200 && networkResponse.type === 'basic') {
           const clone = networkResponse.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(e.request, clone));
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(e.request, clone);
+          });
         }
         return networkResponse;
       })
       .catch(() => {
-        return caches.match(e.request);
+        // 4. Si falla la red (offline), buscamos en la caché
+        return caches.match(e.request).then((cachedResponse) => {
+          if (cachedResponse) {
+            return cachedResponse;
+          }
+          
+          // 5. Si el usuario recarga la página (navegación) y está offline, 
+          // le mostramos el index.html guardado en caché.
+          if (e.request.mode === 'navigate') {
+            return caches.match('/index.html');
+          }
+        });
       })
   );
 });
