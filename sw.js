@@ -1,5 +1,5 @@
-// 1. Subimos la versión a v11 para forzar la actualización en los navegadores de los usuarios
-const CACHE_NAME = 'mep-v11'; 
+// 1. Subimos la versión a v12 para forzar la actualización en los navegadores de los usuarios
+const CACHE_NAME = 'mep-v12'; 
 const ASSETS = [
   '/',
   '/index.html',
