@@ -1,15 +1,24 @@
 {
+  "id": "/",
   "name": "MEP · Movimiento Electoral del Pueblo",
   "short_name": "MEP",
-  "description": "Plataforma oficial del Movimiento Electoral del Pueblo",
+  "description": "Plataforma oficial del Movimiento Electoral del Pueblo para gestión, agenda y comunidad.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#080212",
   "theme_color": "#2b0d4f",
   "lang": "es",
   "dir": "ltr",
+  "categories": ["news", "social", "productivity"],
   "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
     {
       "src": "icon-192.png",
       "sizes": "192x192",
