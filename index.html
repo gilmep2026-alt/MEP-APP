@@ -45,30 +45,30 @@ a{color:inherit;text-decoration:none} img,video,iframe{display:block;max-width:1
 .brand-text-wrap { display: flex; flex-direction: column; min-width: 0; }
 .brand-txt{font-weight:800;font-size:16px;letter-spacing:-0.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff} .brand-sub{font-size:11px;color:var(--gold-300);font-weight:700;display:block;line-height:1.2;letter-spacing:1px;text-transform:uppercase;margin-top:3px}
 
-/* NUEVO: Estilos mejorados para el botón de perfil */
 .admin-btn{display:inline-flex;align-items:center;gap:8px; background:linear-gradient(135deg, rgba(255, 183, 0, 0.18), rgba(255, 183, 0, 0.08)); border:1px solid var(--glass-border); color:var(--gold-300); padding:10px 18px;border-radius:var(--r-md); cursor:pointer;font-weight:700;font-size:13px; letter-spacing:0.5px;white-space:nowrap; transition:all var(--dur-fast) var(--ease); flex:none; box-shadow:0 4px 15px rgba(255, 183, 0, 0.15);}
 .admin-btn:hover{background:linear-gradient(135deg, var(--gold-500), var(--gold-600)); color:var(--purple-950); transform:translateY(-2px); box-shadow:0 10px 28px rgba(255, 183, 0, 0.45);} .admin-btn:active{transform:translateY(0) scale(0.96)} .admin-btn .ico{width:16px;height:16px}
 
 #btnProfile {
   background: rgba(26, 11, 48, 0.8); 
-  padding: 5px 16px 5px 5px; 
+  padding: 4px 14px 4px 4px; 
   border-radius: 50px; 
   border: 1px solid var(--glass-border); 
   display: flex; 
   align-items: center; 
-  gap: 10px;
+  gap: 8px;
+  flex-shrink: 0;
 }
 #topbarAvatar {
-  width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid var(--gold-400); flex: none;
+  width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 2px solid var(--gold-400); flex: none;
 }
 .profile-texts {
-  display: flex; flex-direction: column; justify-content: center; text-align: left; line-height: 1.2;
+  display: flex; flex-direction: column; justify-content: center; text-align: left; line-height: 1.15; overflow: hidden;
 }
 #topbarName {
-  font-size: 14px; font-weight: 800; color: #fff; white-space: nowrap; max-width: 110px; overflow: hidden; text-overflow: ellipsis;
+  font-size: 13px; font-weight: 800; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 80px;
 }
 #topbarCargo {
-  font-size: 10px; color: var(--gold-300); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; max-width: 110px; overflow: hidden; text-overflow: ellipsis; margin-top: 2px;
+  font-size: 9px; color: var(--gold-300); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 80px; margin-top: 1px;
 }
 
 .sidebar{position:fixed;top:var(--topbar-h);left:0;bottom:0; width:var(--sidebar-w);z-index:55; background:rgba(8, 2, 18, 0.88); backdrop-filter:blur(30px) saturate(180%); -webkit-backdrop-filter:blur(30px) saturate(180%); border-right:1px solid var(--glass-border-subtle); overflow-y:auto;overflow-x:hidden; padding:20px 14px 50px; transition:width var(--dur) var(--ease), transform var(--dur) var(--ease); will-change:width,transform;}
@@ -122,10 +122,7 @@ input:not([type="file"]):not([type="checkbox"]):not([type="radio"]),select,texta
 .ad-row{display:flex;gap:16px;align-items:center;background:rgba(42, 20, 80, 0.6);border:1px solid var(--glass-border-subtle);border-radius:var(--r-md);padding:14px 16px;margin-bottom:10px;transition:all var(--dur-fast) var(--ease);} .ad-row:hover{border-color:var(--glass-border);transform:translateX(4px);background:rgba(42, 20, 80, 0.85)} .ad-row .thumb{width:56px;height:56px;border-radius:var(--r-sm);object-fit:cover;background:#000;flex:none;border:1px solid var(--glass-border-subtle)} .ad-row .ad-txt{flex:1;min-width:0} .ad-row .ad-txt b{font-size:14px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--gold-300);font-weight:800;margin-bottom:3px} .ad-row .ad-txt small{font-size:12px;color:var(--text-mute);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
 .modal-overlay{position:fixed;inset:0;z-index:200;background:rgba(4, 1, 10, 0.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);display:none;align-items:center;justify-content:center;padding:20px;animation:fadeIn var(--dur) var(--ease);} @keyframes fadeIn{from{opacity:0}to{opacity:1}} .modal-overlay.show{display:flex}
 .modal-card{position:relative;overflow-y:auto; max-height: 90vh; background:linear-gradient(160deg, rgba(35, 15, 68, 0.95), rgba(14, 4, 34, 0.98));border:1px solid var(--glass-border);border-radius:var(--r-xl);width:100%;max-width:440px;padding:36px 32px 32px;box-shadow:0 35px 90px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,183,0,0.15) inset, var(--shadow-gold);animation:modalIn var(--dur-slow) var(--ease-spring);} @keyframes modalIn{from{opacity:0;transform:scale(0.9) translateY(24px)}to{opacity:1;transform:scale(1) translateY(0)}} .modal-card::before{content:'';position:absolute;top:-90px;right:-90px;width:240px;height:240px;background:radial-gradient(circle, rgba(255, 183, 0, 0.3), transparent 70%);border-radius:50%;filter:blur(12px);pointer-events:none;}
-
-/* NUEVO: Estilo para el logo del modal */
 .modal-logo-img { width: 75px; height: 75px; object-fit: contain; margin-bottom: 15px; background: #fff; padding: 5px; border-radius: 15px; box-shadow: 0 8px 25px rgba(255, 183, 0, 0.4); }
-
 .modal-close{position:absolute;top:16px;right:16px;z-index:2;background:rgba(255, 183, 0, 0.08);border:1px solid var(--glass-border-subtle);color:var(--gold-400);width:36px;height:36px;border-radius:var(--r-sm);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all var(--dur-fast) var(--ease);} .modal-close:hover{background:rgba(255, 183, 0, 0.2);border-color:var(--glass-border);transform:rotate(90deg)} .modal-close .ico{width:16px;height:16px}
 .modal-head{position:relative;z-index:1;text-align:center;margin-bottom:28px} .modal-logo{display:inline-flex;align-items:center;justify-content:center;width:70px;height:70px;border-radius:var(--r-lg);background:linear-gradient(135deg, var(--gold-300), var(--gold-600));color:var(--purple-950);font-weight:900;font-size:22px;letter-spacing:1.2px;margin-bottom:18px;box-shadow:0 12px 32px rgba(255, 183, 0, 0.45), inset 0 1px 0 rgba(255,255,255,0.6);} .modal-head h2{font-size:22px;font-weight:900;color:#fff;letter-spacing:-0.5px;margin-bottom:8px} .modal-head p{font-size:13.5px;color:var(--text-mute);line-height:1.5} .modal-field{position:relative;z-index:1;margin-bottom:16px} .modal-field label{display:block;font-size:11.5px;color:var(--gold-300);margin:0 0 8px;font-weight:800;letter-spacing:1px;text-transform:uppercase;} .modal-field input, .modal-field select{width:100%;background:rgba(8, 2, 18, 0.9) !important;border:1px solid var(--glass-border-subtle);color:#f8f6fc !important;padding:14px 16px;border-radius:var(--r-md);outline:none;transition:all var(--dur-fast) var(--ease);font-size:15px;} .modal-field input:focus, .modal-field select:focus{border-color:var(--gold-500);background:rgba(18, 5, 42, 0.95) !important;box-shadow:0 0 0 4px rgba(255, 183, 0, 0.15), 0 0 25px rgba(255, 183, 0, 0.2);} .modal-field input::placeholder{color:#9987c0 !important} .modal-error{position:relative;z-index:1;background:rgba(239, 68, 68, 0.15);border:1px solid rgba(239, 68, 68, 0.4);color:#fca5a5;padding:12px 16px;border-radius:var(--r-md);font-size:13px;font-weight:700;margin-bottom:16px;display:none;align-items:center;gap:10px;} .modal-error.show{display:flex} .modal-error .ico{width:16px;height:16px;flex:none} .modal-submit{position:relative;z-index:1;width:100%;background:linear-gradient(135deg, var(--gold-300) 0%, var(--gold-500) 50%, var(--gold-600) 100%);color:var(--purple-950);border:0;padding:15px;border-radius:var(--r-md);cursor:pointer;font-weight:900;font-size:15px;letter-spacing:0.4px;display:inline-flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 10px 28px rgba(255, 183, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.6);transition:all var(--dur-fast) var(--ease);font-family:inherit;} .modal-submit:hover{background:linear-gradient(135deg, #fff 0%, var(--gold-300) 50%, var(--gold-500) 100%);transform:translateY(-2px);box-shadow:0 16px 40px rgba(255, 183, 0, 0.6), inset 0 1px 0 rgba(255,255,255,0.8);} .modal-submit:active{transform:translateY(0) scale(0.98)} .modal-submit .ico{width:18px;height:18px}
 body.subapp-mode { padding-top: 0 !important; overflow: hidden; } body.subapp-mode .topbar, body.subapp-mode .sidebar, body.subapp-mode .overlay { display: none !important; } body.subapp-mode main { margin-left: 0 !important; padding: 0 !important; max-width: 100% !important; height: 100vh; } #view-subapp { display: none; flex-direction: column; height: 100vh; width: 100vw; background: #000; } #view-subapp.active { display: flex !important; } .subapp-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 16px; background: rgba(10, 3, 26, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid var(--gold-500); z-index: 10; flex: none; } .subapp-header h2 { font-size: 15px; font-weight: 800; color: #fff; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; text-align: center; } #subappFrame { flex: 1; width: 100%; height: 100%; border: none; background: #fff; }
@@ -140,10 +137,10 @@ body.subapp-mode { padding-top: 0 !important; overflow: hidden; } body.subapp-mo
   .topbar { padding: 0 12px; gap: 8px; } 
   .brand { gap: 8px; } 
   .brand-logo { height: 42px; max-width: 120px; background: transparent; box-shadow: none; padding: 0; } 
-  #topbarCargo { display: none !important; }
-  #topbarName { max-width: 80px; font-size: 13px; }
   #btnProfile { padding: 4px 12px 4px 4px !important; gap: 6px; }
   #topbarAvatar { width: 34px; height: 34px; }
+  #topbarName { font-size: 12px; max-width: 65px; }
+  #topbarCargo { font-size: 8px; max-width: 65px; display: block !important; } /* Forzar la visibilidad en móvil */
 }
 @media(max-width:540px){ .gal-grid{grid-template-columns:1fr} .ag-item{padding:16px;gap:16px} .ag-date{min-width:64px;height:64px} .ag-date b{font-size:22px} .persistent-gallery .pg-head{flex-direction:column;align-items:flex-start;gap:14px} .carousel-wrap{height:calc(100vh - var(--topbar-h));min-height:360px;max-height:none} .carousel-caption{padding:18px 18px 60px} .carousel-caption h3{font-size:18px} .carousel-caption p{font-size:13px} .carousel-btn{width:40px;height:40px;padding:0} .carousel-btn .ico{width:18px;height:18px} }
 @media(prefers-reduced-motion:reduce){ *,*::before,*::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important;} }
@@ -1347,6 +1344,31 @@ pb.collection('mensajes').subscribe('*', function (e) {
   }
 }).catch(() => { });
 
+// CORRECCIÓN: Suscripción en tiempo real para el chat privado (Intranet)
+pb.collection('chat_intranet').subscribe('*', function (e) {
+  if (e.action === 'create' || e.action === 'delete') {
+    if ($('view-intranet').classList.contains('active') && $('intranetRecipient').value) {
+      renderIntranetChat();
+    }
+  }
+}).catch(() => {});
+
+// CORRECCIÓN: Suscripción para notificaciones push
+pb.collection('notificaciones').subscribe('*', function (e) {
+  if (e.action === 'create') {
+    const data = e.record;
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification(data.titulo, {
+        body: data.mensaje,
+        icon: 'logo.png',
+        vibrate: [200, 100, 200]
+      });
+    }
+    toast(`🔔 ${data.titulo}`);
+  }
+}).catch(() => { });
+
+
 async function renderChat(){
   const boxPublic = $('chatBox');
   const boxAdmin = $('adminChatBox');
@@ -1751,7 +1773,6 @@ $('intranetChatForm').addEventListener('submit', async (e) => {
   }
 });
 
-// CORRECCIÓN: Manejo de notificaciones push
 $('n_send').onclick = async () => {
   const titulo = $('n_titulo').value.trim();
   const mensaje = $('n_mensaje').value.trim();
@@ -1773,7 +1794,6 @@ $('n_send').onclick = async () => {
     toast('✅ Notificación enviada con éxito');
   } catch (err) {
     console.error("Error detallado de notificación:", err);
-    // Si hay un error de PocketBase (ej. falta de permisos), lo mostramos
     toast('❌ Error al enviar. Revisa permisos de API.');
   } finally {
     btn.disabled = false;
