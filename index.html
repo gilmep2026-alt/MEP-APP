@@ -17,6 +17,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/pocketbase@0.21.1/dist/pocketbase.umd.js"></script>
 <style>
+/* ... (Los estilos CSS se mantienen exactamente igual que en tu versión anterior) ... */
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
   color-scheme:dark;
@@ -112,6 +113,7 @@ body.subapp-mode { padding-top: 0 !important; overflow: hidden; } body.subapp-mo
 </head>
 <body>
 
+<!-- ICONOS SVG (se mantienen igual) -->
 <svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
   <symbol id="i-menu" viewBox="0 0 256 256"><path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z" fill="currentColor"/></symbol>
   <symbol id="i-download" viewBox="0 0 256 256"><path d="M224,144v64a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V144a8,8,0,0,1,16,0v56H208V144a8,8,0,0,1,16,0ZM93.66,122.34a8,8,0,0,1,0-11.32l24-24a8,8,0,0,1,11.32,0l24,24a8,8,0,0,1-11.32,11.32L136,117.66V48a8,8,0,0,1,16,0v69.66l5.66-5.66a8,8,0,0,1,11.32,11.32l-24,24a8,8,0,0,1-11.32,0Z" fill="currentColor"/></symbol>
@@ -243,7 +245,6 @@ body.subapp-mode { padding-top: 0 !important; overflow: hidden; } body.subapp-mo
           <svg class="ico"><use href="#i-chat"/></svg>
           <span class="label">Chat Público</span>
         </div>
-        <!-- NUEVO: Oculto por defecto, solo el admin lo verá -->
         <div class="nav-item" data-view="intranet" id="navItemIntranet" style="display: none;">
           <svg class="ico" style="color: var(--gold-400);"><use href="#i-shield"/></svg>
           <span class="label" style="color: var(--gold-400); font-weight: 800;">Intranet Privada</span>
@@ -716,7 +717,6 @@ const VENEZUELA_DATA = {
 };
 
 const now = new Date();
-const threeMonthsAgo = new Date(now.setMonth(now.getMonth() - 3)).toISOString().replace('T', ' ');
 const twoHoursAgo = new Date(new Date().getTime() - (2 * 60 * 60 * 1000));
 
 function fmtFecha(iso){
@@ -1316,8 +1316,8 @@ async function renderChat(){
   if(!boxPublic && !boxAdmin) return;
 
   try {
-    const filter = `created > "${threeMonthsAgo}"`;
-    const msgs = await pb.collection('mensajes').getList(1, 100, { sort: 'created', filter: filter, expand: 'user_id' });
+    // Filtro de fecha eliminado temporalmente para evitar errores 400 de PocketBase
+    const msgs = await pb.collection('mensajes').getList(1, 100, { sort: 'created', expand: 'user_id' });
     
     const htmlMsgs = msgs.items.length
       ? msgs.items.map(m => {
@@ -1347,26 +1347,22 @@ async function renderChat(){
       boxAdmin.innerHTML = htmlMsgs;
       boxAdmin.scrollTop = boxAdmin.scrollHeight;
     }
-  } catch(e) { console.error("Error chat:", e); }
+  } catch(e) { 
+    console.error("Error real de PocketBase en chat:", e); 
+    if(boxPublic) boxPublic.innerHTML = '<div style="padding:20px;color:red">Error al cargar los mensajes.</div>';
+  }
 }
 
 async function enviarMensaje(texto, inputElement) {
   if(!texto || !currentUser) return;
   
-  // VERIFICAR BLOQUEO ANTES DE ENVIAR
   try {
-    const bloqueado = await pb.collection('bloqueados').getFirstListItem(`user_id="${currentUser.id}"`);
-    if (bloqueado) {
+    const res = await pb.collection('bloqueados').getList(1, 1, { filter: `user_id="${currentUser.id}"` });
+    if (res.items.length > 0) {
         toast('❌ Estás suspendido del chat. Contacta a un administrador.');
         return;
     }
-  } catch (e) {
-    // Si da error 404, significa que NO está bloqueado, así que puede continuar.
-    if(e.status !== 404) {
-        console.error("Error al verificar bloqueo:", e);
-        // Continuar de todas formas si el error no es 404? Mejor no, mostrar error.
-    }
-  }
+  } catch (e) { console.warn("Error verificando bloqueo:", e); }
 
   try {
     await pb.collection('mensajes').create({
@@ -1546,6 +1542,26 @@ $('a_save').onclick = async () => {
 };
 $('a_cancel').onclick = () => { limpiarForm('agenda'); };
 
+// NUEVO: Corregir la verificación de la Intranet usando currentUser global
+function checkIntranetAuth() {
+  const loginView = $('intranetLoginView');
+  const chatView = $('intranetChatView');
+  
+  const esAdmin = currentUser && currentUser.role === 'admin';
+
+  if (esAdmin) {
+    loginView.style.display = 'none';
+    chatView.style.display = 'block';
+    $('intranetUserLabel').textContent = currentUser.nombre_completo || 'Admin';
+    loadIntranetContacts();
+  } else {
+    loginView.style.display = 'block';
+    chatView.style.display = 'none';
+  }
+}
+
+// (Omito loadIntranetContacts y el form de intranet por brevedad ya que estaban bien)
+
 function renderTodo(){
   renderNavSubapps();
   renderInicio();
@@ -1584,7 +1600,7 @@ async function init() {
     
     initChatUI();
   } else {
-      $('navItemIntranet').style.display = 'none'; // Asegurar que esté oculto si no hay sesión
+      $('navItemIntranet').style.display = 'none';
   }
 
   const termsModal = $('termsModal');
