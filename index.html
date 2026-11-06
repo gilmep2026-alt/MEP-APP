@@ -734,7 +734,12 @@ function safeUrl(u){
 }
 
 const PB_URL = 'https://pocketbase-railway-production-6031.up.railway.app'; 
+// Configuración de PocketBase para asegurar persistencia
 const pb = new PocketBase(PB_URL);
+// Forzar el uso de localStorage para persistir la sesión incluso al recargar
+pb.authStore.onChange((token, record) => {
+    console.log("AuthStore actualizado, sesión activa:", pb.authStore.isValid);
+});
 
 const VENEZUELA_DATA = {
   "Distrito Capital": ["Libertador"],
@@ -843,7 +848,7 @@ $('loginForm').addEventListener('submit', async e => {
     const authData = await pb.collection('users').authWithPassword(email, pass);
     currentUser = authData.record;
     
-    // NUEVO: Guardar la hora exacta del inicio de sesión
+    // NUEVO: Guardar la hora exacta del inicio de sesión para los 7 días
     localStorage.setItem('mep_login_time', Date.now());
 
     if (currentUser.role === 'admin') {
@@ -1333,7 +1338,6 @@ function renderCarrusel(){
     };
   });
 
-  // NUEVO: Solución para las flechas del carrusel
   $('carouselPrev').onclick = () => {
     if(carruselSlides.length === 0) return;
     carruselIndex = (carruselIndex - 1 + carruselSlides.length) % carruselSlides.length;
@@ -1827,22 +1831,12 @@ function renderTodo(){
 }
 
 async function init() {
-  await cargarDatos();
-  renderTodo();
-  
-  // NUEVO: Comprobar aviso de instalación PWA por primera vez
-  const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
-  if (!isStandalone && localStorage.getItem('mep_install_prompted') !== 'true') {
-      setTimeout(() => {
-          $('installBar').classList.add('show');
-      }, 3000);
-  }
-
-  // NUEVO: Comprobar expiración de sesión (7 días) al recargar
+  // 1. Comprobar la sesión activa antes de cargar cualquier otra cosa
   if (pb.authStore.isValid) {
     const loginTime = localStorage.getItem('mep_login_time');
     const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
     
+    // Si ya pasaron 7 días, cerrar la sesión
     if (loginTime && (Date.now() - parseInt(loginTime) > sevenDaysMs)) {
         pb.authStore.clear();
         localStorage.removeItem('mep_login_time');
@@ -1851,8 +1845,30 @@ async function init() {
         // Si la sesión es válida pero no hay tiempo guardado, se lo asignamos ahora
         localStorage.setItem('mep_login_time', Date.now());
     }
+    
+    // Si sigue siendo válida, refrescamos el token
+    if (pb.authStore.isValid) {
+        try {
+            await pb.collection('users').authRefresh();
+        } catch (_) {
+            pb.authStore.clear();
+        }
+    }
   }
 
+  // 2. Cargar datos de la base de datos
+  await cargarDatos();
+  renderTodo();
+  
+  // 3. Comprobar aviso de instalación PWA por primera vez
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+  if (!isStandalone && localStorage.getItem('mep_install_prompted') !== 'true') {
+      setTimeout(() => {
+          $('installBar').classList.add('show');
+      }, 3000);
+  }
+
+  // 4. Restaurar la interfaz si el usuario está logueado
   if (pb.authStore.isValid) {
     currentUser = pb.authStore.record;
     if (currentUser.role === 'admin') {
@@ -1879,6 +1895,7 @@ async function init() {
       $('navItemIntranet').style.display = 'none';
   }
 
+  // 5. Mostrar términos y condiciones si es la primera vez
   const termsModal = $('termsModal');
   if (localStorage.getItem('mep_terms_accepted_v1') !== 'true') {
     termsModal.style.display = 'flex';
@@ -1889,13 +1906,12 @@ async function init() {
   });
 }
 
-// NUEVO: Manejo del banner de instalación PWA
+// Configuración del banner de instalación PWA
 let deferredPrompt = null;
 
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
-  // Mostrarlo solo si no está instalado y no se le ha mostrado antes
   if (!window.matchMedia('(display-mode: standalone)').matches && localStorage.getItem('mep_install_prompted') !== 'true') {
     $('installBar').classList.add('show');
   }
@@ -1903,7 +1919,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
 
 $('installOk').onclick = async () => {
   $('installBar').classList.remove('show');
-  localStorage.setItem('mep_install_prompted', 'true'); // No volver a mostrar
+  localStorage.setItem('mep_install_prompted', 'true'); 
   if (deferredPrompt) {
     deferredPrompt.prompt();
     await deferredPrompt.userChoice;
@@ -1915,10 +1931,9 @@ $('installOk').onclick = async () => {
 
 $('installNo').onclick = () => {
   $('installBar').classList.remove('show');
-  localStorage.setItem('mep_install_prompted', 'true'); // No volver a mostrar
+  localStorage.setItem('mep_install_prompted', 'true'); 
 };
 
-// Instrucciones para iOS en primera visita
 window.addEventListener('load', () => {
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
   if (isIOS && !window.navigator.standalone && localStorage.getItem('mep_install_prompted') !== 'true') {
