@@ -140,7 +140,7 @@ body.subapp-mode { padding-top: 0 !important; overflow: hidden; } body.subapp-mo
   #btnProfile { padding: 4px 12px 4px 4px !important; gap: 6px; }
   #topbarAvatar { width: 34px; height: 34px; }
   #topbarName { font-size: 12px; max-width: 65px; }
-  #topbarCargo { font-size: 8px; max-width: 65px; display: block !important; } /* Forzar la visibilidad en móvil */
+  #topbarCargo { font-size: 8px; max-width: 65px; display: block !important; }
 }
 @media(max-width:540px){ .gal-grid{grid-template-columns:1fr} .ag-item{padding:16px;gap:16px} .ag-date{min-width:64px;height:64px} .ag-date b{font-size:22px} .persistent-gallery .pg-head{flex-direction:column;align-items:flex-start;gap:14px} .carousel-wrap{height:calc(100vh - var(--topbar-h));min-height:360px;max-height:none} .carousel-caption{padding:18px 18px 60px} .carousel-caption h3{font-size:18px} .carousel-caption p{font-size:13px} .carousel-btn{width:40px;height:40px;padding:0} .carousel-btn .ico{width:18px;height:18px} }
 @media(prefers-reduced-motion:reduce){ *,*::before,*::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important;} }
@@ -1244,7 +1244,7 @@ function construirGaleriaHTML(){
       const yt = ytEmbed(it.url);
       media = yt
         ? `<iframe class="gal-media" src="${esc(yt)}" allowfullscreen loading="lazy" title="${esc(it.titulo)}"></iframe>`
-        : `<video class="gal-media" src="${esc(it.url)}" controls preload="metadata"></video>`;
+        : `<video class="gal-media" src="${esc(it.url)}" controls playsinline preload="metadata" onerror="this.outerHTML='<div style=\\'padding:20px;text-align:center;color:#ffd700;\\'><b>Formato de video no soportado</b><br><small>Sube el video en formato MP4.</small></div>'"></video>`;
     }else{
       media = `<img class="gal-media" src="${esc(it.url)}" alt="${esc(it.titulo)}" loading="lazy" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 250%22><rect fill=%22%231a0b30%22 width=%22400%22 height=%22250%22/><text x=%2250%25%22 y=%2250%25%22 fill=%22%23ffd700%22 font-size=%2216%22 text-anchor=%22middle%22 font-family=%22sans-serif%22>Imagen no disponible</text></svg>'">`;
     }
@@ -1285,7 +1285,7 @@ function construirCarruselHTML(){
     let media = '';
     if(it.tipo === 'video'){
       const yt = ytEmbed(it.url);
-      media = yt ? `<iframe src="${esc(yt)}" allowfullscreen loading="lazy" title="${esc(it.titulo)}"></iframe>` : `<video src="${esc(it.url)}" muted loop playsinline preload="metadata"></video>`;
+      media = yt ? `<iframe src="${esc(yt)}" allowfullscreen loading="lazy" title="${esc(it.titulo)}"></iframe>` : `<video src="${esc(it.url)}" muted loop playsinline preload="metadata" onerror="this.outerHTML='<div style=\\'display:flex;align-items:center;justify-content:center;height:100%;color:#ffd700;font-weight:bold;\\'>Video MP4 no soportado</div>'"></video>`;
     }else{
       media = `<img src="${esc(it.url)}" alt="${esc(it.titulo)}" loading="${i === 0 ? 'eager' : 'lazy'}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 800 500%22><rect fill=%22%231a0b30%22 width=%22800%22 height=%22500%22/><text x=%2250%25%22 y=%2250%25%22 fill=%22%23ffd700%22 font-size=%2222%22 text-anchor=%22middle%22 font-family=%22sans-serif%22>Imagen MEP no disponible</text></svg>'">`;
     }
@@ -1326,6 +1326,22 @@ function renderCarrusel(){
       dots.querySelectorAll('.carousel-dot').forEach((d, i) => d.classList.toggle('active', i === carruselIndex));
     };
   });
+
+  // NUEVO: Solución para las flechas del carrusel
+  $('carouselPrev').onclick = () => {
+    if(carruselSlides.length === 0) return;
+    carruselIndex = (carruselIndex - 1 + carruselSlides.length) % carruselSlides.length;
+    track.style.transition = 'transform 0.9s cubic-bezier(0.65, 0, 0.35, 1)';
+    track.style.transform = `translateX(-${carruselIndex * 100}%)`;
+    dots.querySelectorAll('.carousel-dot').forEach((d, i) => d.classList.toggle('active', i === carruselIndex));
+  };
+  $('carouselNext').onclick = () => {
+    if(carruselSlides.length === 0) return;
+    carruselIndex = (carruselIndex + 1) % carruselSlides.length;
+    track.style.transition = 'transform 0.9s cubic-bezier(0.65, 0, 0.35, 1)';
+    track.style.transform = `translateX(-${carruselIndex * 100}%)`;
+    dots.querySelectorAll('.carousel-dot').forEach((d, i) => d.classList.toggle('active', i === carruselIndex));
+  };
 }
 
 function initChatUI() {
@@ -1344,7 +1360,6 @@ pb.collection('mensajes').subscribe('*', function (e) {
   }
 }).catch(() => { });
 
-// CORRECCIÓN: Suscripción en tiempo real para el chat privado (Intranet)
 pb.collection('chat_intranet').subscribe('*', function (e) {
   if (e.action === 'create' || e.action === 'delete') {
     if ($('view-intranet').classList.contains('active') && $('intranetRecipient').value) {
@@ -1352,22 +1367,6 @@ pb.collection('chat_intranet').subscribe('*', function (e) {
     }
   }
 }).catch(() => {});
-
-// CORRECCIÓN: Suscripción para notificaciones push
-pb.collection('notificaciones').subscribe('*', function (e) {
-  if (e.action === 'create') {
-    const data = e.record;
-    if ('Notification' in window && Notification.permission === 'granted') {
-      new Notification(data.titulo, {
-        body: data.mensaje,
-        icon: 'logo.png',
-        vibrate: [200, 100, 200]
-      });
-    }
-    toast(`🔔 ${data.titulo}`);
-  }
-}).catch(() => { });
-
 
 async function renderChat(){
   const boxPublic = $('chatBox');
@@ -1556,12 +1555,18 @@ function limpiarForm(type){
   if(type === 'subapps'){ ['s_nombre','s_icono','s_url'].forEach(i => $(i).value = ''); $('s_save').innerHTML = plus + 'Agregar'; $('s_cancel').style.display = 'none'; }
 }
 
+// NUEVO: Validación de peso al subir archivos en la galería
 $('g_save').onclick = async () => {
   const titulo = $('g_titulo').value.trim();
   const url = $('g_url').value.trim();
   const archivo = $('g_file').files[0];
   if(!titulo){ toast('Escribe un título'); return; }
   if(!url && !archivo){ toast('Indica URL o archivo'); return; }
+  
+  if(archivo && archivo.size > 10 * 1024 * 1024) {
+    toast('❌ El archivo es muy pesado (máximo 10MB). Comprime la imagen o el video.');
+    return;
+  }
 
   const formData = new FormData();
   formData.append('titulo', titulo);
@@ -1576,7 +1581,11 @@ $('g_save').onclick = async () => {
     else await pb.collection('galeria').create(formData);
     await cargarDatos(); renderTodo(); limpiarForm('galeria');
     toast('✅ Guardado');
-  } catch (e) { toast('❌ Error al guardar'); }
+  } catch (e) { 
+    console.error("Error de PocketBase:", e);
+    const errMsg = e.response?.data?.archivo?.message || "Error al guardar";
+    toast('❌ ' + errMsg); 
+  }
 };
 $('g_cancel').onclick = () => { limpiarForm('galeria'); };
 
