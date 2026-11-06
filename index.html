@@ -811,13 +811,13 @@ $('loginForm').addEventListener('submit', async e => {
     if (currentUser.role === 'admin') {
       isAdmin = true;
       $('adminNavWrap').style.display = 'block';
-      $('navItemIntranet').style.display = 'flex'; // MOSTRAR INTRANET AL ADMIN
+      $('navItemIntranet').style.display = 'flex'; 
       toast('✅ Bienvenido, Administrador');
       go('admin');
     } else {
       isAdmin = false;
       $('adminNavWrap').style.display = 'none';
-      $('navItemIntranet').style.display = 'none'; // OCULTAR INTRANET AL MILITANTE
+      $('navItemIntranet').style.display = 'none'; 
       toast('✅ Bienvenido, Militante');
       go('inicio');
     }
@@ -911,7 +911,7 @@ function cerrarSesion() {
   currentUser = null;
   isAdmin = false;
   $('adminNavWrap').style.display = 'none';
-  $('navItemIntranet').style.display = 'none'; // Ocultar intranet al cerrar sesión
+  $('navItemIntranet').style.display = 'none'; 
   $('btnLogin').style.display = 'inline-flex';
   $('btnProfile').style.display = 'none';
   $('btnLogout').style.display = 'none';
@@ -1315,7 +1315,6 @@ async function renderChat(){
   if(!boxPublic && !boxAdmin) return;
 
   try {
-    // Sin expand ni filtro de fecha para evitar errores 400
     const msgs = await pb.collection('mensajes').getList(1, 100, { sort: 'created' });
     
     const htmlMsgs = msgs.items.length
@@ -1559,7 +1558,7 @@ function checkIntranetAuth() {
   }
 }
 
-// NUEVO: Corregir la búsqueda de contactos en la Intranet
+// NUEVO: Búsqueda de contactos corregida (se filtra en el cliente para evitar error 400)
 async function loadIntranetContacts() {
   const select = $('intranetRecipient');
   if (!select) return;
@@ -1567,16 +1566,18 @@ async function loadIntranetContacts() {
   if (!currentUser || currentUser.role !== 'admin') return;
 
   try {
-    const users = await pb.collection('users').getFullList({ 
-      sort: 'nombre_completo', // <-- Corregido aquí, antes decía 'name'
-      filter: `role = "admin" && id != "${currentUser.id}"`
-    });
+    // 1. Traemos TODOS los usuarios ordenados por nombre
+    const allUsers = await pb.collection('users').getFullList({ sort: 'nombre_completo' });
+    
+    // 2. Filtramos en JS: que sean admin y que no seamos nosotros mismos
+    const users = allUsers.filter(u => u.role === 'admin' && u.id !== currentUser.id);
     
     if (users.length === 0) {
       select.innerHTML = '<option value="">No hay otros administradores disponibles</option>';
       return;
     }
 
+    // 3. Llenamos el selector
     select.innerHTML = '<option value="">Selecciona un destinatario...</option>' + 
       users.map(u => {
         const nombreVisible = u.nombre_completo || u.email || 'Admin';
@@ -1586,12 +1587,12 @@ async function loadIntranetContacts() {
     select.disabled = false;
   } catch (e) {
     console.error("Error cargando contactos:", e);
-    select.innerHTML = '<option value="">Error al cargar contactos</option>';
+    select.innerHTML = '<option value="">Error de conexión al cargar</option>';
   }
 }
 
 $('intranetLogoutBtn').onclick = () => {
-  cerrarSesion(); // Cierra sesión globalmente
+  cerrarSesion(); 
   toast('Sesión de intranet cerrada');
 };
 
