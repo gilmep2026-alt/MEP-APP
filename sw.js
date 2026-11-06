@@ -1,5 +1,5 @@
 // 1. Subimos la versión a v7 para forzar la actualización en los navegadores de los usuarios
-const CACHE_NAME = 'mep-v7'; 
+const CACHE_NAME = 'mep-v8'; 
 const ASSETS = [
   '/',
   '/index.html',
