@@ -104,7 +104,7 @@ input:not([type="file"]):not([type="checkbox"]):not([type="radio"]),select,texta
 .pass-wrap { position: relative; width: 100%; display: flex; align-items: center; } .pass-wrap input { padding-right: 45px !important; } .btn-toggle-pass { position: absolute; right: 10px; background: transparent; border: none; color: var(--gold-400); cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 5px; transition: color 0.2s; z-index: 2; } .btn-toggle-pass:hover { color: var(--gold-300); }
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 18px} @media(max-width:640px){.grid2{grid-template-columns:1fr}} .row{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}
 .btn{position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;gap:9px;background:rgba(42, 20, 80, 0.7);border:1px solid var(--glass-border);color:var(--text);padding:13px 22px;border-radius:var(--r-md);cursor:pointer;font-weight:700;font-size:14.5px;letter-spacing:0.2px;transition:all var(--dur-fast) var(--ease);white-space:nowrap;font-family:inherit;box-shadow:0 6px 20px rgba(0,0,0,0.3);} .btn .ico{width:16px;height:16px} .btn:hover{background:rgba(114, 27, 196, 0.65);border-color:var(--gold-500);transform:translateY(-2px);box-shadow:0 10px 28px rgba(81, 19, 158, 0.5);} .btn:active{transform:translateY(0) scale(0.97)} .btn.primary{background:linear-gradient(135deg, var(--gold-300) 0%, var(--gold-500) 50%, var(--gold-600) 100%);color:var(--purple-950);border-color:transparent;font-weight:900;box-shadow:0 8px 25px rgba(255, 183, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -2px 5px rgba(0,0,0,0.15);} .btn.primary:hover{background:linear-gradient(135deg, #fff 0%, var(--gold-300) 50%, var(--gold-500) 100%);box-shadow:0 14px 38px rgba(255, 183, 0, 0.6), inset 0 1px 0 rgba(255,255,255,0.8);transform:translateY(-2px);} .btn.purple{background:linear-gradient(135deg, var(--purple-700), var(--purple-800));color:#fff;border-color:var(--glass-border)} .btn.purple:hover{box-shadow:0 10px 30px rgba(114, 27, 196, 0.6)} .btn.danger{background:linear-gradient(135deg, #7f1d1d, #991b1b);border-color:#ef4444;color:#fff} .btn.danger:hover{box-shadow:0 10px 25px rgba(239, 68, 68, 0.5)} .btn.ghost{background:transparent;border-color:var(--glass-border-subtle)} .btn.sm{padding:10px 16px;font-size:13px} .btn.sm .ico{width:14px;height:14px} .btn.icon{padding:0;width:40px;height:40px} .btn.icon .ico{width:16px;height:16px} .btn.block{width:100%}
-.ag-item{position:relative;background:linear-gradient(160deg, rgba(26, 11, 48, 0.75), rgba(12, 3, 26, 0.88));border:1px solid var(--glass-border-subtle);border-radius:var(--r-lg);padding:22px;margin-bottom:16px;display:flex;gap:20px;transition:all var(--dur) var(--ease);overflow:hidden;box-shadow:var(--shadow-card);} .ag-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:5px;background:linear-gradient(180deg, var(--gold-400), var(--gold-600));box-shadow:0 0 16px var(--gold-400);} .ag-item:hover{transform:translateX(6px);border-color:var(--glass-border);box-shadow:0 18px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,183,0,0.2) inset} .ag-date{background:linear-gradient(135deg, var(--purple-700), var(--purple-800));border-radius:var(--r-md);min-width:74px;height:74px;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1;color:#fff;border:1px solid var(--glass-border);box-shadow:0 10px 25px rgba(81, 19, 158, 0.6), inset 0 1px 0 rgba(255,255,255,0.15);} .ag-date b{font-size:25px;font-weight:900;letter-spacing:-0.8px} .ag-date small{font-size:10px;font-weight:900;text-transform:uppercase;margin-top:6px;letter-spacing:1.4px;color:var(--gold-300)} .ag-body{flex:1;min-width:0} .ag-body h3{font-size:17px;font-weight:900;margin-bottom:8px;color:var(--gold-300);line-height:1.35;letter-spacing:-0.3px} .ag-meta{font-size:12.5px;color:var(--text-dim);display:flex;gap:18px;flex-wrap:wrap;margin-bottom:10px;font-weight:600} .ag-meta span{display:inline-flex;align-items:center;gap:6px} .ag-meta .ico{width:14px;height:14px;color:var(--gold-500)} .ag-body p{font-size:14px;color:var(--text-dim);line-height:1.65}
+.ag-item{position:relative;background:linear-gradient(160deg, rgba(26, 11, 48, 0.75), rgba(12, 3, 26, 0.88));border:1px solid var(--glass-border-subtle);border-radius:var(--r-lg);padding:22px;margin-bottom:16px;display:flex;gap:20px;transition:all var(--dur) var(--ease);overflow:hidden;box-shadow:var(--shadow-card); cursor:pointer;} .ag-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:5px;background:linear-gradient(180deg, var(--gold-400), var(--gold-600));box-shadow:0 0 16px var(--gold-400);} .ag-item:hover{transform:translateX(6px);border-color:var(--glass-border);box-shadow:0 18px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,183,0,0.2) inset} .ag-date{background:linear-gradient(135deg, var(--purple-700), var(--purple-800));border-radius:var(--r-md);min-width:74px;height:74px;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1;color:#fff;border:1px solid var(--glass-border);box-shadow:0 10px 25px rgba(81, 19, 158, 0.6), inset 0 1px 0 rgba(255,255,255,0.15);} .ag-date b{font-size:25px;font-weight:900;letter-spacing:-0.8px} .ag-date small{font-size:10px;font-weight:900;text-transform:uppercase;margin-top:6px;letter-spacing:1.4px;color:var(--gold-300)} .ag-body{flex:1;min-width:0} .ag-body h3{font-size:17px;font-weight:900;margin-bottom:8px;color:var(--gold-300);line-height:1.35;letter-spacing:-0.3px} .ag-meta{font-size:12.5px;color:var(--text-dim);display:flex;gap:18px;flex-wrap:wrap;margin-bottom:10px;font-weight:600} .ag-meta span{display:inline-flex;align-items:center;gap:6px} .ag-meta .ico{width:14px;height:14px;color:var(--gold-500)} .ag-body p{font-size:14px;color:var(--text-dim);line-height:1.65}
 .chat-wrap{display:flex;flex-direction:column;height:calc(100vh - 300px);min-height:440px;border-radius:var(--r-xl);overflow:hidden;border:1px solid var(--glass-border-subtle);background:linear-gradient(180deg, rgba(26, 11, 48, 0.85), rgba(10, 3, 26, 0.95));box-shadow:var(--shadow-card);backdrop-filter:blur(20px);}
 .chat-box{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:14px;scroll-behavior:smooth}
 .msg{max-width:80%;display:flex;gap:12px;align-items:flex-start; align-self:flex-start;}
@@ -498,7 +498,8 @@ body.subapp-mode { padding-top: 0 !important; overflow: hidden; } body.subapp-mo
         <div><label>Plataforma</label><input id="e_plat" placeholder="YouTube / Zoom..."></div>
         <div><label>Estado</label><select id="e_activo"><option value="si">Sí, Transmitiendo</option><option value="no">No / Programado</option></select></div>
       </div>
-      <label>Enlace</label><input id="e_url" placeholder="https://...">
+      <label>Enlace (YouTube, etc.)</label><input id="e_url" placeholder="https://...">
+      <label>Imagen de Portada (Opcional)</label><input type="file" id="e_file" accept="image/*">
       <label>Descripción</label><textarea id="e_desc" placeholder="Detalles..."></textarea>
       <div class="row">
         <button class="btn primary" id="e_save"><svg class="ico"><use href="#i-plus"/></svg>Agregar</button>
@@ -514,13 +515,22 @@ body.subapp-mode { padding-top: 0 !important; overflow: hidden; } body.subapp-mo
         <div><label>Fecha</label><input type="date" id="a_fecha"></div>
         <div><label>Hora</label><input type="time" id="a_hora"></div>
       </div>
-      <label>Nivel de la Actividad</label>
-      <select id="a_nivel">
-        <option value="Nacional">Nacional</option>
-        <option value="Regional">Regional</option>
-        <option value="Municipal">Municipal</option>
-      </select>
+      <div class="grid2">
+        <div>
+          <label>Nivel de la Actividad</label>
+          <select id="a_nivel">
+            <option value="Nacional">Nacional</option>
+            <option value="Regional">Regional</option>
+            <option value="Municipal">Municipal</option>
+          </select>
+        </div>
+        <div>
+          <label>Enlace de Reunión (Meet/Zoom)</label>
+          <input id="a_link" placeholder="https://meet.google.com/...">
+        </div>
+      </div>
       <label>Lugar</label><input id="a_lugar" placeholder="Sede / Municipio / Estado">
+      <label>Imagen de la Actividad (Opcional)</label><input type="file" id="a_file" accept="image/*">
       <label>Descripción</label><textarea id="a_desc" placeholder="Objetivos..."></textarea>
       <div class="row">
         <button class="btn primary" id="a_save"><svg class="ico"><use href="#i-plus"/></svg>Agregar</button>
@@ -546,9 +556,10 @@ body.subapp-mode { padding-top: 0 !important; overflow: hidden; } body.subapp-mo
       <h2><svg class="ico"><use href="#i-squares"/></svg>Sub-Aplicaciones</h2>
       <label>Nombre</label><input id="s_nombre" placeholder="Ej: Sistema...">
       <div class="grid2">
-        <div><label>Icono (Emoji)</label><input id="s_icono" placeholder="📝" maxlength="4"></div>
+        <div><label>Icono (Emoji - Opcional)</label><input id="s_icono" placeholder="📝" maxlength="4"></div>
         <div><label>URL</label><input id="s_url" placeholder="https://..."></div>
       </div>
+      <label>Imagen de la Sub-App (Reemplaza al emoji)</label><input type="file" id="s_file" accept="image/*">
       <div class="row">
         <button class="btn primary" id="s_save"><svg class="ico"><use href="#i-plus"/></svg>Agregar</button>
         <button class="btn" id="s_cancel" style="display:none"><svg class="ico"><use href="#i-x"/></svg>Cancelar</button>
@@ -596,6 +607,28 @@ body.subapp-mode { padding-top: 0 !important; overflow: hidden; } body.subapp-mo
     <div class="gal-grid" id="galGridPersistent"></div>
   </section>
 </main>
+
+<!-- NUEVO: Modal de Detalles de Agenda -->
+<div class="modal-overlay" id="agendaModal">
+  <div class="modal-card" style="max-width: 500px; text-align: left;">
+    <button class="modal-close" onclick="$('agendaModal').classList.remove('show')" aria-label="Cerrar"><svg class="ico"><use href="#i-x"/></svg></button>
+    <div style="text-align: center; margin-bottom: 15px;">
+      <img id="agendaModalImg" src="logo.png" style="width: 100%; height: 200px; object-fit: cover; border-radius: var(--r-md); border: 1px solid var(--glass-border); margin-bottom: 15px;">
+      <h2 id="agendaModalTitle" style="font-size: 22px; font-weight: 900; color: var(--gold-300); line-height: 1.2;"></h2>
+      <p id="agendaModalLevel" style="font-size: 12px; color: var(--text-mute); text-transform: uppercase; font-weight: bold; margin-top: 5px;"></p>
+    </div>
+    <div style="font-size: 14px; color: var(--text-dim); display: flex; flex-direction: column; gap: 10px;">
+      <p><b>Fecha y Hora:</b> <span id="agendaModalDate"></span></p>
+      <p><b>Lugar:</b> <span id="agendaModalPlace"></span></p>
+      <p style="white-space: pre-wrap; margin-top: 10px; background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px;" id="agendaModalDesc"></p>
+    </div>
+    <div class="row" style="margin-top: 20px;">
+      <a id="agendaModalLink" class="btn primary block" href="#" target="_blank" rel="noopener noreferrer" style="display:none;">
+        <svg class="ico"><use href="#i-video"/></svg> Unirse a la Videoconferencia
+      </a>
+    </div>
+  </div>
+</div>
 
 <div class="modal-overlay" id="authModal">
   <div class="modal-card">
@@ -734,12 +767,7 @@ function safeUrl(u){
 }
 
 const PB_URL = 'https://pocketbase-railway-production-6031.up.railway.app'; 
-// Configuración de PocketBase para asegurar persistencia
 const pb = new PocketBase(PB_URL);
-// Forzar el uso de localStorage para persistir la sesión incluso al recargar
-pb.authStore.onChange((token, record) => {
-    console.log("AuthStore actualizado, sesión activa:", pb.authStore.isValid);
-});
 
 const VENEZUELA_DATA = {
   "Distrito Capital": ["Libertador"],
@@ -775,6 +803,12 @@ function ytEmbed(u){
   const m = u.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|live\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})(?:[?&#]|$)/);
   return m ? 'https://www.youtube.com/embed/' + m[1] : null;
 }
+function ytThumb(u){
+  if(!u) return null;
+  const m = u.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|live\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})(?:[?&#]|$)/);
+  return m ? 'https://img.youtube.com/vi/' + m[1] + '/maxresdefault.jpg' : null;
+}
+
 function toast(msg){
   const t = $('toast');
   t.innerHTML = `<svg class="ico" style="color:var(--gold-400)"><use href="#i-check"/></svg><span>${esc(msg)}</span>`;
@@ -802,6 +836,49 @@ let DB = { galeria: [], agenda: [], reglamentos: [], envivo: [], subapps: [] };
 let isAdmin = false;
 let currentUser = null;
 
+function updateUIForUser(user) {
+    if (!user) {
+        currentUser = null;
+        isAdmin = false;
+        $('btnLogin').style.display = 'inline-flex';
+        $('btnProfile').style.display = 'none';
+        $('btnLogout').style.display = 'none';
+        $('adminNavWrap').style.display = 'none';
+        $('navItemIntranet').style.display = 'none';
+        $('chatForm').style.display = 'none';
+        $('chatLoginPrompt').style.display = 'block';
+        return;
+    }
+
+    currentUser = user;
+    isAdmin = currentUser.role === 'admin';
+    
+    $('btnLogin').style.display = 'none';
+    $('btnProfile').style.display = 'flex';
+    $('btnLogout').style.display = 'flex';
+    
+    if (isAdmin) {
+        $('adminNavWrap').style.display = 'block';
+        $('navItemIntranet').style.display = 'flex';
+    } else {
+        $('adminNavWrap').style.display = 'none';
+        $('navItemIntranet').style.display = 'none';
+    }
+
+    const nombreCorto = currentUser.nombre_completo ? currentUser.nombre_completo.split(' ')[0] : 'Perfil';
+    const fotoPerfil = currentUser.foto ? pb.files.getUrl(currentUser, currentUser.foto) : 'logo.png';
+    
+    $('topbarAvatar').src = fotoPerfil;
+    $('topbarName').textContent = nombreCorto;
+    $('topbarCargo').textContent = currentUser.cargo || 'Militante';
+    
+    initChatUI();
+}
+
+pb.authStore.onChange((token, record) => {
+    updateUIForUser(record);
+}, true); 
+
 async function cargarDatos() {
   try {
     const [galeria, agenda, reglamentos, envivo, subapps] = await Promise.all([
@@ -813,10 +890,10 @@ async function cargarDatos() {
     ]);
     
     DB.galeria = galeria.map(r => ({ id: r.id, ...r, url: r.archivo ? pb.files.getUrl(r, r.archivo) : (r.url || '') }));
-    DB.agenda = agenda.map(r => ({ id: r.id, ...r }));
+    DB.agenda = agenda.map(r => ({ id: r.id, ...r, img: r.imagen ? pb.files.getUrl(r, r.imagen) : null }));
     DB.reglamentos = reglamentos.map(r => ({ id: r.id, ...r, url: r.archivo ? pb.files.getUrl(r, r.archivo) : r.enlace }));
-    DB.envivo = envivo.map(r => ({ id: r.id, ...r }));
-    DB.subapps = subapps.map(r => ({ id: r.id, ...r }));
+    DB.envivo = envivo.map(r => ({ id: r.id, ...r, portada: r.portada ? pb.files.getUrl(r, r.portada) : null }));
+    DB.subapps = subapps.map(r => ({ id: r.id, ...r, img: r.imagen ? pb.files.getUrl(r, r.imagen) : null }));
   } catch (e) {
     console.error('Error cargando datos:', e);
   }
@@ -845,39 +922,11 @@ $('loginForm').addEventListener('submit', async e => {
   btn.textContent = 'Verificando...';
 
   try {
-    const authData = await pb.collection('users').authWithPassword(email, pass);
-    currentUser = authData.record;
-    
-    // NUEVO: Guardar la hora exacta del inicio de sesión para los 7 días
+    await pb.collection('users').authWithPassword(email, pass);
     localStorage.setItem('mep_login_time', Date.now());
 
-    if (currentUser.role === 'admin') {
-      isAdmin = true;
-      $('adminNavWrap').style.display = 'block';
-      $('navItemIntranet').style.display = 'flex';
-      toast('✅ Bienvenido, Administrador');
-      go('admin');
-    } else {
-      isAdmin = false;
-      $('adminNavWrap').style.display = 'none';
-      $('navItemIntranet').style.display = 'none';
-      toast('✅ Bienvenido, Militante');
-      go('inicio');
-    }
-    
-    const nombreCorto = currentUser.nombre_completo ? currentUser.nombre_completo.split(' ')[0] : 'Perfil';
-    const fotoPerfil = currentUser.foto ? pb.files.getUrl(currentUser, currentUser.foto) : 'logo.png';
-    
-    $('btnLogin').style.display = 'none';
-    $('btnProfile').style.display = 'flex';
-    $('btnLogout').style.display = 'flex';
-    
-    $('topbarAvatar').src = fotoPerfil;
-    $('topbarName').textContent = nombreCorto;
-    $('topbarCargo').textContent = currentUser.cargo || 'Militante';
-    
+    toast('✅ Bienvenido');
     $('authModal').classList.remove('show');
-    initChatUI(); 
     renderTodo(); 
 
   } catch (error) {
@@ -951,18 +1000,7 @@ $('profileModalClose').onclick = () => $('profileModal').classList.remove('show'
 
 function cerrarSesion() {
   pb.authStore.clear();
-  // NUEVO: Borrar el registro de tiempo para forzar un nuevo login
   localStorage.removeItem('mep_login_time');
-  
-  currentUser = null;
-  isAdmin = false;
-  $('adminNavWrap').style.display = 'none';
-  $('navItemIntranet').style.display = 'none';
-  $('btnLogin').style.display = 'inline-flex';
-  $('btnProfile').style.display = 'none';
-  $('btnLogout').style.display = 'none';
-  $('chatForm').style.display = 'none';
-  $('chatLoginPrompt').style.display = 'block';
   toast('Sesión cerrada');
   go('galeria');
 }
@@ -1111,7 +1149,7 @@ function renderNavSubapps(){
   cont.innerHTML = DB.subapps.length
     ? DB.subapps.map(s => `
         <div class="nav-item" data-subapp="${esc(s.id)}">
-          <span style="font-size:16px;line-height:1;width:18px;text-align:center;flex:none">${esc(s.icono || '🔗')}</span>
+          ${s.img ? `<img src="${esc(s.img)}" style="width:18px;height:18px;border-radius:4px;object-fit:cover;flex:none;">` : `<span style="font-size:16px;line-height:1;width:18px;text-align:center;flex:none">${esc(s.icono || '🔗')}</span>`}
           <span class="label">${esc(s.nombre)}</span>
         </div>`).join('')
     : '<div class="nav-item" style="opacity:.5;font-size:13px"><span class="label">Sin sub-apps</span></div>';
@@ -1152,7 +1190,7 @@ function renderInicio(){
   const prox = validas.slice(0, 3);
   $('inicioAgenda').innerHTML = prox.length
     ? prox.map(a => `
-        <div class="ag-item" style="margin-bottom:12px">
+        <div class="ag-item" style="margin-bottom:12px" onclick="abrirAgendaModal('${esc(a.id)}')">
           <div class="ag-date">
             <b>${esc((a.fecha||'').split(' ')[0].split('-')[2] || '--')}</b>
             <small>${mesCorto(a.fecha)}</small>
@@ -1169,9 +1207,40 @@ function renderInicio(){
     : '<p class="muted">No hay actividades próximas.</p>';
 }
 
+// NUEVO: Abrir Modal de Detalles de Agenda
+function abrirAgendaModal(id) {
+  const a = DB.agenda.find(x => x.id === id);
+  if (!a) return;
+
+  $('agendaModalTitle').textContent = a.titulo;
+  $('agendaModalLevel').textContent = `Nivel ${a.nivel || 'Nacional'}`;
+  $('agendaModalDate').textContent = `${fmtFecha(a.fecha)} a las ${a.hora || '--:--'}`;
+  $('agendaModalPlace').textContent = a.lugar || 'No especificado';
+  $('agendaModalDesc').textContent = a.descripcion || 'Sin descripción adicional.';
+
+  const img = $('agendaModalImg');
+  if (a.img) {
+    img.src = a.img;
+    img.style.display = 'block';
+  } else {
+    img.style.display = 'none';
+  }
+
+  const linkBtn = $('agendaModalLink');
+  const safeLink = safeUrl(a.link_reunion);
+  if (safeLink) {
+    linkBtn.href = safeLink;
+    linkBtn.style.display = 'inline-flex';
+  } else {
+    linkBtn.style.display = 'none';
+  }
+
+  $('agendaModal').classList.add('show');
+}
+
 function renderAgenda(){
   const htmlItem = (a) => `
-    <div class="ag-item">
+    <div class="ag-item" onclick="abrirAgendaModal('${esc(a.id)}')">
       <div class="ag-date">
         <b>${esc((a.fecha||'').split(' ')[0].split('-')[2] || '--')}</b>
         <small>${mesCorto(a.fecha)}</small>
@@ -1228,19 +1297,30 @@ function renderEnVivo(){
   }
   l.innerHTML = DB.envivo.map(v => {
     const u = safeUrl(v.url);
+    
+    // NUEVO: Lógica de miniatura
+    let portadaUrl = v.portada; // Si subieron una foto, usarla
+    if (!portadaUrl) {
+        portadaUrl = ytThumb(v.url) || 'logo.png'; // Si es YT, sacar miniatura. Si no, logo.
+    }
+
     const btnHtml = u ? `<a class="btn ${v.activo ? 'primary' : 'purple'}" href="${esc(u)}" target="_blank" rel="noopener noreferrer">
         <svg class="ico"><use href="#i-${v.activo ? 'eye' : 'external'}"/></svg>
         ${v.activo ? 'Ver Ahora' : 'Abrir Enlace'}
       </a>` : '';
+    
     return `
-    <div class="live-card ${v.activo ? 'is-live' : ''}">
-      <div class="live-dot ${v.activo ? 'on' : ''}"></div>
-      <div class="lc-body">
-        <h3>${esc(v.titulo)} ${v.activo ? '<span class="tag">EN VIVO</span>' : ''}</h3>
+    <div class="gal-card" style="margin-bottom: 20px; padding: 0;">
+      <div class="gal-media-wrap" style="position:relative;">
+        <img src="${esc(portadaUrl)}" style="width:100%; height:100%; object-fit:cover;">
+        ${v.activo ? `<div class="gal-badge" style="background: #ef4444; color: #fff; border-color: #ef4444;"><span class="live-dot on" style="width:8px;height:8px;margin-right:4px;"></span>EN VIVO</div>` : ''}
+      </div>
+      <div class="gal-info" style="padding: 20px;">
+        <h3>${esc(v.titulo)}</h3>
         ${v.plataforma ? `<div class="ag-meta"><span><svg class="ico"><use href="#i-broadcast"/></svg>${esc(v.plataforma)}</span></div>` : ''}
         ${v.descripcion ? `<p>${esc(v.descripcion)}</p>` : ''}
+        <div class="row">${btnHtml}</div>
       </div>
-      ${btnHtml}
     </div>`;
   }).join('');
 }
@@ -1521,7 +1601,7 @@ function renderAdminListas(){
   
   $('e_list').innerHTML = DB.envivo.length ? DB.envivo.map(v => `
     <div class="ad-row">
-      <span class="live-dot ${v.activo ? 'on' : ''}"></span>
+      ${v.portada ? `<img class="thumb" src="${esc(v.portada)}">` : `<span class="live-dot ${v.activo ? 'on' : ''}" style="margin:0 10px"></span>`}
       <div class="ad-txt"><b>${esc(v.titulo)}</b><small>${esc(v.plataforma || 'plataforma')}</small></div>
       <button class="btn sm icon" data-action="edit" data-type="envivo" data-id="${esc(v.id)}"><svg class="ico"><use href="#i-pencil"/></svg></button>
       <button class="btn sm icon danger" data-action="del" data-type="envivo" data-id="${esc(v.id)}"><svg class="ico"><use href="#i-trash"/></svg></button>
@@ -1536,7 +1616,7 @@ function renderAdminListas(){
 
   $('s_list').innerHTML = DB.subapps.length ? DB.subapps.map(s => `
     <div class="ad-row">
-      <div class="thumb" style="display:flex;align-items:center;justify-content:center;font-size:24px;background:transparent;border-color:var(--glass-border-subtle)">${esc(s.icono || '🔗')}</div>
+      <div class="thumb" style="display:flex;align-items:center;justify-content:center;font-size:24px;background:transparent;border-color:var(--glass-border-subtle)">${s.img ? `<img src="${esc(s.img)}" style="width:100%;height:100%;object-fit:cover;border-radius:var(--r-sm);">` : esc(s.icono || '🔗')}</div>
       <div class="ad-txt"><b>${esc(s.nombre)}</b><small>${esc(s.url)}</small></div>
       <button class="btn sm icon" data-action="edit" data-type="subapps" data-id="${esc(s.id)}"><svg class="ico"><use href="#i-pencil"/></svg></button>
       <button class="btn sm icon danger" data-action="del" data-type="subapps" data-id="${esc(s.id)}"><svg class="ico"><use href="#i-trash"/></svg></button>
@@ -1559,10 +1639,10 @@ function limpiarForm(type){
   editando[type] = null;
   const plus = '<svg class="ico"><use href="#i-plus"/></svg>';
   if(type === 'galeria'){ ['g_titulo','g_fecha','g_desc','g_url'].forEach(i => $(i).value = ''); $('g_file').value = ''; $('g_tipo').value = 'imagen'; $('g_save').innerHTML = plus + 'Agregar'; $('g_cancel').style.display = 'none'; }
-  if(type === 'envivo'){ ['e_titulo','e_plat','e_url','e_desc'].forEach(i => $(i).value = ''); $('e_activo').value = 'no'; $('e_save').innerHTML = plus + 'Agregar'; $('e_cancel').style.display = 'none'; }
-  if(type === 'agenda'){ ['a_titulo','a_fecha','a_hora','a_lugar','a_desc'].forEach(i => $(i).value = ''); $('a_nivel').value = 'Nacional'; $('a_save').innerHTML = plus + 'Agregar'; $('a_cancel').style.display = 'none'; }
+  if(type === 'envivo'){ ['e_titulo','e_plat','e_url','e_desc'].forEach(i => $(i).value = ''); $('e_activo').value = 'no'; $('e_file').value = ''; $('e_save').innerHTML = plus + 'Agregar'; $('e_cancel').style.display = 'none'; }
+  if(type === 'agenda'){ ['a_titulo','a_fecha','a_hora','a_lugar','a_desc','a_link'].forEach(i => $(i).value = ''); $('a_nivel').value = 'Nacional'; $('a_file').value = ''; $('a_save').innerHTML = plus + 'Agregar'; $('a_cancel').style.display = 'none'; }
   if(type === 'reglamentos'){ ['r_titulo','r_desc','r_url','r_texto'].forEach(i => $(i).value = ''); $('r_save').innerHTML = plus + 'Agregar'; $('r_cancel').style.display = 'none'; }
-  if(type === 'subapps'){ ['s_nombre','s_icono','s_url'].forEach(i => $(i).value = ''); $('s_save').innerHTML = plus + 'Agregar'; $('s_cancel').style.display = 'none'; }
+  if(type === 'subapps'){ ['s_nombre','s_icono','s_url'].forEach(i => $(i).value = ''); $('s_file').value = ''; $('s_save').innerHTML = plus + 'Agregar'; $('s_cancel').style.display = 'none'; }
 }
 
 $('g_save').onclick = async () => {
@@ -1602,21 +1682,70 @@ $('a_save').onclick = async () => {
   const titulo = $('a_titulo').value.trim();
   const fecha = $('a_fecha').value;
   if(!titulo || !fecha){ toast('Escribe título y fecha'); return; }
-  const payload = { 
-    titulo, fecha, 
-    hora: $('a_hora').value, 
-    nivel: $('a_nivel').value, 
-    lugar: $('a_lugar').value.trim(), 
-    descripcion: $('a_desc').value.trim() 
-  };
+  
+  const archivo = $('a_file').files[0];
+  const formData = new FormData();
+  formData.append('titulo', titulo);
+  formData.append('fecha', fecha);
+  formData.append('hora', $('a_hora').value);
+  formData.append('nivel', $('a_nivel').value);
+  formData.append('lugar', $('a_lugar').value.trim());
+  formData.append('descripcion', $('a_desc').value.trim());
+  formData.append('link_reunion', $('a_link').value.trim());
+  if(archivo) formData.append('imagen', archivo);
+
   try {
-    if(editando.agenda) await pb.collection('agenda').update(editando.agenda, payload);
-    else await pb.collection('agenda').create(payload);
+    if(editando.agenda) await pb.collection('agenda').update(editando.agenda, formData);
+    else await pb.collection('agenda').create(formData);
     await cargarDatos(); renderTodo(); limpiarForm('agenda');
     toast('✅ Guardado');
-  } catch (e) { toast('❌ Error al guardar'); }
+  } catch (e) { console.error(e); toast('❌ Error al guardar'); }
 };
 $('a_cancel').onclick = () => { limpiarForm('agenda'); };
+
+$('e_save').onclick = async () => {
+  const titulo = $('e_titulo').value.trim();
+  const url = $('e_url').value.trim();
+  if(!titulo || !url){ toast('Escribe título y URL'); return; }
+  
+  const archivo = $('e_file').files[0];
+  const formData = new FormData();
+  formData.append('titulo', titulo);
+  formData.append('url', url);
+  formData.append('plataforma', $('e_plat').value.trim());
+  formData.append('activo', $('e_activo').value === 'si');
+  formData.append('descripcion', $('e_desc').value.trim());
+  if(archivo) formData.append('portada', archivo);
+
+  try {
+    if(editando.envivo) await pb.collection('envivo').update(editando.envivo, formData);
+    else await pb.collection('envivo').create(formData);
+    await cargarDatos(); renderTodo(); limpiarForm('envivo');
+    toast('✅ Guardado');
+  } catch (e) { console.error(e); toast('❌ Error al guardar'); }
+};
+$('e_cancel').onclick = () => { limpiarForm('envivo'); };
+
+$('s_save').onclick = async () => {
+  const nombre = $('s_nombre').value.trim();
+  const url = $('s_url').value.trim();
+  if(!nombre || !url){ toast('Escribe nombre y URL'); return; }
+  
+  const archivo = $('s_file').files[0];
+  const formData = new FormData();
+  formData.append('nombre', nombre);
+  formData.append('url', url);
+  formData.append('icono', $('s_icono').value.trim() || '🔗');
+  if(archivo) formData.append('imagen', archivo);
+
+  try {
+    if(editando.subapps) await pb.collection('subapps').update(editando.subapps, formData);
+    else await pb.collection('subapps').create(formData);
+    await cargarDatos(); renderTodo(); limpiarForm('subapps');
+    toast('✅ Guardado');
+  } catch (e) { console.error(e); toast('❌ Error al guardar'); }
+};
+$('s_cancel').onclick = () => { limpiarForm('subapps'); };
 
 function checkIntranetAuth() {
   const loginView = $('intranetLoginView');
@@ -1831,36 +1960,9 @@ function renderTodo(){
 }
 
 async function init() {
-  // 1. Comprobar la sesión activa antes de cargar cualquier otra cosa
-  if (pb.authStore.isValid) {
-    const loginTime = localStorage.getItem('mep_login_time');
-    const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
-    
-    // Si ya pasaron 7 días, cerrar la sesión
-    if (loginTime && (Date.now() - parseInt(loginTime) > sevenDaysMs)) {
-        pb.authStore.clear();
-        localStorage.removeItem('mep_login_time');
-        toast('Sesión expirada. Por favor, ingresa nuevamente.');
-    } else if (!loginTime) {
-        // Si la sesión es válida pero no hay tiempo guardado, se lo asignamos ahora
-        localStorage.setItem('mep_login_time', Date.now());
-    }
-    
-    // Si sigue siendo válida, refrescamos el token
-    if (pb.authStore.isValid) {
-        try {
-            await pb.collection('users').authRefresh();
-        } catch (_) {
-            pb.authStore.clear();
-        }
-    }
-  }
-
-  // 2. Cargar datos de la base de datos
   await cargarDatos();
   renderTodo();
   
-  // 3. Comprobar aviso de instalación PWA por primera vez
   const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
   if (!isStandalone && localStorage.getItem('mep_install_prompted') !== 'true') {
       setTimeout(() => {
@@ -1868,34 +1970,19 @@ async function init() {
       }, 3000);
   }
 
-  // 4. Restaurar la interfaz si el usuario está logueado
   if (pb.authStore.isValid) {
-    currentUser = pb.authStore.record;
-    if (currentUser.role === 'admin') {
-      isAdmin = true;
-      $('adminNavWrap').style.display = 'block';
-      $('navItemIntranet').style.display = 'flex';
-    } else {
-      $('navItemIntranet').style.display = 'none';
+    const loginTime = localStorage.getItem('mep_login_time');
+    const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
+    
+    if (loginTime && (Date.now() - parseInt(loginTime) > sevenDaysMs)) {
+        pb.authStore.clear();
+        localStorage.removeItem('mep_login_time');
+        toast('Sesión expirada. Por favor, ingresa nuevamente.');
+    } else if (!loginTime) {
+        localStorage.setItem('mep_login_time', Date.now());
     }
-    
-    const nombreCorto = currentUser.nombre_completo ? currentUser.nombre_completo.split(' ')[0] : 'Perfil';
-    const fotoPerfil = currentUser.foto ? pb.files.getUrl(currentUser, currentUser.foto) : 'logo.png';
-    
-    $('btnLogin').style.display = 'none';
-    $('btnProfile').style.display = 'flex';
-    $('btnLogout').style.display = 'flex';
-    
-    $('topbarAvatar').src = fotoPerfil;
-    $('topbarName').textContent = nombreCorto;
-    $('topbarCargo').textContent = currentUser.cargo || 'Militante';
-    
-    initChatUI();
-  } else {
-      $('navItemIntranet').style.display = 'none';
   }
 
-  // 5. Mostrar términos y condiciones si es la primera vez
   const termsModal = $('termsModal');
   if (localStorage.getItem('mep_terms_accepted_v1') !== 'true') {
     termsModal.style.display = 'flex';
@@ -1906,7 +1993,6 @@ async function init() {
   });
 }
 
-// Configuración del banner de instalación PWA
 let deferredPrompt = null;
 
 window.addEventListener('beforeinstallprompt', (e) => {
@@ -1919,7 +2005,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
 
 $('installOk').onclick = async () => {
   $('installBar').classList.remove('show');
-  localStorage.setItem('mep_install_prompted', 'true'); 
+  localStorage.setItem('mep_install_prompted', 'true');
   if (deferredPrompt) {
     deferredPrompt.prompt();
     await deferredPrompt.userChoice;
@@ -1931,7 +2017,7 @@ $('installOk').onclick = async () => {
 
 $('installNo').onclick = () => {
   $('installBar').classList.remove('show');
-  localStorage.setItem('mep_install_prompted', 'true'); 
+  localStorage.setItem('mep_install_prompted', 'true');
 };
 
 window.addEventListener('load', () => {
