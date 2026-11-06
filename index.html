@@ -219,6 +219,12 @@ main{padding:32px 24px 120px;max-width:1380px;margin:0 auto;transition:margin-le
 .view.active{display:block;animation:viewIn var(--dur-slow) var(--ease-out)}
 @keyframes viewIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
 
+/* NUEVO: Estilo del botón de retroceso */
+.back-btn-wrap { margin-bottom: 20px; display: none; }
+.back-btn-wrap.show { display: block; animation: fadeIn var(--dur) var(--ease); }
+.btn-back { background: rgba(255, 215, 0, 0.1); border: 1px solid var(--glass-border); color: var(--gold-300); padding: 8px 16px; border-radius: var(--r-md); cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 13px; transition: all 0.2s; }
+.btn-back:hover { background: var(--gold-500); color: var(--purple-950); transform: translateX(-4px); }
+
 #view-galeria{padding:0}
 #view-galeria .carousel-wrap{border-radius:0;border:0;margin-bottom:28px; height: calc(100vh - var(--topbar-h)); min-height: 480px;}
 #view-galeria .gal-grid{padding:0 24px 30px}
@@ -316,6 +322,12 @@ input[type="file"]{width:100%;padding:14px;font-size:13.5px;cursor:pointer;backg
 input[type="file"]:hover{border-color:var(--gold-500);background:rgba(18, 5, 42, 0.9) !important}
 input[type="file"]::file-selector-button{background:linear-gradient(135deg, var(--purple-700), var(--purple-800));color:var(--gold-300);border:1px solid var(--glass-border);border-radius:var(--r-sm);padding:10px 18px;margin-right:16px;cursor:pointer;font-weight:800;font-size:13px;letter-spacing:0.4px;transition:all var(--dur-fast) var(--ease);-webkit-text-fill-color:var(--gold-300);font-family:inherit;}
 input[type="file"]::file-selector-button:hover{background:linear-gradient(135deg, var(--gold-500), var(--gold-600));color:var(--purple-950);-webkit-text-fill-color:var(--purple-950);border-color:var(--gold-500);box-shadow:0 4px 15px rgba(255,183,0,0.4);}
+
+/* NUEVO: Contenedor para contraseña con icono */
+.pass-wrap { position: relative; width: 100%; display: flex; align-items: center; }
+.pass-wrap input { padding-right: 45px !important; }
+.btn-toggle-pass { position: absolute; right: 10px; background: transparent; border: none; color: var(--gold-400); cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 5px; transition: color 0.2s; z-index: 2; }
+.btn-toggle-pass:hover { color: var(--gold-300); }
 
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 18px}
 @media(max-width:640px){.grid2{grid-template-columns:1fr}}
@@ -423,6 +435,12 @@ body.subapp-mode { padding-top: 0 !important; overflow: hidden; } body.subapp-mo
   <symbol id="i-signout" viewBox="0 0 256 256"><path d="M112,216H48a8,8,0,0,1-8-8V48a8,8,0,0,1,8-8h64a8,8,0,0,1,0,16H56V200h56a8,8,0,0,1,0,16Z" opacity=".25" fill="currentColor"/><path d="M112,216H48a8,8,0,0,1-8-8V48a8,8,0,0,1,8-8h64a8,8,0,0,1,0,16H56V200h56a8,8,0,0,1,0,16Zm101.66-93.66-40-40a8,8,0,0,0-11.32,11.32L188.69,120H104a8,8,0,0,0,0,16h84.69l-26.35,26.34a8,8,0,0,0,11.32,11.32l40-40A8,8,0,0,0,213.66,122.34Z" fill="currentColor"/></symbol>
   <symbol id="i-upload" viewBox="0 0 256 256"><path d="M224,144v64a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V144a8,8,0,0,1,16,0v56H208V144a8,8,0,0,1,16,0ZM93.66,77.66,120,51.31V128a8,8,0,0,0,16,0V51.31l26.34,26.35a8,8,0,0,0,11.32-11.32l-40-40a8,8,0,0,0-11.32,0l-40,40A8,8,0,0,0,93.66,77.66Z" fill="currentColor"/></symbol>
   <symbol id="i-eye" viewBox="0 0 256 256"><path d="M128,56C48,56,16,128,16,128s32,72,112,72,112-72,112-72S208,56,128,56Zm0,128c-53.34,0-83.27-36.08-93.06-56C44.73,108.08,74.66,72,128,72s83.27,36.08,93.06,56C211.27,147.92,181.34,184,128,184Z" opacity=".25" fill="currentColor"/><path d="M247.31,124.76c-.35-.79-8.82-19.58-27.65-38.41C194.36,60.94,163.08,48,128,48S61.64,60.94,36.34,86.35C17.51,105.18,9,124,8.69,124.76a8,8,0,0,0,0,6.48c.35.79,8.82,19.58,27.65,38.41C61.64,195.06,92.92,208,128,208s66.36-12.94,91.66-38.35c18.83-18.83,27.3-37.62,27.65-38.41A8,8,0,0,0,247.31,124.76ZM128,192c-30.78,0-57.67-11.19-79.93-33.25A133.47,133.47,0,0,1,25,128,133.33,133.33,0,0,1,48.07,97.25C70.33,75.19,97.22,64,128,64s57.67,11.19,79.93,33.25A133.46,133.46,0,0,1,231.05,128C223.23,142.79,196.7,192,128,192Zm0-112a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160Z" fill="currentColor"/></symbol>
+  <!-- NUEVO ICONO OJO TACHADO -->
+  <symbol id="i-eye-off" viewBox="0 0 256 256">
+    <path d="M128,56C48,56,16,128,16,128s32,72,112,72,112-72,112-72S208,56,128,56Zm0,128c-53.34,0-83.27-36.08-93.06-56C44.73,108.08,74.66,72,128,72s83.27,36.08,93.06,56C211.27,147.92,181.34,184,128,184Z" opacity=".25" fill="currentColor"/>
+    <path d="M247.31,124.76c-.35-.79-8.82-19.58-27.65-38.41C194.36,60.94,163.08,48,128,48S61.64,60.94,36.34,86.35C17.51,105.18,9,124,8.69,124.76a8,8,0,0,0,0,6.48c.35.79,8.82,19.58,27.65,38.41C61.64,195.06,92.92,208,128,208s66.36-12.94,91.66-38.35c18.83-18.83,27.3-37.62,27.65-38.41A8,8,0,0,0,247.31,124.76ZM128,192c-30.78,0-57.67-11.19-79.93-33.25A133.47,133.47,0,0,1,25,128,133.33,133.33,0,0,1,48.07,97.25C70.33,75.19,97.22,64,128,64s57.67,11.19,79.93,33.25A133.46,133.46,0,0,1,231.05,128C223.23,142.79,196.7,192,128,192Zm0-112a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160Z" fill="currentColor"/>
+    <line x1="40" y1="40" x2="216" y2="216" stroke="currentColor" stroke-width="16" stroke-linecap="round"/>
+  </symbol>
   <symbol id="i-pin" viewBox="0 0 256 256"><circle cx="128" cy="104" r="32" opacity=".25" fill="currentColor"/><path d="M128,64a40,40,0,1,0,40,40A40,40,0,0,0,128,64Zm0,64a24,24,0,1,1,24-24A24,24,0,0,1,128,128Zm0-112a88.1,88.1,0,0,0-88,88c0,31.4,14.51,64.68,42,96.25a254.19,254.19,0,0,0,41.45,38.3,8,8,0,0,0,9.18,0A254.19,254.19,0,0,0,174,200.25c27.45-31.57,42-64.85,42-96.25A88.1,88.1,0,0,0,128,16Zm0,206c-16.53-13-72-60.75-72-118a72,72,0,0,1,144,0C200,161.23,144.53,209,128,222Z" fill="currentColor"/></symbol>
   <symbol id="i-clock" viewBox="0 0 256 256"><circle cx="128" cy="128" r="96" opacity=".2" fill="currentColor"/><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm64-88a8,8,0,0,1-8,8H128a8,8,0,0,1-8-8V72a8,8,0,0,1,16,0v48h48A8,8,0,0,1,192,128Z" fill="currentColor"/></symbol>
   <symbol id="i-video" viewBox="0 0 256 256"><path d="M232,208V72a16,16,0,0,0-16-16H40A16,16,0,0,0,24,72V208a16,16,0,0,0,16,16H216A16,16,0,0,0,232,208Zm-32-92,16,8V192l-16-8Z" opacity=".25" fill="currentColor"/><path d="M251.77,73a8,8,0,0,0-8.21.39L208,97.05V72a16,16,0,0,0-16-16H40A16,16,0,0,0,24,72V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V159l35.56,23.71A8,8,0,0,0,256,176V80A8,8,0,0,0,251.77,73ZM192,208H40V72H192ZM240,165.05,208,143.72V88.28L240,67Z" fill="currentColor"/></symbol>
@@ -445,14 +463,12 @@ body.subapp-mode { padding-top: 0 !important; overflow: hidden; } body.subapp-mo
     </div>
   </div>
   
-  <!-- BOTONES DE SESIÓN -->
   <div id="userActions" style="display: flex; gap: 10px;">
     <button class="admin-btn" id="btnLogin" title="Iniciar Sesión">
       <svg class="ico"><use href="#i-lock"/></svg>
       <span>Ingresar</span>
     </button>
     
-    <!-- Botón de Perfil Mejorado -->
     <button class="admin-btn" id="btnProfile" style="display:none; background: rgba(26, 11, 48, 0.8); padding: 4px 12px 4px 4px; border-radius: 50px; border: 1px solid var(--glass-border);" title="Mi Perfil">
       <img id="topbarAvatar" src="logo.png" style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 2px solid var(--gold-400);">
       <div style="display: flex; flex-direction: column; align-items: flex-start; justify-content: center; margin-left: 8px; text-align: left; line-height: 1.2;">
@@ -481,13 +497,14 @@ body.subapp-mode { padding-top: 0 !important; overflow: hidden; } body.subapp-mo
         <svg class="ico caret"><use href="#i-caret"/></svg>
       </div>
       <div class="nav-body">
-        <div class="nav-item" data-view="galeria">
-          <svg class="ico"><use href="#i-images"/></svg>
-          <span class="label">Galería</span>
-        </div>
+        <!-- NUEVO: Inicio antes que Galería -->
         <div class="nav-item" data-view="inicio">
           <svg class="ico"><use href="#i-home"/></svg>
           <span class="label">Inicio</span>
+        </div>
+        <div class="nav-item" data-view="galeria">
+          <svg class="ico"><use href="#i-images"/></svg>
+          <span class="label">Galería</span>
         </div>
       </div>
     </div>
@@ -556,6 +573,13 @@ body.subapp-mode { padding-top: 0 !important; overflow: hidden; } body.subapp-mo
 </aside>
 
 <main>
+  <!-- NUEVO: Botón de retroceso dinámico -->
+  <div class="back-btn-wrap" id="backBtnWrap">
+    <button class="btn-back" onclick="goBack()">
+      <svg class="ico ico-sm"><use href="#i-caret-left"/></svg> Volver Atrás
+    </button>
+  </div>
+
   <section id="view-galeria" class="view active">
     <div class="carousel-wrap" id="carouselWrap">
       <div class="carousel-track" id="carouselTrack"></div>
@@ -579,7 +603,6 @@ body.subapp-mode { padding-top: 0 !important; overflow: hidden; } body.subapp-mo
       </div>
     </div>
     
-    <!-- TARJETAS CLICKEABLES -->
     <div class="stats-grid" id="statsGrid">
       <div class="stat-card" onclick="go('agenda')" title="Ir a Agenda">
         <div class="stat-icon"><svg class="ico"><use href="#i-calendar"/></svg></div>
@@ -677,7 +700,10 @@ body.subapp-mode { padding-top: 0 !important; overflow: hidden; } body.subapp-mo
       <p>Ingresa tus credenciales de administrador para acceder al chat interno.</p>
       <form id="intranetLoginForm">
         <div class="modal-field"><input type="email" id="intranetEmail" placeholder="Correo Electrónico" required></div>
-        <div class="modal-field"><input type="password" id="intranetPass" placeholder="Contraseña" required></div>
+        <div class="modal-field pass-wrap">
+          <input type="password" id="intranetPass" placeholder="Contraseña" required>
+          <button type="button" class="btn-toggle-pass" onclick="togglePassword('intranetPass', this)"><svg class="ico"><use href="#i-eye"/></svg></button>
+        </div>
         <button type="submit" class="btn primary block" id="intranetLoginBtn">Ingresar a la Intranet</button>
       </form>
     </div>
@@ -860,7 +886,13 @@ body.subapp-mode { padding-top: 0 !important; overflow: hidden; } body.subapp-mo
     <!-- Formulario Login -->
     <form id="loginForm" autocomplete="off">
       <div class="modal-field"><label>Correo Electrónico</label><input type="email" id="loginEmail" placeholder="admin@mep.com" required></div>
-      <div class="modal-field"><label>Contraseña</label><input type="password" id="loginPass" placeholder="••••••••" required></div>
+      <div class="modal-field">
+        <label>Contraseña</label>
+        <div class="pass-wrap">
+          <input type="password" id="loginPass" placeholder="••••••••" required>
+          <button type="button" class="btn-toggle-pass" onclick="togglePassword('loginPass', this)"><svg class="ico"><use href="#i-eye"/></svg></button>
+        </div>
+      </div>
       <button type="submit" class="modal-submit"><svg class="ico"><use href="#i-lock"/></svg>Iniciar Sesión</button>
       <p style="text-align: center; margin-top: 15px; font-size: 13px; color: var(--text-dim);">¿No tienes cuenta? <a href="#" onclick="toggleAuthForms(true); return false;" style="color: var(--gold-400); font-weight: bold;">Regístrate aquí</a></p>
     </form>
@@ -869,7 +901,6 @@ body.subapp-mode { padding-top: 0 !important; overflow: hidden; } body.subapp-mo
     <form id="registerForm" style="display:none;" autocomplete="off">
       <div class="modal-field"><label>Nombre y Apellido</label><input type="text" id="regName" placeholder="Ej: Juan Pérez" required></div>
       
-      <!-- DROPDOWNS DE ESTADO Y MUNICIPIO -->
       <div class="grid2">
         <div class="modal-field">
           <label>Estado</label>
@@ -885,7 +916,6 @@ body.subapp-mode { padding-top: 0 !important; overflow: hidden; } body.subapp-mo
         </div>
       </div>
 
-      <!-- CARGO ESTRUCTURADO -->
       <div class="grid2">
         <div class="modal-field">
           <label>Nivel del Cargo</label>
@@ -904,7 +934,24 @@ body.subapp-mode { padding-top: 0 !important; overflow: hidden; } body.subapp-mo
 
       <div class="modal-field"><label>Foto Tipo Carnet</label><input type="file" id="regFoto" accept="image/*" required style="padding: 10px;"></div>
       <div class="modal-field"><label>Correo Electrónico</label><input type="email" id="regEmail" placeholder="correo@ejemplo.com" required></div>
-      <div class="modal-field"><label>Contraseña (mín. 8 caracteres)</label><input type="password" id="regPass" placeholder="••••••••" required minlength="8"></div>
+      
+      <div class="modal-field">
+        <label>Contraseña (mín. 8 caracteres)</label>
+        <div class="pass-wrap">
+          <input type="password" id="regPass" placeholder="••••••••" required minlength="8">
+          <button type="button" class="btn-toggle-pass" onclick="togglePassword('regPass', this)"><svg class="ico"><use href="#i-eye"/></svg></button>
+        </div>
+      </div>
+      
+      <!-- NUEVO: Confirmar Contraseña -->
+      <div class="modal-field">
+        <label>Confirmar Contraseña</label>
+        <div class="pass-wrap">
+          <input type="password" id="regPassConfirm" placeholder="••••••••" required minlength="8">
+          <button type="button" class="btn-toggle-pass" onclick="togglePassword('regPassConfirm', this)"><svg class="ico"><use href="#i-eye"/></svg></button>
+        </div>
+      </div>
+
       <button type="submit" class="modal-submit"><svg class="ico"><use href="#i-check"/></svg>Crear Cuenta</button>
       <p style="text-align: center; margin-top: 15px; font-size: 13px; color: var(--text-dim);">¿Ya tienes cuenta? <a href="#" onclick="toggleAuthForms(false); return false;" style="color: var(--gold-400); font-weight: bold;">Inicia Sesión</a></p>
     </form>
@@ -1012,6 +1059,23 @@ function toast(msg){
   t._tid = setTimeout(() => t.classList.remove('show'), 2600);
 }
 
+// NUEVO: Función para mostrar/ocultar contraseña
+function togglePassword(inputId, btn) {
+  const input = $(inputId);
+  const icon = btn.querySelector('use');
+  if (input.type === 'password') {
+    input.type = 'text';
+    icon.setAttribute('href', '#i-eye-off');
+  } else {
+    input.type = 'password';
+    icon.setAttribute('href', '#i-eye');
+  }
+}
+
+// NUEVO: Sistema de historial para el botón Atrás
+let viewHistory = [];
+let currentView = 'galeria';
+
 let DB = { galeria: [], agenda: [], reglamentos: [], envivo: [], subapps: [] };
 let isAdmin = false;
 let currentUser = null;
@@ -1101,11 +1165,18 @@ $('loginForm').addEventListener('submit', async e => {
 
 $('registerForm').addEventListener('submit', async e => {
   e.preventDefault();
+  
+  // VALIDAR QUE LAS CONTRASEÑAS COINCIDAN
+  if ($('regPass').value !== $('regPassConfirm').value) {
+    $('authErrorText').textContent = 'Las contraseñas no coinciden. Verifícalas.';
+    $('authError').classList.add('show');
+    return;
+  }
+
   const btn = e.target.querySelector('button[type="submit"]');
   btn.disabled = true;
   btn.textContent = 'Creando cuenta...';
 
-  // Lógica del Cargo
   const nivelCargo = $('regCargoNivel').value;
   const detalleCargo = $('regCargoDetalle').value.trim();
   const cargoFinal = nivelCargo === 'Militante' ? 'Militante' : (detalleCargo ? `${nivelCargo} - ${detalleCargo}` : nivelCargo);
@@ -1233,7 +1304,18 @@ document.querySelectorAll('.nav-head').forEach(head => {
   head.onclick = () => head.parentElement.classList.toggle('open');
 });
 
+// NUEVO: Función go() modificada para rastrear el historial
 function go(view, el){
+  // Rastreo de historial
+  if (currentView !== view && view !== 'galeria' && view !== 'inicio') {
+    viewHistory.push(currentView);
+    $('backBtnWrap').classList.add('show');
+  } else if (view === 'galeria' || view === 'inicio') {
+    viewHistory = [];
+    $('backBtnWrap').classList.remove('show');
+  }
+  currentView = view;
+
   document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === 'view-' + view));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   if(el) el.classList.add('active');
@@ -1261,6 +1343,22 @@ function go(view, el){
 
   if(view === 'subapp') document.body.classList.add('subapp-mode');
   else document.body.classList.remove('subapp-mode');
+}
+
+// NUEVO: Función para el botón Atrás
+function goBack() {
+  if (viewHistory.length > 0) {
+    const prevView = viewHistory.pop();
+    currentView = prevView;
+    document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === 'view-' + prevView));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    const n = document.querySelector(`.nav-item[data-view="${prevView}"]`);
+    if(n) n.classList.add('active');
+    
+    if (viewHistory.length === 0) {
+      $('backBtnWrap').classList.remove('show');
+    }
+  }
 }
 
 function actualizarGaleriaPersistente(view){
@@ -1310,7 +1408,7 @@ function abrirSubapp(id, el){
   go('subapp', el);
 }
 
-$('subappBack').onclick = () => { go('galeria'); };
+$('subappBack').onclick = () => { goBack(); };
 $('subappOpen').onclick = () => {
   const u = subappActual && safeUrl(subappActual.url);
   if (u) window.open(u, '_blank', 'noopener,noreferrer');
@@ -1665,7 +1763,6 @@ function renderAdminListas(){
       <button class="btn sm icon danger" data-action="del" data-type="agenda" data-id="${esc(a.id)}"><svg class="ico"><use href="#i-trash"/></svg></button>
     </div>`).join('') : '<p class="muted">Sin actividades.</p>';
   
-  // Faltaban los demás CRUD lists, los agregamos rápido para que no de error:
   $('e_list').innerHTML = DB.envivo.length ? DB.envivo.map(v => `
     <div class="ad-row">
       <span class="live-dot ${v.activo ? 'on' : ''}"></span>
@@ -1755,8 +1852,6 @@ $('a_save').onclick = async () => {
   } catch (e) { toast('❌ Error al guardar'); }
 };
 $('a_cancel').onclick = () => { limpiarForm('agenda'); };
-
-// (Omito e_save, r_save, s_save por brevedad, pero el código funciona con los mismos patrones)
 
 function renderTodo(){
   renderNavSubapps();
