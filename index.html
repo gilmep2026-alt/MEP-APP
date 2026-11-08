@@ -132,7 +132,7 @@ body.subapp-mode { padding-top: 0 !important; overflow: hidden; } body.subapp-mo
 .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:linear-gradient(135deg, var(--purple-700), var(--purple-800));color:#fff;padding:15px 26px;border-radius:var(--r-full);border:1px solid var(--gold-400);box-shadow:0 22px 60px rgba(0,0,0,0.8), var(--shadow-gold);font-size:14px;font-weight:800;z-index:100;transition:transform var(--dur-slow) var(--ease-spring), opacity var(--dur) var(--ease);opacity:0;pointer-events:none;max-width:90vw;display:inline-flex;align-items:center;gap:10px;} .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 .persistent-gallery{margin-top:50px;padding-top:36px;border-top:1px dashed var(--glass-border);position:relative;animation:viewIn var(--dur-slow) var(--ease-out);} .persistent-gallery::before{content:'';position:absolute;top:-1px;left:0;width:120px;height:2px;background:linear-gradient(90deg, var(--gold-500), transparent);box-shadow:0 0 16px var(--gold-400);} .persistent-gallery .pg-head{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:26px;flex-wrap:wrap;} .persistent-gallery .pg-title{display:flex;align-items:center;gap:16px;min-width:0} .persistent-gallery .pg-title .pg-ico{background:linear-gradient(135deg, var(--gold-300), var(--gold-600));color:var(--purple-950);width:52px;height:52px;flex:none;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 28px rgba(255, 183, 0, 0.45), inset 0 1px 0 rgba(255,255,255,0.6);} .persistent-gallery .pg-title .pg-ico .ico{width:26px;height:26px} .persistent-gallery .pg-title h2{font-size:21px;font-weight:900;letter-spacing:-0.5px;color:#fff;line-height:1.2;margin:0} .persistent-gallery .pg-title h2 .accent{background:linear-gradient(180deg, var(--gold-400), var(--gold-600));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent} .persistent-gallery .pg-title p{font-size:13.5px;color:var(--text-mute);margin-top:4px;font-weight:600} .persistent-gallery .pg-badge{background:rgba(255, 183, 0, 0.12);border:1px solid var(--glass-border);color:var(--gold-300);padding:8px 16px;border-radius:var(--r-full);font-size:11.5px;font-weight:900;text-transform:uppercase;letter-spacing:1.2px;display:inline-flex;align-items:center;gap:8px;white-space:nowrap;} .persistent-gallery .pg-badge::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--gold-400);box-shadow:0 0 12px var(--gold-400);animation:pgDot 2s ease-in-out infinite;} @keyframes pgDot{50%{opacity:0.35}}
 .intranet-login-card {max-width: 400px; margin: 40px auto; background: var(--surface-1); padding: 30px; border-radius: var(--r-xl); border: 1px solid var(--glass-border); text-align: center;} .intranet-login-card .ico-xl { color: var(--gold-400); margin-bottom: 15px; } .intranet-login-card h2 { font-size: 20px; margin-bottom: 10px; color: #fff; } .intranet-login-card p { font-size: 14px; color: var(--text-dim); margin-bottom: 20px; }
-@media(min-width:961px){ .sidebar{transform:none} .overlay{display:none} main{margin-left:var(--sidebar-w);padding:36px 36px 120px} body.sidebar-collapsed main{margin-left:var(--sidebar-w-collapsed)} #btnMenu{display:none} #view-galeria{padding:0;margin-left:var(--sidebar-w);margin-top:-36px;padding-top:0} body.sidebar-collapsed #view-galeria{margin-left:var(--sidebar-w-collapsed)} #view-galeria .carousel-wrap{height:min(58vh, 580px);max-height:580px} }
+@media(min-width:961px){ .sidebar{transform:none} .overlay{display:none} main{margin-left:var(--sidebar-w);padding:36px 36px 120px} body.sidebar-collapsed main{margin-left:var(--sidebar-w-collapsed)} #btnMenu{display:none} #view-galeria{padding:0;margin-top:-36px;margin-right:-36px;padding-top:0} #view-galeria .carousel-wrap{height:min(55vh, 550px);max-height:550px;border-radius:0 0 24px 24px} }
 @media(max-width:960px){ .sidebar{transform:translateX(-105%);box-shadow:0 0 70px rgba(0,0,0,0.8)} .sidebar.open{transform:translateX(0)} main{padding:24px 18px 100px} #view-galeria{padding:0} #view-galeria .carousel-wrap{margin-left:-18px;margin-right:-18px} #view-galeria .gal-grid{padding:0 18px 24px} .page-head h1{font-size:26px} .carousel-wrap{height:calc(100vh - var(--topbar-h));min-height:400px;max-height:680px} .carousel-caption{padding:24px 24px 64px} .carousel-caption h3{font-size:21px} .carousel-caption p{font-size:13.5px} .carousel-btn{width:46px;height:46px} .gal-grid{grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px} .persistent-gallery .pg-title h2{font-size:18px} }
 @media(max-width:600px){ 
   .brand-text-wrap { display: none !important; } 
@@ -1358,45 +1358,71 @@ function construirCarruselHTML(){
   }).join('');
 }
 
+let carruselTimer = null;
+
 function renderCarrusel(){
   const track = $('carouselTrack');
   const wrap = $('carouselWrap');
   const dots = $('carouselDots');
   const controls = $('carouselControls');
+  
   if(!DB.galeria.length){
     track.innerHTML = construirCarruselHTML();
     dots.style.display = 'none'; controls.style.display = 'none';
     return;
   }
+  
   carruselSlides = DB.galeria;
   track.innerHTML = construirCarruselHTML();
   dots.style.display = 'flex'; controls.style.display = 'flex';
   dots.innerHTML = DB.galeria.map((_, i) => `<button class="carousel-dot ${i === 0 ? 'active' : ''}" data-dot="${i}"></button>`).join('');
   carruselIndex = 0;
   track.style.transform = `translateX(0%)`;
+
+  function moverA(index) {
+    carruselIndex = index;
+    track.style.transition = 'transform 0.9s cubic-bezier(0.65, 0, 0.35, 1)';
+    track.style.transform = `translateX(-${carruselIndex * 100}%)`;
+    document.querySelectorAll('.carousel-dot').forEach((d, i) => d.classList.toggle('active', i === carruselIndex));
+  }
+
   dots.querySelectorAll('[data-dot]').forEach(dot => {
     dot.onclick = () => {
-      carruselIndex = +dot.dataset.dot;
-      track.style.transition = 'transform 0.9s cubic-bezier(0.65, 0, 0.35, 1)';
-      track.style.transform = `translateX(-${carruselIndex * 100}%)`;
-      dots.querySelectorAll('.carousel-dot').forEach((d, i) => d.classList.toggle('active', i === carruselIndex));
+      moverA(+dot.dataset.dot);
+      iniciarAutoplay(); // Reinicia el timer al hacer clic
     };
   });
 
   $('carouselPrev').onclick = () => {
     if(carruselSlides.length === 0) return;
-    carruselIndex = (carruselIndex - 1 + carruselSlides.length) % carruselSlides.length;
-    track.style.transition = 'transform 0.9s cubic-bezier(0.65, 0, 0.35, 1)';
-    track.style.transform = `translateX(-${carruselIndex * 100}%)`;
-    dots.querySelectorAll('.carousel-dot').forEach((d, i) => d.classList.toggle('active', i === carruselIndex));
+    moverA((carruselIndex - 1 + carruselSlides.length) % carruselSlides.length);
+    iniciarAutoplay();
   };
+  
   $('carouselNext').onclick = () => {
     if(carruselSlides.length === 0) return;
-    carruselIndex = (carruselIndex + 1) % carruselSlides.length;
-    track.style.transition = 'transform 0.9s cubic-bezier(0.65, 0, 0.35, 1)';
-    track.style.transform = `translateX(-${carruselIndex * 100}%)`;
-    dots.querySelectorAll('.carousel-dot').forEach((d, i) => d.classList.toggle('active', i === carruselIndex));
+    moverA((carruselIndex + 1) % carruselSlides.length);
+    iniciarAutoplay();
   };
+
+  // Lógica del Autoplay
+  function iniciarAutoplay() {
+    clearInterval(carruselTimer);
+    if (carruselSlides.length <= 1) return;
+    carruselTimer = setInterval(() => {
+      if (currentView === 'galeria') {
+        moverA((carruselIndex + 1) % carruselSlides.length);
+      }
+    }, 5000); // Cambia cada 5 segundos
+  }
+
+  iniciarAutoplay();
+
+  // Pausar al pasar el mouse
+  if(wrap) {
+    wrap.onmouseenter = () => clearInterval(carruselTimer);
+    wrap.onmouseleave = () => iniciarAutoplay();
+  }
 }
 
 function initChatUI() {
