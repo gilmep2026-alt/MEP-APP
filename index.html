@@ -532,6 +532,7 @@ body.subapp-mode { padding-top: 0 !important; overflow: hidden; } body.subapp-mo
         <option value="Municipal">Municipal</option>
       </select>
       <label>Lugar</label><input id="a_lugar" placeholder="Sede / Municipio / Estado">
+      <label>Enlace de la Actividad (Opcional)</label><input id="a_enlace" placeholder="https://zoom.us/...">
       <label>Descripción</label><textarea id="a_desc" placeholder="Objetivos..."></textarea>
       <div class="row">
         <button class="btn primary" id="a_save"><svg class="ico"><use href="#i-plus"/></svg>Agregar</button>
@@ -1181,6 +1182,7 @@ function renderInicio(){
           <div class="ag-full-desc">
             <b style="color: var(--gold-300);">Descripción:</b><br><br>
             ${a.descripcion ? esc(a.descripcion).replace(/\n/g, '<br>') : 'No hay detalles adicionales.'}
+            ${a.enlace ? `<div class="row" style="margin-top: 15px;"><a href="${esc(a.enlace)}" target="_blank" rel="noopener noreferrer" class="btn sm primary"><svg class="ico"><use href="#i-external"/></svg> Abrir Enlace de la Actividad</a></div>` : ''}
           </div>
         </details>`).join('')
     : '<p class="muted">No hay actividades próximas.</p>';
@@ -1207,6 +1209,7 @@ function renderAgenda(){
       <div class="ag-full-desc">
         <b style="color: var(--gold-300);">Descripción:</b><br><br>
         ${a.descripcion ? esc(a.descripcion).replace(/\n/g, '<br>') : 'No hay detalles adicionales.'}
+        ${a.enlace ? `<div class="row" style="margin-top: 15px;"><a href="${esc(a.enlace)}" target="_blank" rel="noopener noreferrer" class="btn sm primary"><svg class="ico"><use href="#i-external"/></svg> Abrir Enlace de la Actividad</a></div>` : ''}
       </div>
     </details>`;
 
@@ -1583,7 +1586,7 @@ function limpiarForm(type){
   const plus = '<svg class="ico"><use href="#i-plus"/></svg>';
   if(type === 'galeria'){ ['g_titulo','g_fecha','g_desc','g_url'].forEach(i => $(i).value = ''); $('g_file').value = ''; $('g_tipo').value = 'imagen'; $('g_save').innerHTML = plus + 'Agregar'; $('g_cancel').style.display = 'none'; }
   if(type === 'envivo'){ ['e_titulo','e_plat','e_url','e_desc'].forEach(i => $(i).value = ''); $('e_activo').value = 'no'; $('e_save').innerHTML = plus + 'Agregar'; $('e_cancel').style.display = 'none'; }
-  if(type === 'agenda'){ ['a_titulo','a_fecha','a_hora','a_lugar','a_desc'].forEach(i => $(i).value = ''); $('a_nivel').value = 'Nacional'; $('a_save').innerHTML = plus + 'Agregar'; $('a_cancel').style.display = 'none'; }
+  if(type === 'agenda'){ ['a_titulo','a_fecha','a_hora','a_lugar','a_enlace','a_desc'].forEach(i => $(i).value = ''); $('a_nivel').value = 'Nacional'; $('a_save').innerHTML = plus + 'Agregar'; $('a_cancel').style.display = 'none'; }
   if(type === 'reglamentos'){ ['r_titulo','r_desc','r_url','r_texto'].forEach(i => $(i).value = ''); $('r_save').innerHTML = plus + 'Agregar'; $('r_cancel').style.display = 'none'; }
   if(type === 'subapps'){ ['s_nombre','s_icono','s_url'].forEach(i => $(i).value = ''); $('s_save').innerHTML = plus + 'Agregar'; $('s_cancel').style.display = 'none'; }
 }
@@ -1630,6 +1633,7 @@ $('a_save').onclick = async () => {
     hora: $('a_hora').value, 
     nivel: $('a_nivel').value, 
     lugar: $('a_lugar').value.trim(), 
+    enlace: $('a_enlace').value.trim(), 
     descripcion: $('a_desc').value.trim() 
   };
   try {
