@@ -8,7 +8,6 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="MEP">
-<!-- NUEVO: Se agregó https://cdn.jsdelivr.net a connect-src para solucionar el error de la Consola -->
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://pocketbase-railway-production-6031.up.railway.app wss://pocketbase-railway-production-6031.up.railway.app https://cdn.jsdelivr.net; frame-src https://www.youtube.com; frame-ancestors 'none'; base-uri 'self'; object-src 'none';">
 <link rel="apple-touch-icon" href="logo.png">
 <link rel="manifest" href="manifest.json">
@@ -105,7 +104,18 @@ input:not([type="file"]):not([type="checkbox"]):not([type="radio"]),select,texta
 .pass-wrap { position: relative; width: 100%; display: flex; align-items: center; } .pass-wrap input { padding-right: 45px !important; } .btn-toggle-pass { position: absolute; right: 10px; background: transparent; border: none; color: var(--gold-400); cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 5px; transition: color 0.2s; z-index: 2; } .btn-toggle-pass:hover { color: var(--gold-300); }
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 18px} @media(max-width:640px){.grid2{grid-template-columns:1fr}} .row{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}
 .btn{position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;gap:9px;background:rgba(42, 20, 80, 0.7);border:1px solid var(--glass-border);color:var(--text);padding:13px 22px;border-radius:var(--r-md);cursor:pointer;font-weight:700;font-size:14.5px;letter-spacing:0.2px;transition:all var(--dur-fast) var(--ease);white-space:nowrap;font-family:inherit;box-shadow:0 6px 20px rgba(0,0,0,0.3);} .btn .ico{width:16px;height:16px} .btn:hover{background:rgba(114, 27, 196, 0.65);border-color:var(--gold-500);transform:translateY(-2px);box-shadow:0 10px 28px rgba(81, 19, 158, 0.5);} .btn:active{transform:translateY(0) scale(0.97)} .btn.primary{background:linear-gradient(135deg, var(--gold-300) 0%, var(--gold-500) 50%, var(--gold-600) 100%);color:var(--purple-950);border-color:transparent;font-weight:900;box-shadow:0 8px 25px rgba(255, 183, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -2px 5px rgba(0,0,0,0.15);} .btn.primary:hover{background:linear-gradient(135deg, #fff 0%, var(--gold-300) 50%, var(--gold-500) 100%);box-shadow:0 14px 38px rgba(255, 183, 0, 0.6), inset 0 1px 0 rgba(255,255,255,0.8);transform:translateY(-2px);} .btn.purple{background:linear-gradient(135deg, var(--purple-700), var(--purple-800));color:#fff;border-color:var(--glass-border)} .btn.purple:hover{box-shadow:0 10px 30px rgba(114, 27, 196, 0.6)} .btn.danger{background:linear-gradient(135deg, #7f1d1d, #991b1b);border-color:#ef4444;color:#fff} .btn.danger:hover{box-shadow:0 10px 25px rgba(239, 68, 68, 0.5)} .btn.ghost{background:transparent;border-color:var(--glass-border-subtle)} .btn.sm{padding:10px 16px;font-size:13px} .btn.sm .ico{width:14px;height:14px} .btn.icon{padding:0;width:40px;height:40px} .btn.icon .ico{width:16px;height:16px} .btn.block{width:100%}
-.ag-item{position:relative;background:linear-gradient(160deg, rgba(26, 11, 48, 0.75), rgba(12, 3, 26, 0.88));border:1px solid var(--glass-border-subtle);border-radius:var(--r-lg);padding:22px;margin-bottom:16px;display:flex;gap:20px;transition:all var(--dur) var(--ease);overflow:hidden;box-shadow:var(--shadow-card);} .ag-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:5px;background:linear-gradient(180deg, var(--gold-400), var(--gold-600));box-shadow:0 0 16px var(--gold-400);} .ag-item:hover{transform:translateX(6px);border-color:var(--glass-border);box-shadow:0 18px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,183,0,0.2) inset} .ag-date{background:linear-gradient(135deg, var(--purple-700), var(--purple-800));border-radius:var(--r-md);min-width:74px;height:74px;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1;color:#fff;border:1px solid var(--glass-border);box-shadow:0 10px 25px rgba(81, 19, 158, 0.6), inset 0 1px 0 rgba(255,255,255,0.15);} .ag-date b{font-size:25px;font-weight:900;letter-spacing:-0.8px} .ag-date small{font-size:10px;font-weight:900;text-transform:uppercase;margin-top:6px;letter-spacing:1.4px;color:var(--gold-300)} .ag-body{flex:1;min-width:0} .ag-body h3{font-size:17px;font-weight:900;margin-bottom:8px;color:var(--gold-300);line-height:1.35;letter-spacing:-0.3px} .ag-meta{font-size:12.5px;color:var(--text-dim);display:flex;gap:18px;flex-wrap:wrap;margin-bottom:10px;font-weight:600} .ag-meta span{display:inline-flex;align-items:center;gap:6px} .ag-meta .ico{width:14px;height:14px;color:var(--gold-500)} .ag-body p{font-size:14px;color:var(--text-dim);line-height:1.65}
+
+/* NUEVO: Estilos para el acordeón de la agenda */
+details.ag-item { cursor: pointer; }
+details.ag-item summary { list-style: none; outline: none; }
+details.ag-item summary::-webkit-details-marker { display: none; }
+details.ag-item .ag-full-desc { display: none; padding-top: 15px; border-top: 1px solid var(--glass-border-subtle); margin-top: 15px; color: var(--text-dim); font-size: 14.5px; line-height: 1.6; }
+details.ag-item[open] .ag-full-desc { display: block; animation: fadeIn 0.3s ease-in; }
+details.ag-item[open] .ag-meta { margin-bottom: 0; }
+details.ag-item .ag-toggle-txt { font-size: 11px; color: var(--gold-400); font-weight: bold; display: block; margin-top: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+details.ag-item[open] .ag-toggle-txt::after { content: ' ▲ Cerrar'; }
+details.ag-item:not([open]) .ag-toggle-txt::after { content: ' ▼ Ver detalles'; }
+
 .chat-wrap{display:flex;flex-direction:column;height:calc(100vh - 300px);min-height:440px;border-radius:var(--r-xl);overflow:hidden;border:1px solid var(--glass-border-subtle);background:linear-gradient(180deg, rgba(26, 11, 48, 0.85), rgba(10, 3, 26, 0.95));box-shadow:var(--shadow-card);backdrop-filter:blur(20px);}
 .chat-box{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:14px;scroll-behavior:smooth}
 .msg{max-width:80%;display:flex;gap:12px;align-items:flex-start; align-self:flex-start;}
@@ -1152,40 +1162,53 @@ function renderInicio(){
   const prox = validas.slice(0, 3);
   $('inicioAgenda').innerHTML = prox.length
     ? prox.map(a => `
-        <div class="ag-item" style="margin-bottom:12px">
-          <div class="ag-date">
-            <b>${esc((a.fecha||'').split(' ')[0].split('-')[2] || '--')}</b>
-            <small>${mesCorto(a.fecha)}</small>
-          </div>
-          <div class="ag-body">
-            <h3>${esc(a.titulo)}</h3>
-            <div class="ag-meta">
-              ${a.hora ? `<span><svg class="ico"><use href="#i-clock"/></svg>${esc(a.hora)}</span>` : ''}
-              ${a.lugar ? `<span><svg class="ico"><use href="#i-pin"/></svg>${esc(a.lugar)}</span>` : ''}
-              <span><svg class="ico"><use href="#i-shield"/></svg>${esc(a.nivel || 'Nacional')}</span>
+        <details class="ag-item" style="margin-bottom:12px; padding: 15px; display: block;">
+          <summary style="display: flex; gap: 20px;">
+            <div class="ag-date">
+              <b>${esc((a.fecha||'').split(' ')[0].split('-')[2] || '--')}</b>
+              <small>${mesCorto(a.fecha)}</small>
             </div>
+            <div class="ag-body">
+              <h3>${esc(a.titulo)}</h3>
+              <div class="ag-meta">
+                ${a.hora ? `<span><svg class="ico"><use href="#i-clock"/></svg>${esc(a.hora)}</span>` : ''}
+                ${a.lugar ? `<span><svg class="ico"><use href="#i-pin"/></svg>${esc(a.lugar)}</span>` : ''}
+                <span><svg class="ico"><use href="#i-shield"/></svg>${esc(a.nivel || 'Nacional')}</span>
+              </div>
+              <span class="ag-toggle-txt"></span>
+            </div>
+          </summary>
+          <div class="ag-full-desc">
+            <b style="color: var(--gold-300);">Descripción:</b><br><br>
+            ${a.descripcion ? esc(a.descripcion).replace(/\n/g, '<br>') : 'No hay detalles adicionales.'}
           </div>
-        </div>`).join('')
+        </details>`).join('')
     : '<p class="muted">No hay actividades próximas.</p>';
 }
 
 function renderAgenda(){
   const htmlItem = (a) => `
-    <div class="ag-item">
-      <div class="ag-date">
-        <b>${esc((a.fecha||'').split(' ')[0].split('-')[2] || '--')}</b>
-        <small>${mesCorto(a.fecha)}</small>
-      </div>
-      <div class="ag-body">
-        <h3>${esc(a.titulo)}</h3>
-        <div class="ag-meta">
-          ${a.fecha ? `<span><svg class="ico"><use href="#i-calendar"/></svg>${esc(fmtFecha(a.fecha))}</span>` : ''}
-          ${a.hora ? `<span><svg class="ico"><use href="#i-clock"/></svg>${esc(a.hora)}</span>` : ''}
-          ${a.lugar ? `<span><svg class="ico"><use href="#i-pin"/></svg>${esc(a.lugar)}</span>` : ''}
+    <details class="ag-item">
+      <summary style="display: flex; gap: 20px; width: 100%;">
+        <div class="ag-date">
+          <b>${esc((a.fecha||'').split(' ')[0].split('-')[2] || '--')}</b>
+          <small>${mesCorto(a.fecha)}</small>
         </div>
-        ${a.descripcion ? `<p>${esc(a.descripcion)}</p>` : ''}
+        <div class="ag-body">
+          <h3>${esc(a.titulo)}</h3>
+          <div class="ag-meta">
+            ${a.fecha ? `<span><svg class="ico"><use href="#i-calendar"/></svg>${esc(fmtFecha(a.fecha))}</span>` : ''}
+            ${a.hora ? `<span><svg class="ico"><use href="#i-clock"/></svg>${esc(a.hora)}</span>` : ''}
+            ${a.lugar ? `<span><svg class="ico"><use href="#i-pin"/></svg>${esc(a.lugar)}</span>` : ''}
+          </div>
+          <span class="ag-toggle-txt"></span>
+        </div>
+      </summary>
+      <div class="ag-full-desc">
+        <b style="color: var(--gold-300);">Descripción:</b><br><br>
+        ${a.descripcion ? esc(a.descripcion).replace(/\n/g, '<br>') : 'No hay detalles adicionales.'}
       </div>
-    </div>`;
+    </details>`;
 
   const validas = DB.agenda.filter(a => {
     if(!a.fecha) return false;
@@ -1617,6 +1640,60 @@ $('a_save').onclick = async () => {
   } catch (e) { toast('❌ Error al guardar'); }
 };
 $('a_cancel').onclick = () => { limpiarForm('agenda'); };
+
+$('r_save').onclick = async () => {
+  const titulo = $('r_titulo').value.trim();
+  if(!titulo){ toast('Escribe el título'); return; }
+  const payload = { 
+    titulo, 
+    descripcion: $('r_desc').value.trim(), 
+    enlace: $('r_url').value.trim(), 
+    texto: $('r_texto').value.trim() 
+  };
+  try {
+    if(editando.reglamentos) await pb.collection('reglamentos').update(editando.reglamentos, payload);
+    else await pb.collection('reglamentos').create(payload);
+    await cargarDatos(); renderTodo(); limpiarForm('reglamentos');
+    toast('✅ Reglamento guardado');
+  } catch (e) { 
+    console.error(e);
+    toast('❌ Error al guardar'); 
+  }
+};
+$('r_cancel').onclick = () => { limpiarForm('reglamentos'); };
+
+$('e_save').onclick = async () => {
+  const titulo = $('e_titulo').value.trim();
+  const url = $('e_url').value.trim();
+  if(!titulo || !url){ toast('Escribe título y enlace'); return; }
+  const payload = { 
+    titulo, url, 
+    plataforma: $('e_plat').value.trim(), 
+    activo: $('e_activo').value === 'si', 
+    descripcion: $('e_desc').value.trim() 
+  };
+  try {
+    if(editando.envivo) await pb.collection('envivo').update(editando.envivo, payload);
+    else await pb.collection('envivo').create(payload);
+    await cargarDatos(); renderTodo(); limpiarForm('envivo');
+    toast('✅ Transmisión guardada');
+  } catch (e) { toast('❌ Error al guardar'); }
+};
+$('e_cancel').onclick = () => { limpiarForm('envivo'); };
+
+$('s_save').onclick = async () => {
+  const nombre = $('s_nombre').value.trim();
+  const url = $('s_url').value.trim();
+  if(!nombre || !url){ toast('Escribe el nombre y la URL'); return; }
+  const payload = { nombre, url, icono: $('s_icono').value.trim() || '🔗' };
+  try {
+    if(editando.subapps) await pb.collection('subapps').update(editando.subapps, payload);
+    else await pb.collection('subapps').create(payload);
+    await cargarDatos(); renderTodo(); limpiarForm('subapps');
+    toast('✅ Sub-app guardada');
+  } catch (e) { toast('❌ Error al guardar'); }
+};
+$('s_cancel').onclick = () => { limpiarForm('subapps'); };
 
 function checkIntranetAuth() {
   const loginView = $('intranetLoginView');
