@@ -1,88 +1,177 @@
-// 1. Subimos la versión a v23 para forzar la actualización en los navegadores de los usuarios
-const CACHE_NAME = 'mep-v23'; 
-const ASSETS = [
+/* ============================================================================
+   MEP · Service Worker
+   Estrategia:
+   · Navegación  → red primero con timeout de 4 s, respaldo en caché (index.html).
+   · Estáticos   → stale-while-revalidate (respuesta inmediata + refresco en 2º plano).
+   · Cross-origin (PocketBase, fuentes, YouTube) → NO se intercepta nunca.
+     Eso protege el realtime (SSE) y las descargas de /api/files/.
+   ========================================================================== */
+
+const VERSION = 'mep-v14';
+const STATIC_CACHE = 'mep-static-' + VERSION;
+const RUNTIME_CACHE = 'mep-runtime-' + VERSION;
+const MAX_ESTATICOS = 90;
+const TIMEOUT_NAVEGACION = 4000;
+
+const PRECACHE = [
   '/',
   '/index.html',
+  '/app.js',
   '/manifest.json',
-  '/logo.png'
-  // Nota: He quitado icon-192 e icon-512 de aquí por seguridad. 
-  // Si no los tienes creados aún, la instalación del SW fallaría por completo.
-  // Si ya los tienes, puedes volver a agregarlos a esta lista.
+  '/logo.png',
+  '/icon-192.png',
+  '/icon-512.png',
+  '/icon-180.png',
+  '/icon-maskable-192.png',
+  '/icon-maskable-512.png'
 ];
 
-// INSTALACIÓN: Guardar el "App Shell" en caché
-self.addEventListener('install', (e) => {
-  e.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      // Usamos un bucle para que si un archivo falla, no rompa toda la instalación
-      return Promise.all(
-        ASSETS.map((url) => {
-          return cache.add(url).catch((err) => {
-            console.warn(`No se pudo cachear el archivo: ${url}`, err);
-          });
-        })
-      );
-    })
-  );
-  self.skipWaiting(); // Fuerza a que el nuevo SW tome el control de inmediato
+/* ------------------------------------------------------------- instalación */
+self.addEventListener('install', (event) => {
+  event.waitUntil((async () => {
+    const cache = await caches.open(STATIC_CACHE);
+    // allSettled: si un archivo falla no aborta toda la instalación.
+    await Promise.allSettled(
+      PRECACHE.map((url) => cache.add(new Request(url, { cache: 'reload' })))
+    );
+    await self.skipWaiting();
+  })());
 });
 
-// ACTIVACIÓN: Limpiar cachés antiguas
-self.addEventListener('activate', (e) => {
-  e.waitUntil(
-    caches.keys().then((keys) => {
-      return Promise.all(
-        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
-      );
-    })
-  );
-  self.clients.claim(); // Toma el control de las pestañas abiertas
+/* ---------------------------------------------------------------- activación */
+self.addEventListener('activate', (event) => {
+  event.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(
+      keys
+        .filter((k) => k !== STATIC_CACHE && k !== RUNTIME_CACHE)
+        .map((k) => caches.delete(k))
+    );
+    if (self.registration.navigationPreload) {
+      try { await self.registration.navigationPreload.enable(); } catch (_) { }
+    }
+    await self.clients.claim();
+  })());
 });
 
-// FETCH: Interceptar peticiones
-self.addEventListener('fetch', (e) => {
-  // Solo procesar peticiones GET
-  if (e.request.method !== 'GET') return;
+/* ------------------------------------------------------------------ helpers */
+async function recortarCache(nombre, maximo) {
+  const cache = await caches.open(nombre);
+  const keys = await cache.keys();
+  if (keys.length <= maximo) return;
+  const sobran = keys.slice(0, keys.length - maximo);
+  await Promise.all(sobran.map((k) => cache.delete(k)));
+}
 
-  const url = new URL(e.request.url);
+async function fetchConTimeout(request, ms) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), ms);
+  try {
+    return await fetch(request, { signal: controller.signal });
+  } finally {
+    clearTimeout(timer);
+  }
+}
 
-  // 2. CRUCIAL: Ignorar peticiones a PocketBase (API, Realtime, etc.)
-  // Esto evita que el chat o las notificaciones en vivo se congelen.
-  if (url.pathname.includes('/api/') || url.pathname.includes('/_/')) {
-    return; // Deja que el navegador maneje la petición directamente a la red
+function respuestaOffline() {
+  return new Response(
+    '<!doctype html><html lang="es"><head><meta charset="utf-8">' +
+    '<meta name="viewport" content="width=device-width,initial-scale=1">' +
+    '<title>MEP · Sin conexión</title></head>' +
+    '<body style="margin:0;background:#080212;color:#f8f6fc;font-family:system-ui,sans-serif;' +
+    'display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:24px">' +
+    '<div><h1 style="color:#ffd700;font-size:22px;margin:0 0 12px">Sin conexión</h1>' +
+    '<p style="color:#c8bce0;max-width:340px">No pudimos cargar la aplicación. ' +
+    'Revisa tu conexión e inténtalo de nuevo.</p>' +
+    '<p><button onclick="location.reload()" style="margin-top:16px;padding:12px 22px;border:0;border-radius:12px;' +
+    'background:#ffd700;color:#110424;font-weight:700;font-size:15px">Reintentar</button></p></div>' +
+    '</body></html>',
+    { status: 503, headers: { 'Content-Type': 'text/html; charset=utf-8' } }
+  );
+}
+
+/* ------------------------------------------------------------ navegación */
+async function manejarNavegacion(request) {
+  try {
+    const respuesta = await fetchConTimeout(request, TIMEOUT_NAVEGACION);
+    if (respuesta && respuesta.ok) {
+      const cache = await caches.open(STATIC_CACHE);
+      cache.put('/index.html', respuesta.clone());
+    }
+    return respuesta;
+  } catch (_) {
+    const cache = await caches.open(STATIC_CACHE);
+    const guardado = await cache.match('/index.html', { ignoreSearch: true });
+    return guardado || respuestaOffline();
+  }
+}
+
+/* --------------------------------------------------------------- estáticos */
+async function manejarEstatico(request) {
+  const cache = await caches.open(STATIC_CACHE);
+  const guardado = await cache.match(request, { ignoreSearch: true });
+
+  const actualizacion = fetch(request)
+    .then(async (respuesta) => {
+      if (respuesta && respuesta.ok && respuesta.type === 'basic') {
+        await cache.put(request, respuesta.clone());
+        await recortarCache(STATIC_CACHE, MAX_ESTATICOS);
+      }
+      return respuesta;
+    })
+    .catch(() => null);
+
+  if (guardado) return guardado;
+
+  const respuesta = await actualizacion;
+  if (respuesta) return respuesta;
+
+  if (request.destination === 'image') {
+    return new Response(
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 250"><rect width="400" height="250" fill="#1a0b30"/>' +
+      '<text x="50%" y="50%" fill="#ffd700" font-size="16" text-anchor="middle" font-family="sans-serif">Sin conexión</text></svg>',
+      { status: 200, headers: { 'Content-Type': 'image/svg+xml' } }
+    );
   }
 
-  // Ignorar peticiones que no sean HTTP/HTTPS (ej. extensiones de Chrome)
-  if (!url.protocol.startsWith('http')) {
+  return new Response('', { status: 504, statusText: 'Sin conexión' });
+}
+
+/* ------------------------------------------------------------------- fetch */
+self.addEventListener('fetch', (event) => {
+  const request = event.request;
+  if (request.method !== 'GET') return;
+
+  let url;
+  try { url = new URL(request.url); } catch (_) { return; }
+
+  // Solo gestionamos el propio origen: PocketBase, fuentes y YouTube pasan directo.
+  if (url.origin !== self.location.origin) return;
+
+  // Rutas de API o del panel de PocketBase (por si algún día se sirven aquí).
+  if (url.pathname.startsWith('/api/') || url.pathname.startsWith('/_/')) return;
+
+  if (request.mode === 'navigate') {
+    event.respondWith(manejarNavegacion(request));
     return;
   }
 
-  // 3. Estrategia: Network First (Red primero), Cache Fallback (Caché de respaldo)
-  e.respondWith(
-    fetch(e.request)
-      .then((networkResponse) => {
-        // Si la respuesta es exitosa y es un archivo local, actualizamos la caché
-        if (networkResponse.status === 200 && networkResponse.type === 'basic') {
-          const clone = networkResponse.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(e.request, clone);
-          });
-        }
-        return networkResponse;
-      })
-      .catch(() => {
-        // 4. Si falla la red (offline), buscamos en la caché
-        return caches.match(e.request).then((cachedResponse) => {
-          if (cachedResponse) {
-            return cachedResponse;
-          }
-          
-          // 5. Si el usuario recarga la página (navegación) y está offline, 
-          // le mostramos el index.html guardado en caché.
-          if (e.request.mode === 'navigate') {
-            return caches.match('/index.html');
-          }
-        });
-      })
-  );
+  event.respondWith(manejarEstatico(request));
+});
+
+/* ----------------------------------------------------------------- mensajes */
+self.addEventListener('message', (event) => {
+  if (event.data === 'SKIP_WAITING') self.skipWaiting();
+});
+
+/* -------------------------------------------------------- notificaciones */
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  event.waitUntil((async () => {
+    const ventanas = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    for (const ventana of ventanas) {
+      if ('focus' in ventana) return ventana.focus();
+    }
+    if (self.clients.openWindow) return self.clients.openWindow('/');
+  })());
 });
