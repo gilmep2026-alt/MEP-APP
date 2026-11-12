@@ -8,8 +8,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="MEP">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self' https://pocketbase-railway-production-6031.up.railway.app wss://pocketbase-railway-production-6031.up.railway.app https://cdn.jsdelivr.net; frame-src https:; frame-ancestors 'none'; base-uri 'self'; object-src 'none';">
-<link rel="apple-touch-icon" href="logo.png">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<!-- La CSP y las cabeceras de seguridad se sirven desde el archivo _headers (Cloudflare Pages). -->
+<link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
 <link rel="manifest" href="manifest.json">
 <title>MEP · Movimiento Electoral del Pueblo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -48,14 +49,27 @@ a{color:inherit;text-decoration:none} img,video,iframe{display:block;max-width:1
 .admin-btn{display:inline-flex;align-items:center;gap:8px; background:linear-gradient(135deg, rgba(255, 183, 0, 0.18), rgba(255, 183, 0, 0.08)); border:1px solid var(--glass-border); color:var(--gold-300); padding:10px 18px;border-radius:var(--r-md); cursor:pointer;font-weight:700;font-size:13px; letter-spacing:0.5px;white-space:nowrap; transition:all var(--dur-fast) var(--ease); flex:none; box-shadow:0 4px 15px rgba(255, 183, 0, 0.15);}
 .admin-btn:hover{background:linear-gradient(135deg, var(--gold-500), var(--gold-600)); color:var(--purple-950); transform:translateY(-2px); box-shadow:0 10px 28px rgba(255, 183, 0, 0.45);} .admin-btn:active{transform:translateY(0) scale(0.96)} .admin-btn .ico{width:16px;height:16px}
 
-#btnProfile { background: rgba(26, 11, 48, 0.8); padding: 4px 14px 4px 4px; border-radius: 50px; border: 1px solid var(--glass-border); display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-#topbarAvatar { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 2px solid var(--gold-400); flex: none; }
-.profile-texts { display: flex; flex-direction: column; justify-content: center; text-align: left; line-height: 1.15; overflow: hidden; }
+#btnProfile {
+  background: rgba(26, 11, 48, 0.8); 
+  padding: 4px 14px 4px 4px; 
+  border-radius: 50px; 
+  border: 1px solid var(--glass-border); 
+  display: flex; 
+  align-items: center; 
+  gap: 8px;
+  flex-shrink: 0;
+}
+#topbarAvatar {
+  width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 2px solid var(--gold-400); flex: none;
+}
+.profile-texts {
+  display: flex; flex-direction: column; justify-content: center; text-align: left; line-height: 1.15; overflow: hidden;
+}
 #topbarName {
-  font-size: 13px; font-weight: 800; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;
+  font-size: 13px; font-weight: 800; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 80px;
 }
 #topbarCargo {
-  font-size: 10px; color: var(--gold-300); font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; margin-top: 1px;
+  font-size: 9px; color: var(--gold-300); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 80px; margin-top: 1px;
 }
 
 .sidebar{position:fixed;top:var(--topbar-h);left:0;bottom:0; width:var(--sidebar-w);z-index:55; background:rgba(8, 2, 18, 0.88); backdrop-filter:blur(30px) saturate(180%); -webkit-backdrop-filter:blur(30px) saturate(180%); border-right:1px solid var(--glass-border-subtle); overflow-y:auto;overflow-x:hidden; padding:20px 14px 50px; transition:width var(--dur) var(--ease), transform var(--dur) var(--ease); will-change:width,transform;}
@@ -63,8 +77,8 @@ a{color:inherit;text-decoration:none} img,video,iframe{display:block;max-width:1
 .sidebar-collapse{display:none;position:sticky;top:0;margin-left:auto;margin-bottom:12px; background:rgba(255, 183, 0, 0.08);border:1px solid var(--glass-border-subtle); color:var(--gold-400);width:36px;height:36px;border-radius:var(--r-sm); cursor:pointer;align-items:center;justify-content:center; transition:all var(--dur-fast) var(--ease);z-index:2;}
 .sidebar-collapse:hover{background:rgba(255, 183, 0, 0.2);border-color:var(--glass-border)}
 .nav-group{margin-bottom:10px} .nav-head{display:flex;align-items:center;gap:12px;padding:12px 14px; border-radius:var(--r-md);cursor:pointer;user-select:none; color:var(--gold-400);font-weight:800;font-size:11px; text-transform:uppercase;letter-spacing:1.4px; transition:background var(--dur-fast) var(--ease); position:relative;}
-.nav-head:hover{background:rgba(255, 183, 0, 0.06)} .nav-head .ico{width:18px;height:18px;opacity:0.9} .nav-head .caret{margin-left:auto;transition:transform var(--dur) var(--ease);flex:none;opacity:0.5;width:14px;height:14px;}
-.nav-group.open .nav-head .caret{transform:rotate(90deg);opacity:1;color:var(--gold-500)} .nav-body{max-height:0;overflow:hidden;transition:max-height var(--dur-slow) var(--ease), opacity var(--dur) var(--ease);opacity:0;} .nav-group.open .nav-body{max-height:1500px;opacity:1;padding-top:4px}
+.nav-head:hover{background:rgba(255, 183, 0, 0.06)} .nav-head .ico{width:18px;height:18px;opacity:0.9} .nav-head .caret{margin-left:auto;transition:transform var(--dur) var(--ease-out);flex:none;opacity:0.5;width:14px;height:14px;}
+.nav-group.open .nav-head .caret{transform:rotate(90deg);opacity:1;color:var(--gold-500)} .nav-body{max-height:0;overflow:hidden;transition:max-height var(--dur-slow) var(--ease-out), opacity var(--dur) var(--ease);opacity:0;} .nav-group.open .nav-body{max-height:1500px;opacity:1;padding-top:4px}
 .nav-item{display:flex;align-items:center;gap:14px; padding:12px 14px;border-radius:var(--r-md); color:var(--text-dim);cursor:pointer;font-size:14.5px;font-weight:500; margin-bottom:4px;position:relative;overflow:hidden; transition:all var(--dur-fast) var(--ease);}
 .nav-item::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:4px;height:0;background:linear-gradient(180deg, var(--gold-400), var(--gold-600));border-radius:0 4px 4px 0;transition:height var(--dur) var(--ease-spring);box-shadow:0 0 12px var(--gold-400);}
 .nav-item:hover{background:rgba(114, 27, 196, 0.22);color:var(--gold-300);transform:translateX(4px)} .nav-item:hover::before{height:60%} .nav-item:hover .ico{color:var(--gold-400)}
@@ -83,7 +97,7 @@ main{padding:32px 24px 120px;max-width:1380px;margin:0 auto;transition:margin-le
 .carousel-controls{position:absolute;top:50%;transform:translateY(-50%);z-index:4;width:100%;display:flex;justify-content:space-between;padding:0 24px;pointer-events:none;} .carousel-btn{pointer-events:auto;background:rgba(14, 4, 34, 0.75);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--glass-border);color:var(--gold-400);width:54px;height:54px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all var(--dur-fast) var(--ease);opacity:0.8;box-shadow:0 8px 25px rgba(0,0,0,0.5);} .carousel-wrap:hover .carousel-btn{opacity:1} .carousel-btn:hover{background:var(--gold-500);color:var(--purple-950);transform:scale(1.1);box-shadow:0 10px 30px rgba(255, 183, 0, 0.6);border-color:var(--gold-500);} .carousel-btn:active{transform:scale(0.95)} .carousel-btn .ico{width:22px;height:22px}
 .carousel-dots{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);z-index:4;display:flex;gap:10px;padding:10px 20px;background:rgba(14, 4, 34, 0.75);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid var(--glass-border-subtle);border-radius:var(--r-full);box-shadow:0 10px 30px rgba(0,0,0,0.5);} .carousel-dot{width:10px;height:10px;border-radius:50%;background:rgba(255, 183, 0, 0.35);cursor:pointer;border:0;padding:0;transition:all var(--dur) var(--ease);} .carousel-dot.active{background:var(--gold-500);width:32px;border-radius:var(--r-full);box-shadow:0 0 16px var(--gold-500);} .carousel-dot:hover:not(.active){background:rgba(255, 183, 0, 0.7)}
 .carousel-progress{position:absolute;bottom:0;left:0;right:0;height:4px;background:rgba(255,255,255,0.08);z-index:5;} .carousel-progress-bar{height:100%;width:0%;background:linear-gradient(90deg, var(--gold-500), var(--gold-300));box-shadow:0 0 14px var(--gold-400);transition:width 0.3s linear;} .carousel-empty{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px;background:radial-gradient(700px 350px at 50% 0%, rgba(255, 183, 0, 0.1), transparent 65%),linear-gradient(135deg, var(--surface-2), var(--surface-1));} .carousel-empty .em{display:inline-flex;align-items:center;justify-content:center;width:100px;height:100px;border-radius:var(--r-lg);background:linear-gradient(135deg, rgba(255, 183, 0, 0.2), rgba(114, 27, 196, 0.3));color:var(--gold-400);margin-bottom:24px;border:1px solid var(--glass-border);box-shadow:var(--shadow-gold);} .carousel-empty .em .ico{width:48px;height:48px} .carousel-empty h3{font-size:22px;font-weight:900;color:#fff;margin-bottom:10px} .carousel-empty p{font-size:14.5px;color:var(--text-mute);max-width:420px;line-height:1.6}
-.gal-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;} .gal-card{position:relative;overflow:hidden;background:linear-gradient(160deg, rgba(26, 11, 48, 0.8), rgba(10, 3, 26, 0.9));border:1px solid var(--glass-border-subtle);border-radius:var(--r-lg);display:flex;flex-direction:column;transition:all var(--dur) var(--ease);animation:cardIn var(--dur-slow) var(--ease-out) both;cursor:pointer;box-shadow:var(--shadow-card);} @keyframes cardIn{from{opacity:0;transform:translateY(28px) scale(0.97)}to{opacity:1;transform:none}} .gal-card:hover{transform:translateY(-8px);border-color:var(--glass-border);box-shadow:0 25px 60px rgba(0,0,0,0.7), var(--shadow-gold);} .gal-media-wrap{position:relative;overflow:hidden;aspect-ratio:16/10;background:#020005} .gal-media{width:100%;height:100%;object-fit:cover;transition:transform var(--dur-slow) var(--ease)} .gal-card:hover .gal-media{transform:scale(1.08)} .gal-media-wrap iframe.gal-media{transform:none} .gal-badge{position:absolute;top:14px;right:14px;z-index:2;display:inline-flex;align-items:center;gap:6px;background:rgba(8, 2, 18, 0.85);color:var(--gold-300);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);padding:6px 12px;border-radius:var(--r-full);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;border:1px solid var(--glass-border);box-shadow:0 4px 15px rgba(0,0,0,0.4);} .gal-badge .ico{width:13px;height:13px} .gal-info{padding:20px;flex:1;display:flex;flex-direction:column} .gal-info h3{font-size:16.5px;font-weight:800;margin-bottom:8px;color:var(--gold-300);line-height:1.4;letter-spacing:-0.2px} .gal-info p{font-size:13.5px;color:var(--text-dim);line-height:1.6;flex:1} .gal-fecha{font-size:11.5px;color:var(--text-mute);margin-top:16px;display:inline-flex;align-items:center;gap:7px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase} .gal-fecha .ico{width:14px;height:14px;color:var(--gold-500)}
+.gal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px;} .gal-card{position:relative;overflow:hidden;background:linear-gradient(160deg, rgba(26, 11, 48, 0.8), rgba(10, 3, 26, 0.9));border:1px solid var(--glass-border-subtle);border-radius:var(--r-lg);display:flex;flex-direction:column;transition:all var(--dur) var(--ease);animation:cardIn var(--dur-slow) var(--ease-out) both;cursor:pointer;box-shadow:var(--shadow-card);} @keyframes cardIn{from{opacity:0;transform:translateY(28px) scale(0.97)}to{opacity:1;transform:none}} .gal-card:hover{transform:translateY(-8px);border-color:var(--glass-border);box-shadow:0 25px 60px rgba(0,0,0,0.7), var(--shadow-gold);} .gal-media-wrap{position:relative;overflow:hidden;aspect-ratio:16/10;background:#020005} .gal-media{width:100%;height:100%;object-fit:cover;transition:transform var(--dur-slow) var(--ease)} .gal-card:hover .gal-media{transform:scale(1.08)} .gal-media-wrap iframe.gal-media{transform:none} .gal-badge{position:absolute;top:14px;right:14px;z-index:2;display:inline-flex;align-items:center;gap:6px;background:rgba(8, 2, 18, 0.85);color:var(--gold-300);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);padding:6px 12px;border-radius:var(--r-full);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;border:1px solid var(--glass-border);box-shadow:0 4px 15px rgba(0,0,0,0.4);} .gal-badge .ico{width:13px;height:13px} .gal-info{padding:20px;flex:1;display:flex;flex-direction:column} .gal-info h3{font-size:16.5px;font-weight:800;margin-bottom:8px;color:var(--gold-300);line-height:1.4;letter-spacing:-0.2px} .gal-info p{font-size:13.5px;color:var(--text-dim);line-height:1.6;flex:1} .gal-fecha{font-size:11.5px;color:var(--text-mute);margin-top:16px;display:inline-flex;align-items:center;gap:7px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase} .gal-fecha .ico{width:14px;height:14px;color:var(--gold-500)}
 .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:72px 24px;text-align:center;background:linear-gradient(160deg, rgba(26, 11, 48, 0.5), rgba(10, 3, 26, 0.6));border:1px dashed rgba(114, 27, 196, 0.4);border-radius:var(--r-lg);box-shadow:var(--shadow-card);} .empty .em{display:inline-flex;align-items:center;justify-content:center;width:84px;height:84px;border-radius:var(--r-lg);background:linear-gradient(135deg, rgba(255, 183, 0, 0.15), rgba(114, 27, 196, 0.25));color:var(--gold-400);margin-bottom:20px;border:1px solid var(--glass-border);box-shadow:0 8px 24px rgba(0,0,0,0.4);} .empty .em .ico{width:40px;height:40px} .empty h3{font-size:18px;font-weight:900;color:var(--text);margin-bottom:8px;letter-spacing:-0.3px} .empty p{font-size:14px;color:var(--text-mute);max-width:380px;line-height:1.6}
 .card{position:relative;background:linear-gradient(160deg, rgba(26, 11, 48, 0.75) 0%, rgba(12, 3, 26, 0.88) 100%);border-radius:var(--r-xl);padding:28px;margin-bottom:24px;box-shadow:var(--shadow-card);border:1px solid var(--glass-border-subtle);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);} .card::before{content:'';position:absolute;inset:-1px;border-radius:inherit;padding:1px;background:linear-gradient(135deg, rgba(255, 183, 0, 0.35), transparent 45%, transparent 55%, rgba(114, 27, 196, 0.4));-webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;opacity:0.8;} .card h2{font-size:18px;font-weight:900;margin:0 0 22px;color:#fff;display:flex;align-items:center;gap:12px;letter-spacing:-0.3px;padding-bottom:16px;border-bottom:1px solid var(--glass-border-subtle);} .card h2 .ico{color:var(--gold-400)}
 label{display:block;font-size:11.5px;color:var(--gold-300);margin:16px 0 8px;font-weight:800;letter-spacing:1px;text-transform:uppercase;} label:first-of-type{margin-top:0}
@@ -91,22 +105,7 @@ input:not([type="file"]):not([type="checkbox"]):not([type="radio"]),select,texta
 .pass-wrap { position: relative; width: 100%; display: flex; align-items: center; } .pass-wrap input { padding-right: 45px !important; } .btn-toggle-pass { position: absolute; right: 10px; background: transparent; border: none; color: var(--gold-400); cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 5px; transition: color 0.2s; z-index: 2; } .btn-toggle-pass:hover { color: var(--gold-300); }
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 18px} @media(max-width:640px){.grid2{grid-template-columns:1fr}} .row{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}
 .btn{position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;gap:9px;background:rgba(42, 20, 80, 0.7);border:1px solid var(--glass-border);color:var(--text);padding:13px 22px;border-radius:var(--r-md);cursor:pointer;font-weight:700;font-size:14.5px;letter-spacing:0.2px;transition:all var(--dur-fast) var(--ease);white-space:nowrap;font-family:inherit;box-shadow:0 6px 20px rgba(0,0,0,0.3);} .btn .ico{width:16px;height:16px} .btn:hover{background:rgba(114, 27, 196, 0.65);border-color:var(--gold-500);transform:translateY(-2px);box-shadow:0 10px 28px rgba(81, 19, 158, 0.5);} .btn:active{transform:translateY(0) scale(0.97)} .btn.primary{background:linear-gradient(135deg, var(--gold-300) 0%, var(--gold-500) 50%, var(--gold-600) 100%);color:var(--purple-950);border-color:transparent;font-weight:900;box-shadow:0 8px 25px rgba(255, 183, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -2px 5px rgba(0,0,0,0.15);} .btn.primary:hover{background:linear-gradient(135deg, #fff 0%, var(--gold-300) 50%, var(--gold-500) 100%);box-shadow:0 14px 38px rgba(255, 183, 0, 0.6), inset 0 1px 0 rgba(255,255,255,0.8);transform:translateY(-2px);} .btn.purple{background:linear-gradient(135deg, var(--purple-700), var(--purple-800));color:#fff;border-color:var(--glass-border)} .btn.purple:hover{box-shadow:0 10px 30px rgba(114, 27, 196, 0.6)} .btn.danger{background:linear-gradient(135deg, #7f1d1d, #991b1b);border-color:#ef4444;color:#fff} .btn.danger:hover{box-shadow:0 10px 25px rgba(239, 68, 68, 0.5)} .btn.ghost{background:transparent;border-color:var(--glass-border-subtle)} .btn.sm{padding:10px 16px;font-size:13px} .btn.sm .ico{width:14px;height:14px} .btn.icon{padding:0;width:40px;height:40px} .btn.icon .ico{width:16px;height:16px} .btn.block{width:100%}
-
-/* Estilos para el botón "Ver Enlace" en agenda */
-.ag-link{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--gold-400),var(--gold-600));color:var(--purple-950);padding:6px 12px;border-radius:var(--r-full);font-size:11.5px;font-weight:900;letter-spacing:.4px;text-transform:uppercase;text-decoration:none;cursor:pointer;box-shadow:0 4px 14px rgba(255,183,0,.35);transition:all .2s;white-space:nowrap}
-.ag-link:hover{background:linear-gradient(135deg,#fff,var(--gold-300));transform:translateY(-1px);box-shadow:0 6px 20px rgba(255,183,0,.55)}
-.ag-link .ico{width:12px;height:12px;color:var(--purple-950)}
-
-details.ag-item { cursor: pointer; }
-details.ag-item summary { list-style: none; outline: none; }
-details.ag-item summary::-webkit-details-marker { display: none; }
-details.ag-item .ag-full-desc { display: none; padding-top: 15px; border-top: 1px solid var(--glass-border-subtle); margin-top: 15px; color: var(--text-dim); font-size: 14.5px; line-height: 1.6; }
-details.ag-item[open] .ag-full-desc { display: block; animation: fadeIn 0.3s ease-in; }
-details.ag-item[open] .ag-meta { margin-bottom: 0; }
-details.ag-item .ag-toggle-txt { font-size: 11px; color: var(--gold-400); font-weight: bold; display: block; margin-top: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
-details.ag-item[open] .ag-toggle-txt::after { content: ' ▲ Cerrar'; }
-details.ag-item:not([open]) .ag-toggle-txt::after { content: ' ▼ Ver detalles'; }
-
+.ag-item{position:relative;background:linear-gradient(160deg, rgba(26, 11, 48, 0.75), rgba(12, 3, 26, 0.88));border:1px solid var(--glass-border-subtle);border-radius:var(--r-lg);padding:22px;margin-bottom:16px;display:flex;gap:20px;transition:all var(--dur) var(--ease);overflow:hidden;box-shadow:var(--shadow-card);} .ag-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:5px;background:linear-gradient(180deg, var(--gold-400), var(--gold-600));box-shadow:0 0 16px var(--gold-400);} .ag-item:hover{transform:translateX(6px);border-color:var(--glass-border);box-shadow:0 18px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,183,0,0.2) inset} .ag-date{background:linear-gradient(135deg, var(--purple-700), var(--purple-800));border-radius:var(--r-md);min-width:74px;height:74px;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1;color:#fff;border:1px solid var(--glass-border);box-shadow:0 10px 25px rgba(81, 19, 158, 0.6), inset 0 1px 0 rgba(255,255,255,0.15);} .ag-date b{font-size:25px;font-weight:900;letter-spacing:-0.8px} .ag-date small{font-size:10px;font-weight:900;text-transform:uppercase;margin-top:6px;letter-spacing:1.4px;color:var(--gold-300)} .ag-body{flex:1;min-width:0} .ag-body h3{font-size:17px;font-weight:900;margin-bottom:8px;color:var(--gold-300);line-height:1.35;letter-spacing:-0.3px} .ag-meta{font-size:12.5px;color:var(--text-dim);display:flex;gap:18px;flex-wrap:wrap;margin-bottom:10px;font-weight:600} .ag-meta span{display:inline-flex;align-items:center;gap:6px} .ag-meta .ico{width:14px;height:14px;color:var(--gold-500)} .ag-body p{font-size:14px;color:var(--text-dim);line-height:1.65}
 .chat-wrap{display:flex;flex-direction:column;height:calc(100vh - 300px);min-height:440px;border-radius:var(--r-xl);overflow:hidden;border:1px solid var(--glass-border-subtle);background:linear-gradient(180deg, rgba(26, 11, 48, 0.85), rgba(10, 3, 26, 0.95));box-shadow:var(--shadow-card);backdrop-filter:blur(20px);}
 .chat-box{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:14px;scroll-behavior:smooth}
 .msg{max-width:80%;display:flex;gap:12px;align-items:flex-start; align-self:flex-start;}
@@ -132,8 +131,8 @@ body.subapp-mode { padding-top: 0 !important; overflow: hidden; } body.subapp-mo
 .toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:linear-gradient(135deg, var(--purple-700), var(--purple-800));color:#fff;padding:15px 26px;border-radius:var(--r-full);border:1px solid var(--gold-400);box-shadow:0 22px 60px rgba(0,0,0,0.8), var(--shadow-gold);font-size:14px;font-weight:800;z-index:100;transition:transform var(--dur-slow) var(--ease-spring), opacity var(--dur) var(--ease);opacity:0;pointer-events:none;max-width:90vw;display:inline-flex;align-items:center;gap:10px;} .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 .persistent-gallery{margin-top:50px;padding-top:36px;border-top:1px dashed var(--glass-border);position:relative;animation:viewIn var(--dur-slow) var(--ease-out);} .persistent-gallery::before{content:'';position:absolute;top:-1px;left:0;width:120px;height:2px;background:linear-gradient(90deg, var(--gold-500), transparent);box-shadow:0 0 16px var(--gold-400);} .persistent-gallery .pg-head{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:26px;flex-wrap:wrap;} .persistent-gallery .pg-title{display:flex;align-items:center;gap:16px;min-width:0} .persistent-gallery .pg-title .pg-ico{background:linear-gradient(135deg, var(--gold-300), var(--gold-600));color:var(--purple-950);width:52px;height:52px;flex:none;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 28px rgba(255, 183, 0, 0.45), inset 0 1px 0 rgba(255,255,255,0.6);} .persistent-gallery .pg-title .pg-ico .ico{width:26px;height:26px} .persistent-gallery .pg-title h2{font-size:21px;font-weight:900;letter-spacing:-0.5px;color:#fff;line-height:1.2;margin:0} .persistent-gallery .pg-title h2 .accent{background:linear-gradient(180deg, var(--gold-400), var(--gold-600));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent} .persistent-gallery .pg-title p{font-size:13.5px;color:var(--text-mute);margin-top:4px;font-weight:600} .persistent-gallery .pg-badge{background:rgba(255, 183, 0, 0.12);border:1px solid var(--glass-border);color:var(--gold-300);padding:8px 16px;border-radius:var(--r-full);font-size:11.5px;font-weight:900;text-transform:uppercase;letter-spacing:1.2px;display:inline-flex;align-items:center;gap:8px;white-space:nowrap;} .persistent-gallery .pg-badge::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--gold-400);box-shadow:0 0 12px var(--gold-400);animation:pgDot 2s ease-in-out infinite;} @keyframes pgDot{50%{opacity:0.35}}
 .intranet-login-card {max-width: 400px; margin: 40px auto; background: var(--surface-1); padding: 30px; border-radius: var(--r-xl); border: 1px solid var(--glass-border); text-align: center;} .intranet-login-card .ico-xl { color: var(--gold-400); margin-bottom: 15px; } .intranet-login-card h2 { font-size: 20px; margin-bottom: 10px; color: #fff; } .intranet-login-card p { font-size: 14px; color: var(--text-dim); margin-bottom: 20px; }
-@media(min-width:961px){ .sidebar{transform:none} .overlay{display:none} main{margin-left:var(--sidebar-w);padding:36px 36px 120px} body.sidebar-collapsed main{margin-left:var(--sidebar-w-collapsed)} #btnMenu{display:none} #view-galeria{padding:0;margin-top:-36px;margin-right:-36px;padding-top:0} #view-galeria .carousel-wrap{height:min(55vh, 550px);max-height:550px;border-radius:0 0 24px 24px} }
-@media(max-width:960px){ .sidebar{transform:translateX(-105%);box-shadow:0 0 70px rgba(0,0,0,0.8)} .sidebar.open{transform:translateX(0)} main{padding:24px 18px 100px} #view-galeria{padding:0} #view-galeria .carousel-wrap{margin-left:-18px;margin-right:-18px} #view-galeria .gal-grid{padding:0 18px 24px} .page-head h1{font-size:26px} .carousel-wrap{height:calc(100vh - var(--topbar-h));min-height:400px;max-height:680px} .carousel-caption{padding:24px 24px 64px} .carousel-caption h3{font-size:21px} .carousel-caption p{font-size:13.5px} .carousel-btn{width:46px;height:46px} .gal-grid{grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px} .persistent-gallery .pg-title h2{font-size:18px} }
+@media(min-width:961px){ .sidebar{transform:none} .overlay{display:none} main{margin-left:var(--sidebar-w);padding:36px 36px 120px} body.sidebar-collapsed main{margin-left:var(--sidebar-w-collapsed)} #btnMenu{display:none} #view-galeria{padding:0;margin-left:var(--sidebar-w);margin-top:-36px;padding-top:0} body.sidebar-collapsed #view-galeria{margin-left:var(--sidebar-w-collapsed)} }
+@media(max-width:960px){ .sidebar{transform:translateX(-105%);box-shadow:0 0 70px rgba(0,0,0,0.8)} .sidebar.open{transform:translateX(0)} main{padding:24px 18px 100px} #view-galeria{padding:0} #view-galeria .carousel-wrap{margin-left:-18px;margin-right:-18px} #view-galeria .gal-grid{padding:0 18px 24px} .page-head h1{font-size:26px} .carousel-wrap{height:calc(100vh - var(--topbar-h));min-height:400px;max-height:680px} .carousel-caption{padding:24px 24px 64px} .carousel-caption h3{font-size:21px} .carousel-caption p{font-size:13.5px} .carousel-btn{width:46px;height:46px} .gal-grid{grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px} .persistent-gallery .pg-title h2{font-size:18px} }
 @media(max-width:600px){ 
   .brand-text-wrap { display: none !important; } 
   .topbar { padding: 0 12px; gap: 8px; } 
@@ -141,12 +140,34 @@ body.subapp-mode { padding-top: 0 !important; overflow: hidden; } body.subapp-mo
   .brand-logo { height: 42px; max-width: 120px; background: transparent; box-shadow: none; padding: 0; } 
   #btnProfile { padding: 4px 12px 4px 4px !important; gap: 6px; }
   #topbarAvatar { width: 34px; height: 34px; }
-  #topbarName { font-size: 11px; max-width: 90px; }
-  #topbarCargo { font-size: 8px; max-width: 90px; display: block !important; }
+  #topbarName { font-size: 12px; max-width: 65px; }
+  #topbarCargo { font-size: 8px; max-width: 65px; display: block !important; } /* Forzar la visibilidad en móvil */
 }
 @media(max-width:540px){ .gal-grid{grid-template-columns:1fr} .ag-item{padding:16px;gap:16px} .ag-date{min-width:64px;height:64px} .ag-date b{font-size:22px} .persistent-gallery .pg-head{flex-direction:column;align-items:flex-start;gap:14px} .carousel-wrap{height:calc(100vh - var(--topbar-h));min-height:360px;max-height:none} .carousel-caption{padding:18px 18px 60px} .carousel-caption h3{font-size:18px} .carousel-caption p{font-size:13px} .carousel-btn{width:40px;height:40px;padding:0} .carousel-btn .ico{width:18px;height:18px} }
 @media(prefers-reduced-motion:reduce){ *,*::before,*::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important;} }
-</style>
+/* ===== parches v2: rendimiento, accesibilidad y multimedia ===== */
+body.modal-open{overflow:hidden}
+:focus-visible{outline:2px solid var(--gold-400);outline-offset:2px}
+.toast.err{border-color:#ef4444}
+.toast.err .ico{color:#fca5a5}
+@media(max-width:960px){body{background-attachment:scroll}}
+.carousel-slide .slide-media{width:100%;height:100%;position:relative;background:#020005}
+.slide-media img,.slide-media video,.slide-media iframe{width:100%;height:100%;object-fit:cover;display:block;border:0}
+.slide-ph{width:100%;height:100%;background:linear-gradient(135deg,#1a0b30,#0e0422)}
+.gal-media-ph{display:flex;align-items:center;justify-content:center;color:var(--gold-500);background:linear-gradient(135deg,#1a0b30,#0e0422)}
+.gal-play{position:absolute;inset:0;margin:auto;width:64px;height:64px;border-radius:50%;border:1px solid var(--gold-400);background:rgba(8,2,18,.7);color:var(--gold-300);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:3;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);transition:transform var(--dur-fast) var(--ease)}
+.gal-play:hover{transform:scale(1.08);background:var(--gold-500);color:var(--purple-950)}
+.gal-play .ico{width:26px;height:26px}
+.chat-wrap{height:calc(100dvh - 300px)}
+#view-intranet .chat-wrap{height:calc(100dvh - 400px);min-height:340px}
+@supports not (height:1dvh){
+  .chat-wrap{height:calc(100vh - 300px)}
+  #view-intranet .chat-wrap{height:calc(100vh - 400px)}
+}
+@media(prefers-reduced-motion:reduce){
+  .carousel-track{transition:none!important}
+  .carousel-progress-bar{transition:none!important}
+}</style>
 </head>
 <body>
 
@@ -170,7 +191,11 @@ body.subapp-mode { padding-top: 0 !important; overflow: hidden; } body.subapp-mo
   <symbol id="i-signout" viewBox="0 0 256 256"><path d="M112,216H48a8,8,0,0,1-8-8V48a8,8,0,0,1,8-8h64a8,8,0,0,1,0,16H56V200h56a8,8,0,0,1,0,16Z" opacity=".25" fill="currentColor"/><path d="M112,216H48a8,8,0,0,1-8-8V48a8,8,0,0,1,8-8h64a8,8,0,0,1,0,16H56V200h56a8,8,0,0,1,0,16Zm101.66-93.66-40-40a8,8,0,0,0-11.32,11.32L188.69,120H104a8,8,0,0,0,0,16h84.69l-26.35,26.34a8,8,0,0,0,11.32,11.32l40-40A8,8,0,0,0,213.66,122.34Z" fill="currentColor"/></symbol>
   <symbol id="i-upload" viewBox="0 0 256 256"><path d="M224,144v64a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V144a8,8,0,0,1,16,0v56H208V144a8,8,0,0,1,16,0ZM93.66,77.66,120,51.31V128a8,8,0,0,0,16,0V51.31l26.34,26.35a8,8,0,0,0,11.32-11.32l-40-40a8,8,0,0,0-11.32,0l-40,40A8,8,0,0,0,93.66,77.66Z" fill="currentColor"/></symbol>
   <symbol id="i-eye" viewBox="0 0 256 256"><path d="M128,56C48,56,16,128,16,128s32,72,112,72,112-72,112-72S208,56,128,56Zm0,128c-53.34,0-83.27-36.08-93.06-56C44.73,108.08,74.66,72,128,72s83.27,36.08,93.06,56C211.27,147.92,181.34,184,128,184Z" opacity=".25" fill="currentColor"/><path d="M247.31,124.76c-.35-.79-8.82-19.58-27.65-38.41C194.36,60.94,163.08,48,128,48S61.64,60.94,36.34,86.35C17.51,105.18,9,124,8.69,124.76a8,8,0,0,0,0,6.48c.35.79,8.82,19.58,27.65,38.41C61.64,195.06,92.92,208,128,208s66.36-12.94,91.66-38.35c18.83-18.83,27.3-37.62,27.65-38.41A8,8,0,0,0,247.31,124.76ZM128,192c-30.78,0-57.67-11.19-79.93-33.25A133.47,133.47,0,0,1,25,128,133.33,133.33,0,0,1,48.07,97.25C70.33,75.19,97.22,64,128,64s57.67,11.19,79.93,33.25A133.46,133.46,0,0,1,231.05,128C223.23,142.79,196.7,192,128,192Zm0-112a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160Z" fill="currentColor"/></symbol>
-  <symbol id="i-eye-off" viewBox="0 0 256 256"><path d="M128,56C48,56,16,128,16,128s32,72,112,72,112-72,112-72S208,56,128,56Zm0,128c-53.34,0-83.27-36.08-93.06-56C44.73,108.08,74.66,72,128,72s83.27,36.08,93.06,56C211.27,147.92,181.34,184,128,184Z" opacity=".25" fill="currentColor"/><path d="M247.31,124.76c-.35-.79-8.82-19.58-27.65-38.41C194.36,60.94,163.08,48,128,48S61.64,60.94,36.34,86.35C17.51,105.18,9,124,8.69,124.76a8,8,0,0,0,0,6.48c.35.79,8.82,19.58,27.65,38.41C61.64,195.06,92.92,208,128,208s66.36-12.94,91.66-38.35c18.83-18.83,27.3-37.62,27.65-38.41A8,8,0,0,0,247.31,124.76ZM128,192c-30.78,0-57.67-11.19-79.93-33.25A133.47,133.47,0,0,1,25,128,133.33,133.33,0,0,1,48.07,97.25C70.33,75.19,97.22,64,128,64s57.67,11.19,79.93,33.25A133.46,133.46,0,0,1,231.05,128C223.23,142.79,196.7,192,128,192Zm0-112a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160Z" fill="currentColor"/><line x1="40" y1="40" x2="216" y2="216" stroke="currentColor" stroke-width="16" stroke-linecap="round"/></symbol>
+  <symbol id="i-eye-off" viewBox="0 0 256 256">
+    <path d="M128,56C48,56,16,128,16,128s32,72,112,72,112-72,112-72S208,56,128,56Zm0,128c-53.34,0-83.27-36.08-93.06-56C44.73,108.08,74.66,72,128,72s83.27,36.08,93.06,56C211.27,147.92,181.34,184,128,184Z" opacity=".25" fill="currentColor"/>
+    <path d="M247.31,124.76c-.35-.79-8.82-19.58-27.65-38.41C194.36,60.94,163.08,48,128,48S61.64,60.94,36.34,86.35C17.51,105.18,9,124,8.69,124.76a8,8,0,0,0,0,6.48c.35.79,8.82,19.58,27.65,38.41C61.64,195.06,92.92,208,128,208s66.36-12.94,91.66-38.35c18.83-18.83,27.3-37.62,27.65-38.41A8,8,0,0,0,247.31,124.76ZM128,192c-30.78,0-57.67-11.19-79.93-33.25A133.47,133.47,0,0,1,25,128,133.33,133.33,0,0,1,48.07,97.25C70.33,75.19,97.22,64,128,64s57.67,11.19,79.93,33.25A133.46,133.46,0,0,1,231.05,128C223.23,142.79,196.7,192,128,192Zm0-112a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160Z" fill="currentColor"/>
+    <line x1="40" y1="40" x2="216" y2="216" stroke="currentColor" stroke-width="16" stroke-linecap="round"/>
+  </symbol>
   <symbol id="i-pin" viewBox="0 0 256 256"><circle cx="128" cy="104" r="32" opacity=".25" fill="currentColor"/><path d="M128,64a40,40,0,1,0,40,40A40,40,0,0,0,128,64Zm0,64a24,24,0,1,1,24-24A24,24,0,0,1,128,128Zm0-112a88.1,88.1,0,0,0-88,88c0,31.4,14.51,64.68,42,96.25a254.19,254.19,0,0,0,41.45,38.3,8,8,0,0,0,9.18,0A254.19,254.19,0,0,0,174,200.25c27.45-31.57,42-64.85,42-96.25A88.1,88.1,0,0,0,128,16Zm0,206c-16.53-13-72-60.75-72-118a72,72,0,0,1,144,0C200,161.23,144.53,209,128,222Z" fill="currentColor"/></symbol>
   <symbol id="i-clock" viewBox="0 0 256 256"><circle cx="128" cy="128" r="96" opacity=".2" fill="currentColor"/><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm64-88a8,8,0,0,1-8,8H128a8,8,0,0,1-8-8V72a8,8,0,0,1,16,0v48h48A8,8,0,0,1,192,128Z" fill="currentColor"/></symbol>
   <symbol id="i-video" viewBox="0 0 256 256"><path d="M232,208V72a16,16,0,0,0-16-16H40A16,16,0,0,0,24,72V208a16,16,0,0,0,16,16H216A16,16,0,0,0,232,208Zm-32-92,16,8V192l-16-8Z" opacity=".25" fill="currentColor"/><path d="M251.77,73a8,8,0,0,0-8.21.39L208,97.05V72a16,16,0,0,0-16-16H40A16,16,0,0,0,24,72V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V159l35.56,23.71A8,8,0,0,0,256,176V80A8,8,0,0,0,251.77,73ZM192,208H40V72H192ZM240,165.05,208,143.72V88.28L240,67Z" fill="currentColor"/></symbol>
@@ -303,7 +328,7 @@ body.subapp-mode { padding-top: 0 !important; overflow: hidden; } body.subapp-mo
 
 <main>
   <div class="back-btn-wrap" id="backBtnWrap">
-    <button class="btn-back" onclick="goBack()">
+    <button class="btn-back" id="btnBack" type="button">
       <svg class="ico ico-sm"><use href="#i-caret-left"/></svg> Volver Atrás
     </button>
   </div>
@@ -327,24 +352,24 @@ body.subapp-mode { padding-top: 0 !important; overflow: hidden; } body.subapp-mo
         <span class="hero-tag"><svg class="ico"><use href="#i-home"/></svg> Plataforma Oficial MEP</span>
         <h2>Movimiento Electoral <span style="color:var(--gold-300)">del Pueblo</span></h2>
         <p>Centro unificado de organización política, despliegue territorial, comunicación institucional y gestión de militancia.</p>
-        <button class="btn primary" onclick="go('galeria')"><svg class="ico"><use href="#i-images"/></svg> Explorar Galería Multimedia</button>
+        <button class="btn primary" data-goto="galeria"><svg class="ico"><use href="#i-images"/></svg> Explorar Galería Multimedia</button>
       </div>
     </div>
     
     <div class="stats-grid" id="statsGrid">
-      <div class="stat-card" onclick="go('agenda')" title="Ir a Agenda">
+      <div class="stat-card" data-goto="agenda" role="button" tabindex="0" title="Ir a Agenda">
         <div class="stat-icon"><svg class="ico"><use href="#i-calendar"/></svg></div>
         <div class="stat-info"><b id="statAgenda">0</b><span>Actividades</span></div>
       </div>
-      <div class="stat-card" onclick="go('galeria')" title="Ir a Galería">
+      <div class="stat-card" data-goto="galeria" role="button" tabindex="0" title="Ir a Galería">
         <div class="stat-icon"><svg class="ico"><use href="#i-images"/></svg></div>
         <div class="stat-info"><b id="statGaleria">0</b><span>Multimedia</span></div>
       </div>
-      <div class="stat-card" onclick="go('subapp')" title="Ir a Sub-Apps">
+      <div class="stat-card" data-open-subapps role="button" tabindex="0" title="Ir a Sub-Apps">
         <div class="stat-icon"><svg class="ico"><use href="#i-squares"/></svg></div>
         <div class="stat-info"><b id="statSubapps">0</b><span>Sub-Apps</span></div>
       </div>
-      <div class="stat-card" onclick="go('reglamentos')" title="Ir a Reglamentos">
+      <div class="stat-card" data-goto="reglamentos" role="button" tabindex="0" title="Ir a Reglamentos">
         <div class="stat-icon"><svg class="ico"><use href="#i-scroll"/></svg></div>
         <div class="stat-info"><b id="statRegs">0</b><span>Reglamentos</span></div>
       </div>
@@ -362,7 +387,7 @@ body.subapp-mode { padding-top: 0 !important; overflow: hidden; } body.subapp-mo
       <h2 id="subappTitle">Cargando...</h2>
       <button class="btn sm primary" id="subappOpen" style="padding: 8px 12px;"><svg class="ico"><use href="#i-external"/></svg> Abrir</button>
     </div>
-    <iframe id="subappFrame" referrerpolicy="no-referrer" sandbox="allow-scripts allow-forms allow-same-origin allow-popups allow-popups-to-escape-sandbox" allow="fullscreen"></iframe>
+    <iframe id="subappFrame" referrerpolicy="no-referrer" sandbox="allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox" allow="fullscreen"></iframe>
   </section>
 
   <section id="view-agenda" class="view">
@@ -412,7 +437,7 @@ body.subapp-mode { padding-top: 0 !important; overflow: hidden; } body.subapp-mo
         <button class="btn primary" type="submit"><svg class="ico"><use href="#i-chat"/></svg>Enviar</button>
       </form>
       <div id="chatLoginPrompt" style="padding: 20px; text-align: center; color: var(--text-mute);">
-        Debes <a href="#" onclick="abrirModalAuth(); return false;" style="color: var(--gold-400); font-weight: bold;">iniciar sesión</a> para participar en el chat.
+        Debes <a href="#" id="linkOpenAuth" style="color: var(--gold-400); font-weight: bold;">iniciar sesión</a> para participar en el chat.
       </div>
     </div>
   </section>
@@ -430,7 +455,7 @@ body.subapp-mode { padding-top: 0 !important; overflow: hidden; } body.subapp-mo
         <div class="modal-field"><input type="email" id="intranetEmail" placeholder="Correo Electrónico" required></div>
         <div class="modal-field pass-wrap">
           <input type="password" id="intranetPass" placeholder="Contraseña" required>
-          <button type="button" class="btn-toggle-pass" onclick="togglePassword('intranetPass', this)"><svg class="ico"><use href="#i-eye"/></svg></button>
+          <button type="button" class="btn-toggle-pass" data-toggle-pass="intranetPass" aria-label="Mostrar contraseña"><svg class="ico"><use href="#i-eye"/></svg></button>
         </div>
         <button type="submit" class="btn primary block" id="intranetLoginBtn">Ingresar a la Intranet</button>
       </form>
@@ -519,7 +544,6 @@ body.subapp-mode { padding-top: 0 !important; overflow: hidden; } body.subapp-mo
         <option value="Municipal">Municipal</option>
       </select>
       <label>Lugar</label><input id="a_lugar" placeholder="Sede / Municipio / Estado">
-      <label>Enlace de la Actividad (Opcional)</label><input id="a_enlace" placeholder="https://zoom.us/...">
       <label>Descripción</label><textarea id="a_desc" placeholder="Objetivos..."></textarea>
       <div class="row">
         <button class="btn primary" id="a_save"><svg class="ico"><use href="#i-plus"/></svg>Agregar</button>
@@ -533,6 +557,7 @@ body.subapp-mode { padding-top: 0 !important; overflow: hidden; } body.subapp-mo
       <label>Título</label><input id="r_titulo" placeholder="Estatutos...">
       <label>Resumen</label><input id="r_desc" placeholder="Breve descripción...">
       <label>Enlace Externo</label><input id="r_url" placeholder="https://...">
+      <label>…o subir el PDF</label><input type="file" id="r_file" accept=.pdf,application/pdf">
       <label>Texto</label><textarea id="r_texto" placeholder="Escribe aquí..."></textarea>
       <div class="row">
         <button class="btn primary" id="r_save"><svg class="ico"><use href="#i-plus"/></svg>Agregar</button>
@@ -558,7 +583,7 @@ body.subapp-mode { padding-top: 0 !important; overflow: hidden; } body.subapp-mo
     <div class="card" id="adminChatCard">
       <h2><svg class="ico"><use href="#i-chat"/></svg>Monitoreo de Chat en Vivo</h2>
       <p style="font-size:14px;color:var(--text-dim);margin-bottom:20px;">Puedes ver todos los mensajes y suspender usuarios que incumplan las normas.</p>
-      <div class="chat-wrap" style="height: calc(100vh - 200px); min-height: 500px; border-radius: var(--r-lg);">
+      <div class="chat-wrap" style="height: calc(100dvh - 240px); min-height: 400px; border-radius: var(--r-lg);">
         <div class="chat-box" id="adminChatBox" style="padding: 16px;"></div>
         <form class="chat-form" id="adminChatForm" autocomplete="off" style="padding: 12px;">
           <input id="adminChatInput" placeholder="Responde como Administrador..." maxlength="600">
@@ -596,11 +621,11 @@ body.subapp-mode { padding-top: 0 !important; overflow: hidden; } body.subapp-mo
   </section>
 </main>
 
-<div class="modal-overlay" id="authModal">
+<div class="modal-overlay" id="authModal" role="dialog" aria-modal="true" aria-labelledby="authModalTitle">
   <div class="modal-card">
     <button class="modal-close" id="authModalClose" aria-label="Cerrar"><svg class="ico"><use href="#i-x"/></svg></button>
     <div class="modal-head">
-      <img src="logo.png" alt="Logo MEP" class="modal-logo-img" onerror="this.style.display='none'">
+      <img src="logo.png" alt="Logo MEP" class="modal-logo-img">
       <h2 id="authModalTitle">Ingresar</h2>
       <p id="authModalSubtitle">Accede a tu cuenta o regístrate</p>
     </div>
@@ -616,11 +641,11 @@ body.subapp-mode { padding-top: 0 !important; overflow: hidden; } body.subapp-mo
         <label>Contraseña</label>
         <div class="pass-wrap">
           <input type="password" id="loginPass" placeholder="••••••••" required>
-          <button type="button" class="btn-toggle-pass" onclick="togglePassword('loginPass', this)"><svg class="ico"><use href="#i-eye"/></svg></button>
+          <button type="button" class="btn-toggle-pass" data-toggle-pass="loginPass" aria-label="Mostrar contraseña"><svg class="ico"><use href="#i-eye"/></svg></button>
         </div>
       </div>
       <button type="submit" class="modal-submit"><svg class="ico"><use href="#i-lock"/></svg>Iniciar Sesión</button>
-      <p style="text-align: center; margin-top: 15px; font-size: 13px; color: var(--text-dim);">¿No tienes cuenta? <a href="#" onclick="toggleAuthForms(true); return false;" style="color: var(--gold-400); font-weight: bold;">Regístrate aquí</a></p>
+      <p style="text-align: center; margin-top: 15px; font-size: 13px; color: var(--text-dim);">¿No tienes cuenta? <a href="#" data-auth-toggle="register" style="color: var(--gold-400); font-weight: bold;">Regístrate aquí</a></p>
     </form>
 
     <form id="registerForm" style="display:none;" autocomplete="off">
@@ -664,7 +689,7 @@ body.subapp-mode { padding-top: 0 !important; overflow: hidden; } body.subapp-mo
         <label>Contraseña (mín. 8 caracteres)</label>
         <div class="pass-wrap">
           <input type="password" id="regPass" placeholder="••••••••" required minlength="8">
-          <button type="button" class="btn-toggle-pass" onclick="togglePassword('regPass', this)"><svg class="ico"><use href="#i-eye"/></svg></button>
+          <button type="button" class="btn-toggle-pass" data-toggle-pass="regPass" aria-label="Mostrar contraseña"><svg class="ico"><use href="#i-eye"/></svg></button>
         </div>
       </div>
       
@@ -672,17 +697,17 @@ body.subapp-mode { padding-top: 0 !important; overflow: hidden; } body.subapp-mo
         <label>Confirmar Contraseña</label>
         <div class="pass-wrap">
           <input type="password" id="regPassConfirm" placeholder="••••••••" required minlength="8">
-          <button type="button" class="btn-toggle-pass" onclick="togglePassword('regPassConfirm', this)"><svg class="ico"><use href="#i-eye"/></svg></button>
+          <button type="button" class="btn-toggle-pass" data-toggle-pass="regPassConfirm" aria-label="Mostrar contraseña"><svg class="ico"><use href="#i-eye"/></svg></button>
         </div>
       </div>
 
       <button type="submit" class="modal-submit"><svg class="ico"><use href="#i-check"/></svg>Crear Cuenta</button>
-      <p style="text-align: center; margin-top: 15px; font-size: 13px; color: var(--text-dim);">¿Ya tienes cuenta? <a href="#" onclick="toggleAuthForms(false); return false;" style="color: var(--gold-400); font-weight: bold;">Inicia Sesión</a></p>
+      <p style="text-align: center; margin-top: 15px; font-size: 13px; color: var(--text-dim);">¿Ya tienes cuenta? <a href="#" data-auth-toggle="login" style="color: var(--gold-400); font-weight: bold;">Inicia Sesión</a></p>
     </form>
   </div>
 </div>
 
-<div class="modal-overlay" id="profileModal">
+<div class="modal-overlay" id="profileModal" role="dialog" aria-modal="true" aria-labelledby="profNombre">
   <div class="modal-card">
     <button class="modal-close" id="profileModalClose" aria-label="Cerrar"><svg class="ico"><use href="#i-x"/></svg></button>
     <div class="modal-head">
@@ -698,7 +723,7 @@ body.subapp-mode { padding-top: 0 !important; overflow: hidden; } body.subapp-mo
   </div>
 </div>
 
-<div class="modal-overlay" id="termsModal" style="display: none; z-index: 300;">
+<div class="modal-overlay" id="termsModal" role="dialog" aria-modal="true" style="display:none;z-index:300;">
   <div class="modal-card" style="max-width: 500px; text-align: left;">
     <div class="modal-head" style="text-align: center;">
       <div class="modal-logo" style="background: var(--gold-500); color: var(--purple-950); font-weight: 900; font-size: 24px;">MEP</div>
@@ -712,1334 +737,13 @@ body.subapp-mode { padding-top: 0 !important; overflow: hidden; } body.subapp-mo
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 <div id="installBar">
   <p>📲 Instala la app oficial del MEP en tu dispositivo</p>
   <button class="btn primary sm" id="installOk">Instalar</button>
   <button class="btn sm" id="installNo">Luego</button>
 </div>
 
-<script>
-const $ = id => document.getElementById(id);
-const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-
-function safeUrl(u){
-  if (typeof u !== 'string' || !u.trim()) return null;
-  try {
-    const x = new URL(u, location.origin);
-    if (!['http:','https:'].includes(x.protocol)) return null;
-    return x.toString();
-  } catch { return null; }
-}
-
-const PB_URL = 'https://pocketbase-railway-production-6031.up.railway.app'; 
-const pb = new PocketBase(PB_URL);
-
-const VENEZUELA_DATA = {
-  "Distrito Capital": ["Libertador"],
-  "Miranda": ["Baruta", "Chacao", "El Hatillo", "Guaicaipuro", "Los Salias", "Sucre", "Plaza", "Zamora"],
-  "Zulia": ["Maracaibo", "San Francisco", "Cabimas", "Lagunillas", "Machiques de Perijá"],
-  "Carabobo": ["Valencia", "Naguanagua", "San Diego", "Guacara", "Puerto Cabello"],
-  "Lara": ["Iribarren (Barquisimeto)", "Palavecino", "Torres", "Jiménez"],
-  "Aragua": ["Girardot (Maracay)", "Santiago Mariño", "Mario Briceño Iragorry", "Socorro"],
-  "Anzoátegui": ["Sotillo (Puerto La Cruz)", "Bolívar (Barcelona)", "Urbaneja", "Guanta"],
-  "Táchira": ["San Cristóbal", "Cárdenas", "Capacho Nuevo", "Táriba"],
-  "Nueva Esparta": ["Maneiro (Pampatar)", "Marcano", "Gómez", "Arismendi"],
-  "Bolívar": ["Caroní (Ciudad Guayana)", "Heres (Ciudad Bolívar)", "Piar", "Angostura"],
-  "Falcón": ["Miranda (Coro)", "Carirubana (Punto Fijo)", "Colina", "Los Taques"]
-};
-
-const twoHoursAgo = new Date(new Date().getTime() - (2 * 60 * 60 * 1000));
-
-function fmtFecha(iso){
-  if(!iso) return '';
-  const soloFecha = iso.split(' ')[0]; 
-  const p = soloFecha.split('-');
-  return p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : iso;
-}
-function mesCorto(iso){
-  const soloFecha = (iso || '').split(' ')[0];
-  const m = ['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'];
-  const i = parseInt(soloFecha.split('-')[1],10);
-  return m[i-1] || '';
-}
-function ytEmbed(u){
-  if(!u) return null;
-  const m = u.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|live\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})(?:[?&#]|$)/);
-  return m ? 'https://www.youtube.com/embed/' + m[1] : null;
-}
-function toast(msg){
-  const t = $('toast');
-  t.innerHTML = `<svg class="ico" style="color:var(--gold-400)"><use href="#i-check"/></svg><span>${esc(msg)}</span>`;
-  t.classList.add('show');
-  clearTimeout(t._tid);
-  t._tid = setTimeout(() => t.classList.remove('show'), 2600);
-}
-
-function togglePassword(inputId, btn) {
-  const input = $(inputId);
-  const icon = btn.querySelector('use');
-  if (input.type === 'password') {
-    input.type = 'text';
-    icon.setAttribute('href', '#i-eye-off');
-  } else {
-    input.type = 'password';
-    icon.setAttribute('href', '#i-eye');
-  }
-}
-
-let viewHistory = [];
-let currentView = 'galeria';
-let DB = { galeria: [], agenda: [], reglamentos: [], envivo: [], subapps: [] };
-let isAdmin = false;
-let currentUser = null;
-
-function updateUIForUser(user) {
-    if (!user) {
-        currentUser = null;
-        isAdmin = false;
-        $('btnLogin').style.display = 'inline-flex';
-        $('btnProfile').style.display = 'none';
-        $('btnLogout').style.display = 'none';
-        $('adminNavWrap').style.display = 'none';
-        $('navItemIntranet').style.display = 'none';
-        $('chatForm').style.display = 'none';
-        $('chatLoginPrompt').style.display = 'block';
-        return;
-    }
-
-    currentUser = user;
-    isAdmin = currentUser.role === 'admin';
-    
-    $('btnLogin').style.display = 'none';
-    $('btnProfile').style.display = 'flex';
-    $('btnLogout').style.display = 'flex';
-    
-    if (isAdmin) {
-        $('adminNavWrap').style.display = 'block';
-        $('navItemIntranet').style.display = 'flex';
-    } else {
-        $('adminNavWrap').style.display = 'none';
-        $('navItemIntranet').style.display = 'none';
-    }
-
-    const nombreMostrar = currentUser.nombre_completo || 'Usuario';
-    const rolRaw = (currentUser.role || 'militante').toString();
-    const rolMostrar = rolRaw.charAt(0).toUpperCase() + rolRaw.slice(1).toLowerCase();
-    const estadoMostrar = currentUser.estado || 'Sin estado';
-    const fotoPerfil = currentUser.foto ? pb.files.getUrl(currentUser, currentUser.foto) : 'logo.png';
-
-    $('topbarAvatar').src = fotoPerfil;
-    $('topbarName').textContent = nombreMostrar;
-    $('topbarCargo').textContent = `${rolMostrar} · ${estadoMostrar}`;
-    $('btnProfile').title = `${nombreMostrar}\nRol: ${rolMostrar}\nEstado: ${estadoMostrar}\nCargo: ${currentUser.cargo || '—'}`;
-    
-    initChatUI();
-}
-
-pb.authStore.onChange((token, record) => {
-    updateUIForUser(record);
-}, true);
-
-async function cargarDatos() {
-  try {
-    const [galeria, agenda, reglamentos, envivo, subapps] = await Promise.all([
-      pb.collection('galeria').getFullList({ sort: '-fecha' }),
-      pb.collection('agenda').getFullList({ sort: 'fecha,hora' }),
-      pb.collection('reglamentos').getFullList(),
-      pb.collection('envivo').getFullList(),
-      pb.collection('subapps').getFullList()
-    ]);
-    
-    DB.galeria = galeria.map(r => ({ id: r.id, ...r, url: r.archivo ? pb.files.getUrl(r, r.archivo) : (r.url || '') }));
-    DB.agenda = agenda.map(r => ({ id: r.id, ...r }));
-    DB.reglamentos = reglamentos.map(r => ({ id: r.id, ...r, url: r.archivo ? pb.files.getUrl(r, r.archivo) : r.enlace }));
-    DB.envivo = envivo.map(r => ({ id: r.id, ...r }));
-    DB.subapps = subapps.map(r => ({ id: r.id, ...r }));
-  } catch (e) {
-    console.error('Error cargando datos:', e);
-  }
-}
-
-function abrirModalAuth() {
-  $('authModal').classList.add('show');
-  toggleAuthForms(false); 
-}
-
-function toggleAuthForms(isRegister) {
-  $('loginForm').style.display = isRegister ? 'none' : 'block';
-  $('registerForm').style.display = isRegister ? 'block' : 'none';
-  $('authModalTitle').textContent = isRegister ? 'Registro de Militante' : 'Ingresar';
-  $('authModalSubtitle').textContent = isRegister ? 'Completa tus datos para unirte' : 'Accede a tu cuenta';
-  $('authError').classList.remove('show');
-}
-
-$('loginForm').addEventListener('submit', async e => {
-  e.preventDefault();
-  const email = $('loginEmail').value;
-  const pass = $('loginPass').value;
-  const btn = e.target.querySelector('button[type="submit"]');
-  
-  btn.disabled = true;
-  btn.textContent = 'Verificando...';
-
-  try {
-    await pb.collection('users').authWithPassword(email, pass);
-    localStorage.setItem('mep_login_time', Date.now());
-
-    toast('✅ Bienvenido');
-    $('authModal').classList.remove('show');
-    renderTodo(); 
-
-  } catch (error) {
-    $('authErrorText').textContent = 'Credenciales incorrectas o cuenta no existe.';
-    $('authError').classList.add('show');
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = '<svg class="ico"><use href="#i-lock"/></svg>Iniciar Sesión';
-  }
-});
-
-$('registerForm').addEventListener('submit', async e => {
-  e.preventDefault();
-  
-  if ($('regPass').value !== $('regPassConfirm').value) {
-    $('authErrorText').textContent = 'Las contraseñas no coinciden. Verifícalas.';
-    $('authError').classList.add('show');
-    return;
-  }
-
-  const btn = e.target.querySelector('button[type="submit"]');
-  btn.disabled = true;
-  btn.textContent = 'Creando cuenta...';
-
-  const nivelCargo = $('regCargoNivel').value;
-  const detalleCargo = $('regCargoDetalle').value.trim();
-  const cargoFinal = nivelCargo === 'Militante' ? 'Militante' : (detalleCargo ? `${nivelCargo} - ${detalleCargo}` : nivelCargo);
-
-  const formData = new FormData();
-  formData.append('email', $('regEmail').value);
-  formData.append('password', $('regPass').value);
-  formData.append('passwordConfirm', $('regPass').value);
-  formData.append('nombre_completo', $('regName').value);
-  formData.append('estado', $('regEstado').value); 
-  formData.append('municipio', $('regMunicipio').value); 
-  formData.append('cargo', cargoFinal); 
-  formData.append('role', 'militante'); 
-  formData.append('foto', $('regFoto').files[0]);
-
-  try {
-    await pb.collection('users').create(formData);
-    toast('✅ Cuenta creada. Ahora puedes iniciar sesión.');
-    toggleAuthForms(false); 
-    $('loginEmail').value = $('regEmail').value;
-  } catch (error) {
-    console.error(error);
-    let errorMsg = 'Error al registrar. Verifica los datos.';
-    if(error.response?.data?.email?.code === 'validation_not_unique') errorMsg = 'Este correo ya está registrado.';
-    $('authErrorText').textContent = errorMsg;
-    $('authError').classList.add('show');
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = '<svg class="ico"><use href="#i-check"/></svg>Crear Cuenta';
-  }
-});
-
-$('btnLogin').onclick = abrirModalAuth;
-$('authModalClose').onclick = () => $('authModal').classList.remove('show');
-
-$('btnProfile').onclick = () => {
-  if(!currentUser) return;
-  $('profFoto').src = currentUser.foto ? pb.files.getUrl(currentUser, currentUser.foto) : 'logo.png';
-  $('profNombre').textContent = currentUser.nombre_completo;
-  $('profCargo').textContent = currentUser.cargo;
-  $('profEstado').textContent = currentUser.estado;
-  $('profMunicipio').textContent = currentUser.municipio;
-  $('profRole').textContent = currentUser.role;
-  $('profileModal').classList.add('show');
-};
-$('profileModalClose').onclick = () => $('profileModal').classList.remove('show');
-
-function cerrarSesion() {
-  pb.authStore.clear();
-  localStorage.removeItem('mep_login_time');
-  toast('Sesión cerrada');
-  go('galeria');
-}
-$('btnLogout').onclick = cerrarSesion;
-$('logoutBtnAdmin').onclick = cerrarSesion;
-
-
-document.addEventListener('DOMContentLoaded', () => {
-  const selectEstado = $('regEstado');
-  const selectMunicipio = $('regMunicipio');
-  const selectCargoNivel = $('regCargoNivel');
-  const inputCargoDetalle = $('regCargoDetalle');
-
-  if(selectEstado) {
-    Object.keys(VENEZUELA_DATA).sort().forEach(estado => {
-      const option = document.createElement('option');
-      option.value = estado;
-      option.textContent = estado;
-      selectEstado.appendChild(option);
-    });
-  }
-
-  if(selectEstado) {
-    selectEstado.addEventListener('change', (e) => {
-      const estadoSeleccionado = e.target.value;
-      selectMunicipio.innerHTML = '<option value="">Selecciona...</option>';
-      
-      if (estadoSeleccionado && VENEZUELA_DATA[estadoSeleccionado]) {
-        VENEZUELA_DATA[estadoSeleccionado].sort().forEach(municipio => {
-          const option = document.createElement('option');
-          option.value = municipio;
-          option.textContent = municipio;
-          selectMunicipio.appendChild(option);
-        });
-        selectMunicipio.disabled = false;
-      } else {
-        selectMunicipio.innerHTML = '<option value="">Elige estado...</option>';
-        selectMunicipio.disabled = true;
-      }
-    });
-  }
-
-  if(selectCargoNivel) {
-    selectCargoNivel.addEventListener('change', (e) => {
-      if (e.target.value === 'Militante') {
-        inputCargoDetalle.value = '';
-        inputCargoDetalle.disabled = true;
-        inputCargoDetalle.required = false;
-      } else {
-        inputCargoDetalle.disabled = false;
-        inputCargoDetalle.required = true;
-        inputCargoDetalle.focus();
-      }
-    });
-  }
-});
-
-const sidebar = $('sidebar'), overlay = $('overlay');
-function abrirMenu(){ sidebar.classList.add('open'); overlay.classList.add('show'); }
-function cerrarMenu(){ sidebar.classList.remove('open'); overlay.classList.remove('show'); }
-$('btnMenu').onclick = () => sidebar.classList.contains('open') ? cerrarMenu() : abrirMenu();
-overlay.onclick = cerrarMenu;
-
-document.querySelectorAll('.nav-head').forEach(head => {
-  head.onclick = () => head.parentElement.classList.toggle('open');
-});
-
-// ===== Botón para colapsar/expandir la sidebar en desktop =====
-const collapseBtn = $('collapseToggle');
-if (collapseBtn) {
-  const syncCollapseIcon = () => {
-    const icon = collapseBtn.querySelector('use');
-    const isCollapsed = document.body.classList.contains('sidebar-collapsed');
-    if (icon) icon.setAttribute('href', isCollapsed ? '#i-caret' : '#i-caret-left');
-    collapseBtn.setAttribute('aria-label', isCollapsed ? 'Expandir menú' : 'Colapsar menú');
-    collapseBtn.setAttribute('title', isCollapsed ? 'Expandir menú' : 'Colapsar menú');
-  };
-  collapseBtn.onclick = () => {
-    document.body.classList.toggle('sidebar-collapsed');
-    const isCollapsed = document.body.classList.contains('sidebar-collapsed');
-    localStorage.setItem('mep_sidebar_collapsed', isCollapsed ? '1' : '0');
-    syncCollapseIcon();
-  };
-  if (localStorage.getItem('mep_sidebar_collapsed') === '1') {
-    document.body.classList.add('sidebar-collapsed');
-  }
-  syncCollapseIcon();
-}
-
-function go(view, el){
-  if (currentView !== view && view !== 'galeria' && view !== 'inicio') {
-    viewHistory.push(currentView);
-    $('backBtnWrap').classList.add('show');
-  } else if (view === 'galeria' || view === 'inicio') {
-    viewHistory = [];
-    $('backBtnWrap').classList.remove('show');
-  }
-  currentView = view;
-
-  document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === 'view-' + view));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  if(el) el.classList.add('active');
-  else{
-    const n = document.querySelector(`.nav-item[data-view="${view}"]`);
-    if(n) n.classList.add('active');
-  }
-  cerrarMenu();
-  window.scrollTo({ top: 0, behavior: 'auto' });
-  
-  if(view === 'chat') {
-    if(!currentUser) {
-      $('chatLoginPrompt').style.display = 'block';
-      $('chatForm').style.display = 'none';
-      $('chatBox').innerHTML = ''; 
-    } else {
-      $('chatLoginPrompt').style.display = 'none';
-      $('chatForm').style.display = 'flex';
-      renderChat();
-    }
-  }
-  if(view === 'intranet') checkIntranetAuth();
-  
-  actualizarGaleriaPersistente(view);
-
-  if(view === 'subapp') document.body.classList.add('subapp-mode');
-  else document.body.classList.remove('subapp-mode');
-}
-
-function goBack() {
-  if (viewHistory.length > 0) {
-    const prevView = viewHistory.pop();
-    currentView = prevView;
-    document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === 'view-' + prevView));
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    const n = document.querySelector(`.nav-item[data-view="${prevView}"]`);
-    if(n) n.classList.add('active');
-    
-    if (viewHistory.length === 0) {
-      $('backBtnWrap').classList.remove('show');
-    }
-  }
-}
-
-function actualizarGaleriaPersistente(view){
-  const pg = $('persistentGallery');
-  if(!pg) return;
-  const ocultar = (view === 'galeria' || view === 'subapp');
-  pg.style.display = ocultar ? 'none' : 'block';
-}
-
-$('nav').addEventListener('click', e => {
-  const item = e.target.closest('.nav-item');
-  if(!item) return;
-  if(item.dataset.subapp){ abrirSubapp(item.dataset.subapp, item); return; }
-  if(item.dataset.view){ 
-    if(item.dataset.view === 'admin' && !isAdmin) {
-      toast('❌ No tienes permisos de administrador');
-      return;
-    }
-    go(item.dataset.view, item); 
-  }
-});
-
-$('brand').onclick = () => go('galeria');
-
-function renderNavSubapps(){
-  const cont = $('navSubapps');
-  cont.innerHTML = DB.subapps.length
-    ? DB.subapps.map(s => `
-        <div class="nav-item" data-subapp="${esc(s.id)}">
-          <span style="font-size:16px;line-height:1;width:18px;text-align:center;flex:none">${esc(s.icono || '🔗')}</span>
-          <span class="label">${esc(s.nombre)}</span>
-        </div>`).join('')
-    : '<div class="nav-item" style="opacity:.5;font-size:13px"><span class="label">Sin sub-apps</span></div>';
-}
-
-let subappActual = null;
-function abrirSubapp(id, el){
-  const s = DB.subapps.find(x => x.id === id);
-  if(!s) return;
-  const u = safeUrl(s.url);
-  if (!u) { toast('❌ URL inválida'); return; }
-  subappActual = { ...s, url: u };
-  $('subappTitle').textContent = s.nombre;
-  const f = $('subappFrame');
-  f.src = 'about:blank';
-  setTimeout(() => { f.src = u; }, 80);
-  go('subapp', el);
-}
-
-$('subappBack').onclick = () => { goBack(); };
-$('subappOpen').onclick = () => {
-  const u = subappActual && safeUrl(subappActual.url);
-  if (u) window.open(u, '_blank', 'noopener,noreferrer');
-};
-
-function renderInicio(){
-  $('statAgenda').textContent = DB.agenda.length;
-  $('statGaleria').textContent = DB.galeria.length;
-  $('statSubapps').textContent = DB.subapps.length;
-  $('statRegs').textContent = DB.reglamentos.length;
-
-  const validas = DB.agenda.filter(a => {
-    if(!a.fecha) return false;
-    const fechaHora = new Date(`${a.fecha.split(' ')[0]}T${a.hora || '00:00'}:00`);
-    return fechaHora >= twoHoursAgo;
-  });
-
-  const prox = validas.slice(0, 3);
-  $('inicioAgenda').innerHTML = prox.length
-    ? prox.map(a => {
-        const linkHtml = a.enlace ? `<a href="${esc(a.enlace)}" target="_blank" rel="noopener noreferrer" class="ag-link" onclick="event.stopPropagation();"><svg class="ico"><use href="#i-external"/></svg>Ver Enlace</a>` : '';
-        return `
-        <details class="ag-item" style="margin-bottom:12px; padding: 15px; display: block;">
-          <summary style="display: flex; gap: 20px;">
-            <div class="ag-date">
-              <b>${esc((a.fecha||'').split(' ')[0].split('-')[2] || '--')}</b>
-              <small>${mesCorto(a.fecha)}</small>
-            </div>
-            <div class="ag-body">
-              <h3>${esc(a.titulo)}</h3>
-              <div class="ag-meta">
-                ${a.hora ? `<span><svg class="ico"><use href="#i-clock"/></svg>${esc(a.hora)}</span>` : ''}
-                ${a.lugar ? `<span><svg class="ico"><use href="#i-pin"/></svg>${esc(a.lugar)}</span>` : ''}
-                <span><svg class="ico"><use href="#i-shield"/></svg>${esc(a.nivel || 'Nacional')}</span>
-                ${linkHtml}
-              </div>
-              <span class="ag-toggle-txt"></span>
-            </div>
-          </summary>
-          <div class="ag-full-desc">
-            <b style="color: var(--gold-300);">Descripción:</b><br><br>
-            ${a.descripcion ? esc(a.descripcion).replace(/\n/g, '<br>') : 'No hay detalles adicionales.'}
-            ${a.enlace ? `<div class="row" style="margin-top: 15px;"><a href="${esc(a.enlace)}" target="_blank" rel="noopener noreferrer" class="btn sm primary"><svg class="ico"><use href="#i-external"/></svg> Abrir Enlace de la Actividad</a></div>` : ''}
-          </div>
-        </details>`;
-      }).join('')
-    : '<p class="muted">No hay actividades próximas.</p>';
-}
-
-function renderAgenda(){
-  const htmlItem = (a) => {
-    const linkHtml = a.enlace ? `<a href="${esc(a.enlace)}" target="_blank" rel="noopener noreferrer" class="ag-link" onclick="event.stopPropagation();"><svg class="ico"><use href="#i-external"/></svg>Ver Enlace</a>` : '';
-    return `
-    <details class="ag-item">
-      <summary style="display: flex; gap: 20px; width: 100%;">
-        <div class="ag-date">
-          <b>${esc((a.fecha||'').split(' ')[0].split('-')[2] || '--')}</b>
-          <small>${mesCorto(a.fecha)}</small>
-        </div>
-        <div class="ag-body">
-          <h3>${esc(a.titulo)}</h3>
-          <div class="ag-meta">
-            ${a.fecha ? `<span><svg class="ico"><use href="#i-calendar"/></svg>${esc(fmtFecha(a.fecha))}</span>` : ''}
-            ${a.hora ? `<span><svg class="ico"><use href="#i-clock"/></svg>${esc(a.hora)}</span>` : ''}
-            ${a.lugar ? `<span><svg class="ico"><use href="#i-pin"/></svg>${esc(a.lugar)}</span>` : ''}
-            ${linkHtml}
-          </div>
-          <span class="ag-toggle-txt"></span>
-        </div>
-      </summary>
-      <div class="ag-full-desc">
-        <b style="color: var(--gold-300);">Descripción:</b><br><br>
-        ${a.descripcion ? esc(a.descripcion).replace(/\n/g, '<br>') : 'No hay detalles adicionales.'}
-        ${a.enlace ? `<div class="row" style="margin-top: 15px;"><a href="${esc(a.enlace)}" target="_blank" rel="noopener noreferrer" class="btn sm primary"><svg class="ico"><use href="#i-external"/></svg> Abrir Enlace de la Actividad</a></div>` : ''}
-      </div>
-    </details>`;
-  };
-
-  const validas = DB.agenda.filter(a => {
-    if(!a.fecha) return false;
-    const fechaHora = new Date(`${a.fecha.split(' ')[0]}T${a.hora || '00:00'}:00`);
-    return fechaHora >= twoHoursAgo;
-  });
-
-  const nac = validas.filter(a => a.nivel === 'Nacional' || !a.nivel); 
-  const reg = validas.filter(a => a.nivel === 'Regional');
-  const mun = validas.filter(a => a.nivel === 'Municipal');
-
-  const emptyMsg = '<div class="empty"><span class="em"><svg class="ico ico-2xl"><use href="#i-calendar"/></svg></span><h3>Sin actividades</h3><p>No hay actividades en este nivel.</p></div>';
-
-  $('agendaListNacional').querySelector('.agenda-container').innerHTML = nac.length ? nac.map(htmlItem).join('') : emptyMsg;
-  $('agendaListRegional').querySelector('.agenda-container').innerHTML = reg.length ? reg.map(htmlItem).join('') : emptyMsg;
-  $('agendaListMunicipal').querySelector('.agenda-container').innerHTML = mun.length ? mun.map(htmlItem).join('') : emptyMsg;
-}
-
-function renderReglamentos(){
-  $('regList').innerHTML = DB.reglamentos.length
-    ? DB.reglamentos.map(r => {
-        const u = safeUrl(r.url);
-        const btnHtml = u ? `<div class="row"><a class="btn sm primary" href="${esc(u)}" target="_blank" rel="noopener noreferrer"><svg class="ico"><use href="#i-external"/></svg>Ver Documento</a></div>` : '';
-        return `
-        <div class="reg-item">
-          <h3><svg class="ico ico-lg"><use href="#i-scroll"/></svg>${esc(r.titulo)}</h3>
-          ${r.descripcion ? `<p style="color:var(--text-dim);margin-bottom:12px">${esc(r.descripcion)}</p>` : ''}
-          ${r.texto ? `<p>${esc(r.texto)}</p>` : ''}
-          ${btnHtml}
-        </div>`;
-      }).join('')
-    : '<div class="empty"><span class="em"><svg class="ico ico-2xl"><use href="#i-scroll"/></svg></span><h3>Sin reglamentos</h3><p>Aún no se han publicado reglamentos.</p></div>';
-}
-
-function renderEnVivo(){
-  const l = $('liveList');
-  if(!DB.envivo.length){
-    l.innerHTML = '<div class="empty"><span class="em"><svg class="ico ico-2xl"><use href="#i-broadcast"/></svg></span><h3>Sin transmisiones</h3><p>No hay transmisiones en este momento.</p></div>';
-    return;
-  }
-  l.innerHTML = DB.envivo.map(v => {
-    const u = safeUrl(v.url);
-    const btnHtml = u ? `<a class="btn ${v.activo ? 'primary' : 'purple'}" href="${esc(u)}" target="_blank" rel="noopener noreferrer">
-        <svg class="ico"><use href="#i-${v.activo ? 'eye' : 'external'}"/></svg>
-        ${v.activo ? 'Ver Ahora' : 'Abrir Enlace'}
-      </a>` : '';
-    return `
-    <div class="live-card ${v.activo ? 'is-live' : ''}">
-      <div class="live-dot ${v.activo ? 'on' : ''}"></div>
-      <div class="lc-body">
-        <h3>${esc(v.titulo)} ${v.activo ? '<span class="tag">EN VIVO</span>' : ''}</h3>
-        ${v.plataforma ? `<div class="ag-meta"><span><svg class="ico"><use href="#i-broadcast"/></svg>${esc(v.plataforma)}</span></div>` : ''}
-        ${v.descripcion ? `<p>${esc(v.descripcion)}</p>` : ''}
-      </div>
-      ${btnHtml}
-    </div>`;
-  }).join('');
-}
-
-function construirGaleriaHTML(){
-  if(!DB.galeria.length){
-    return `<div class="empty" style="grid-column:1/-1"><span class="em"><svg class="ico ico-2xl"><use href="#i-images"/></svg></span><h3>Galería vacía</h3><p>El administrador puede agregar contenido.</p></div>`;
-  }
-  return DB.galeria.map((it, i) => {
-    let media = '';
-    if(it.tipo === 'video'){
-      const yt = ytEmbed(it.url);
-      media = yt
-        ? `<iframe class="gal-media" src="${esc(yt)}" allowfullscreen loading="lazy" title="${esc(it.titulo)}"></iframe>`
-        : `<video class="gal-media" src="${esc(it.url)}" controls playsinline preload="metadata" onerror="this.outerHTML='<div style=\\'padding:20px;text-align:center;color:#ffd700;\\'><b>Formato de video no soportado</b><br><small>Sube el video en formato MP4.</small></div>'"></video>`;
-    }else{
-      media = `<img class="gal-media" src="${esc(it.url)}" alt="${esc(it.titulo)}" loading="lazy" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 250%22><rect fill=%22%231a0b30%22 width=%22400%22 height=%22250%22/><text x=%2250%25%22 y=%2250%25%22 fill=%22%23ffd700%22 font-size=%2216%22 text-anchor=%22middle%22 font-family=%22sans-serif%22>Imagen no disponible</text></svg>'">`;
-    }
-    return `
-      <div class="gal-card" style="animation-delay:${Math.min(i*45, 450)}ms">
-        <div class="gal-media-wrap">
-          <span class="gal-badge"><svg class="ico"><use href="#i-${it.tipo === 'video' ? 'video' : 'image'}"/></svg>${it.tipo === 'video' ? 'Video' : 'Imagen'}</span>
-          ${media}
-        </div>
-        <div class="gal-info">
-          <h3>${esc(it.titulo || 'Sin título')}</h3>
-          ${it.descripcion ? `<p>${esc(it.descripcion)}</p>` : ''}
-          ${it.fecha ? `<span class="gal-fecha"><svg class="ico"><use href="#i-calendar"/></svg>${esc(fmtFecha(it.fecha))}</span>` : ''}
-        </div>
-      </div>`;
-  }).join('');
-}
-
-function renderGaleria(){
-  const html = construirGaleriaHTML();
-  const g = $('galGrid');
-  const gp = $('galGridPersistent');
-  if(g) g.innerHTML = html;
-  if(gp) gp.innerHTML = html;
-}
-
-const CARRUSEL_INTERVAL = 5500;
-let carruselIndex = 0;
-let carruselProgressTimer = null;
-let carruselPaused = false;
-let carruselSlides = [];
-
-function construirCarruselHTML(){
-  if(!DB.galeria.length){
-    return `<div class="carousel-empty"><span class="em"><svg class="ico"><use href="#i-images"/></svg></span><h3>No hay contenido</h3><p>El administrador puede agregar imágenes y videos.</p></div>`;
-  }
-  return DB.galeria.map((it, i) => {
-    let media = '';
-    if(it.tipo === 'video'){
-      const yt = ytEmbed(it.url);
-      media = yt ? `<iframe src="${esc(yt)}" allowfullscreen loading="lazy" title="${esc(it.titulo)}"></iframe>` : `<video src="${esc(it.url)}" muted loop playsinline preload="metadata" onerror="this.outerHTML='<div style=\\'display:flex;align-items:center;justify-content:center;height:100%;color:#ffd700;font-weight:bold;\\'>Video MP4 no soportado</div>'"></video>`;
-    }else{
-      media = `<img src="${esc(it.url)}" alt="${esc(it.titulo)}" loading="${i === 0 ? 'eager' : 'lazy'}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 800 500%22><rect fill=%22%231a0b30%22 width=%22800%22 height=%22500%22/><text x=%2250%25%22 y=%2250%25%22 fill=%22%23ffd700%22 font-size=%2222%22 text-anchor=%22middle%22 font-family=%22sans-serif%22>Imagen MEP no disponible</text></svg>'">`;
-    }
-    return `
-      <div class="carousel-slide" data-index="${i}">
-        ${media}
-        <div class="carousel-overlay"></div>
-        <div class="carousel-caption">
-          <h3>${esc(it.titulo || 'Sin título')}</h3>
-          ${it.descripcion ? `<p>${esc(it.descripcion)}</p>` : ''}
-          ${it.fecha ? `<span class="carousel-meta"><svg class="ico"><use href="#i-calendar"/></svg>${esc(fmtFecha(it.fecha))}</span>` : ''}
-        </div>
-      </div>`;
-  }).join('');
-}
-
-let carruselTimer = null;
-
-function renderCarrusel(){
-  const track = $('carouselTrack');
-  const wrap = $('carouselWrap');
-  const dots = $('carouselDots');
-  const controls = $('carouselControls');
-  
-  if(!DB.galeria.length){
-    track.innerHTML = construirCarruselHTML();
-    dots.style.display = 'none'; controls.style.display = 'none';
-    return;
-  }
-  
-  carruselSlides = DB.galeria;
-  track.innerHTML = construirCarruselHTML();
-  dots.style.display = 'flex'; controls.style.display = 'flex';
-  dots.innerHTML = DB.galeria.map((_, i) => `<button class="carousel-dot ${i === 0 ? 'active' : ''}" data-dot="${i}"></button>`).join('');
-  carruselIndex = 0;
-  track.style.transform = `translateX(0%)`;
-
-  function moverA(index) {
-    carruselIndex = index;
-    track.style.transition = 'transform 0.9s cubic-bezier(0.65, 0, 0.35, 1)';
-    track.style.transform = `translateX(-${carruselIndex * 100}%)`;
-    document.querySelectorAll('.carousel-dot').forEach((d, i) => d.classList.toggle('active', i === carruselIndex));
-  }
-
-  dots.querySelectorAll('[data-dot]').forEach(dot => {
-    dot.onclick = () => {
-      moverA(+dot.dataset.dot);
-      iniciarAutoplay(); // Reinicia el timer al hacer clic
-    };
-  });
-
-  $('carouselPrev').onclick = () => {
-    if(carruselSlides.length === 0) return;
-    moverA((carruselIndex - 1 + carruselSlides.length) % carruselSlides.length);
-    iniciarAutoplay();
-  };
-  
-  $('carouselNext').onclick = () => {
-    if(carruselSlides.length === 0) return;
-    moverA((carruselIndex + 1) % carruselSlides.length);
-    iniciarAutoplay();
-  };
-
-  // Lógica del Autoplay
-  function iniciarAutoplay() {
-    clearInterval(carruselTimer);
-    if (carruselSlides.length <= 1) return;
-    carruselTimer = setInterval(() => {
-      if (currentView === 'galeria') {
-        moverA((carruselIndex + 1) % carruselSlides.length);
-      }
-    }, 5000); // Cambia cada 5 segundos
-  }
-
-  iniciarAutoplay();
-
-  // Pausar al pasar el mouse
-  if(wrap) {
-    wrap.onmouseenter = () => clearInterval(carruselTimer);
-    wrap.onmouseleave = () => iniciarAutoplay();
-  }
-}
-
-function initChatUI() {
-  if(!currentUser) return;
-  if ($('view-chat').classList.contains('active')) {
-    $('chatLoginPrompt').style.display = 'none';
-    $('chatForm').style.display = 'flex';
-    renderChat();
-  }
-}
-
-pb.collection('mensajes').subscribe('*', function (e) {
-  if (e.action === 'create' || e.action === 'delete') {
-    if($('view-chat').classList.contains('active')) renderChat();
-    if($('view-admin').classList.contains('active')) renderAdminChat();
-  }
-}).catch(() => { });
-
-pb.collection('chat_intranet').subscribe('*', function (e) {
-  if (e.action === 'create' || e.action === 'delete') {
-    if ($('view-intranet').classList.contains('active') && $('intranetRecipient').value) {
-      renderIntranetChat();
-    }
-  }
-}).catch(() => {});
-
-async function renderChat(){
-  const boxPublic = $('chatBox');
-  const boxAdmin = $('adminChatBox');
-  if(!boxPublic && !boxAdmin) return;
-
-  try {
-    const msgs = await pb.collection('mensajes').getList(1, 100, { sort: 'created' });
-    
-    const htmlMsgs = msgs.items.length
-      ? msgs.items.map(m => {
-          const isMine = currentUser && m.user_id === currentUser.id;
-          const fotoUrl = m.foto_url || 'logo.png'; 
-          return `
-          <div class="msg ${isMine ? 'mine' : ''}">
-            <img src="${fotoUrl}" class="msg-avatar" onerror="this.src='logo.png'">
-            <div class="msg-content">
-              <div class="msg-head">
-                <b>${esc(m.usuario)} <span class="msg-cargo">${esc(m.cargo || 'Militante')}</span></b>
-                <span>${new Date(m.created).toLocaleString('es-VE',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</span>
-                ${isAdmin && !isMine ? `<button class="btn sm danger" style="padding:2px 8px; margin-left:8px; font-size:10px;" data-action="ban" data-userid="${esc(m.user_id)}" data-usuario="${esc(m.usuario)}">Suspender</button>` : ''}
-              </div>
-              <div class="msg-body">${esc(m.texto)}</div>
-            </div>
-          </div>`;
-        }).join('')
-      : '<div class="empty" style="margin:auto;background:transparent;border:0"><h3>Sin mensajes</h3><p>Envía el primer mensaje.</p></div>';
-
-    if(boxPublic) {
-      const alFinal = boxPublic.scrollTop + boxPublic.clientHeight >= boxPublic.scrollHeight - 70;
-      boxPublic.innerHTML = htmlMsgs;
-      if(alFinal) boxPublic.scrollTop = boxPublic.scrollHeight;
-    }
-    if(boxAdmin) {
-      boxAdmin.innerHTML = htmlMsgs;
-      boxAdmin.scrollTop = boxAdmin.scrollHeight;
-    }
-  } catch(e) { 
-    console.error("Error real de PocketBase en chat:", e); 
-    if(boxPublic) boxPublic.innerHTML = '<div style="padding:20px;color:red">Error al cargar los mensajes.</div>';
-  }
-}
-
-async function renderAdminChat(){
-  await renderChat();
-}
-
-async function enviarMensaje(texto, inputElement) {
-  if(!texto || !currentUser) return;
-  
-  try {
-    const res = await pb.collection('bloqueados').getList(1, 1, { filter: `user_id="${currentUser.id}"` });
-    if (res.items.length > 0) {
-        toast('❌ Estás suspendido del chat. Contacta a un administrador.');
-        return;
-    }
-  } catch (e) { console.warn("Error verificando bloqueo:", e); }
-
-  try {
-    await pb.collection('mensajes').create({
-      usuario: currentUser.nombre_completo,
-      user_id: currentUser.id,
-      cargo: currentUser.cargo,
-      foto_url: currentUser.foto ? pb.files.getUrl(currentUser, currentUser.foto) : '',
-      texto: texto
-    });
-    inputElement.value = '';
-  } catch (e) {
-    console.error(e);
-    toast('❌ Error al enviar el mensaje.');
-  }
-}
-
-$('chatForm').addEventListener('submit', e => {
-  e.preventDefault();
-  enviarMensaje($('chatInput').value.trim(), $('chatInput'));
-});
-
-$('adminChatForm').addEventListener('submit', e => {
-  e.preventDefault();
-  enviarMensaje($('adminChatInput').value.trim(), $('adminChatInput'));
-});
-
-async function banearUsuario(userId, usuario) {
-  if(!confirm(`¿Suspender a ${usuario} del chat permanentemente?`)) return;
-  try {
-    await pb.collection('bloqueados').create({ user_id: userId, usuario: usuario });
-    toast(`🚫 ${usuario} ha sido suspendido.`);
-    renderBlockedUsers();
-  } catch (e) {
-    toast('❌ Error al suspender usuario');
-  }
-}
-
-async function renderBlockedUsers() {
-  const listContainer = $('blockedUsersList');
-  if(!listContainer || !isAdmin) return;
-  try {
-    const bloqueados = await pb.collection('bloqueados').getFullList({ sort: '-created' });
-    listContainer.innerHTML = bloqueados.length ? bloqueados.map(b => `
-      <div class="ad-row">
-        <div class="thumb" style="background: #7f1d1d; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 20px;">🚫</div>
-        <div class="ad-txt"><b>${esc(b.usuario)}</b><small>ID: ${esc(b.user_id)}</small></div>
-        <button class="btn sm primary" data-action="unban" data-id="${esc(b.id)}" data-usuario="${esc(b.usuario)}" title="Desbloquear"><svg class="ico"><use href="#i-check"/></svg> Desbloquear</button>
-      </div>
-    `).join('') : '<p class="muted">No hay usuarios suspendidos.</p>';
-  } catch(e) { listContainer.innerHTML = '<p class="muted">Error al cargar.</p>'; }
-}
-
-async function desbloquearUsuario(id, nombre) {
-  if(!confirm(`¿Desbloquear a ${nombre}?`)) return;
-  try {
-    await pb.collection('bloqueados').delete(id);
-    toast(`✅ ${nombre} desbloqueado.`);
-    renderBlockedUsers(); 
-  } catch (e) { toast('❌ Error al desbloquear'); }
-}
-
-document.addEventListener('click', e => {
-  const btn = e.target.closest('[data-action]');
-  if(!btn) return;
-  const { action, type, id, userid, usuario } = btn.dataset;
-  if(action === 'del') eliminarItem(type, id);
-  else if(action === 'edit') cargarParaEditar(type, id);
-  else if(action === 'ban') banearUsuario(userid, usuario);
-  else if(action === 'unban') desbloquearUsuario(id, usuario);
-});
-
-let editando = { galeria:null, envivo:null, agenda:null, reglamentos:null, subapps:null };
-
-function renderAdminListas(){
-  $('g_list').innerHTML = DB.galeria.length ? DB.galeria.map(it => `
-    <div class="ad-row">
-      ${it.tipo === 'imagen' ? `<img class="thumb" src="${esc(it.url)}">` : `<div class="thumb" style="display:flex;align-items:center;justify-content:center;color:var(--gold-300)"><svg class="ico ico-lg"><use href="#i-video"/></svg></div>`}
-      <div class="ad-txt"><b>${esc(it.titulo)}</b><small>${esc(it.tipo)} · ${esc(fmtFecha(it.fecha) || 'sin fecha')}</small></div>
-      <button class="btn sm icon" data-action="edit" data-type="galeria" data-id="${esc(it.id)}"><svg class="ico"><use href="#i-pencil"/></svg></button>
-      <button class="btn sm icon danger" data-action="del" data-type="galeria" data-id="${esc(it.id)}"><svg class="ico"><use href="#i-trash"/></svg></button>
-    </div>`).join('') : '<p class="muted">Sin elementos.</p>';
-
-  $('a_list').innerHTML = DB.agenda.length ? DB.agenda.map(a => `
-    <div class="ad-row">
-      <div class="ad-txt"><b>${esc(a.titulo)} <span style="font-size:10px;color:var(--gold-500)">[${esc(a.nivel || 'Nacional')}]</span></b><small>${esc(fmtFecha(a.fecha))} ${esc(a.hora || '')}${a.enlace ? ' · 🔗' : ''}</small></div>
-      <button class="btn sm icon" data-action="edit" data-type="agenda" data-id="${esc(a.id)}"><svg class="ico"><use href="#i-pencil"/></svg></button>
-      <button class="btn sm icon danger" data-action="del" data-type="agenda" data-id="${esc(a.id)}"><svg class="ico"><use href="#i-trash"/></svg></button>
-    </div>`).join('') : '<p class="muted">Sin actividades.</p>';
-  
-  $('e_list').innerHTML = DB.envivo.length ? DB.envivo.map(v => `
-    <div class="ad-row">
-      <span class="live-dot ${v.activo ? 'on' : ''}"></span>
-      <div class="ad-txt"><b>${esc(v.titulo)}</b><small>${esc(v.plataforma || 'plataforma')}</small></div>
-      <button class="btn sm icon" data-action="edit" data-type="envivo" data-id="${esc(v.id)}"><svg class="ico"><use href="#i-pencil"/></svg></button>
-      <button class="btn sm icon danger" data-action="del" data-type="envivo" data-id="${esc(v.id)}"><svg class="ico"><use href="#i-trash"/></svg></button>
-    </div>`).join('') : '<p class="muted">Sin transmisiones.</p>';
-
-  $('r_list').innerHTML = DB.reglamentos.length ? DB.reglamentos.map(r => `
-    <div class="ad-row">
-      <div class="ad-txt"><b>${esc(r.titulo)}</b><small>${esc(r.descripcion || 'documento')}</small></div>
-      <button class="btn sm icon" data-action="edit" data-type="reglamentos" data-id="${esc(r.id)}"><svg class="ico"><use href="#i-pencil"/></svg></button>
-      <button class="btn sm icon danger" data-action="del" data-type="reglamentos" data-id="${esc(r.id)}"><svg class="ico"><use href="#i-trash"/></svg></button>
-    </div>`).join('') : '<p class="muted">Sin reglamentos.</p>';
-
-  $('s_list').innerHTML = DB.subapps.length ? DB.subapps.map(s => `
-    <div class="ad-row">
-      <div class="thumb" style="display:flex;align-items:center;justify-content:center;font-size:24px;background:transparent;border-color:var(--glass-border-subtle)">${esc(s.icono || '🔗')}</div>
-      <div class="ad-txt"><b>${esc(s.nombre)}</b><small>${esc(s.url)}</small></div>
-      <button class="btn sm icon" data-action="edit" data-type="subapps" data-id="${esc(s.id)}"><svg class="ico"><use href="#i-pencil"/></svg></button>
-      <button class="btn sm icon danger" data-action="del" data-type="subapps" data-id="${esc(s.id)}"><svg class="ico"><use href="#i-trash"/></svg></button>
-    </div>`).join('') : '<p class="muted">Sin sub-apps.</p>';
-  
-  renderBlockedUsers();
-}
-
-async function eliminarItem(type, id){
-  if(!confirm('¿Estás seguro de eliminar este elemento?')) return;
-  try {
-    await pb.collection(type).delete(id);
-    await cargarDatos();
-    renderTodo();
-    toast('🗑 Elemento eliminado');
-  } catch (e) { toast('❌ Error al eliminar'); }
-}
-
-function limpiarForm(type){
-  editando[type] = null;
-  const plus = '<svg class="ico"><use href="#i-plus"/></svg>';
-  if(type === 'galeria'){ ['g_titulo','g_fecha','g_desc','g_url'].forEach(i => $(i).value = ''); $('g_file').value = ''; $('g_tipo').value = 'imagen'; $('g_save').innerHTML = plus + 'Agregar'; $('g_cancel').style.display = 'none'; }
-  if(type === 'envivo'){ ['e_titulo','e_plat','e_url','e_desc'].forEach(i => $(i).value = ''); $('e_activo').value = 'no'; $('e_save').innerHTML = plus + 'Agregar'; $('e_cancel').style.display = 'none'; }
-  if(type === 'agenda'){ ['a_titulo','a_fecha','a_hora','a_lugar','a_enlace','a_desc'].forEach(i => $(i).value = ''); $('a_nivel').value = 'Nacional'; $('a_save').innerHTML = plus + 'Agregar'; $('a_cancel').style.display = 'none'; }
-  if(type === 'reglamentos'){ ['r_titulo','r_desc','r_url','r_texto'].forEach(i => $(i).value = ''); $('r_save').innerHTML = plus + 'Agregar'; $('r_cancel').style.display = 'none'; }
-  if(type === 'subapps'){ ['s_nombre','s_icono','s_url'].forEach(i => $(i).value = ''); $('s_save').innerHTML = plus + 'Agregar'; $('s_cancel').style.display = 'none'; }
-}
-
-$('g_save').onclick = async () => {
-  const titulo = $('g_titulo').value.trim();
-  const url = $('g_url').value.trim();
-  const archivo = $('g_file').files[0];
-  if(!titulo){ toast('Escribe un título'); return; }
-  if(!url && !archivo){ toast('Indica URL o archivo'); return; }
-  
-  if(archivo && archivo.size > 10 * 1024 * 1024) {
-    toast('❌ El archivo es muy pesado (máximo 10MB). Comprime la imagen o el video.');
-    return;
-  }
-
-  const formData = new FormData();
-  formData.append('titulo', titulo);
-  formData.append('descripcion', $('g_desc').value.trim());
-  formData.append('fecha', $('g_fecha').value);
-  formData.append('tipo', $('g_tipo').value);
-  if(archivo) formData.append('archivo', archivo);
-  else if(url) formData.append('url', url);
-
-  try {
-    if(editando.galeria) await pb.collection('galeria').update(editando.galeria, formData);
-    else await pb.collection('galeria').create(formData);
-    await cargarDatos(); renderTodo(); limpiarForm('galeria');
-    toast('✅ Guardado');
-  } catch (e) { 
-    console.error("Error de PocketBase:", e);
-    const errMsg = e.response?.data?.archivo?.message || "Error al guardar";
-    toast('❌ ' + errMsg); 
-  }
-};
-$('g_cancel').onclick = () => { limpiarForm('galeria'); };
-
-$('a_save').onclick = async () => {
-  const titulo = $('a_titulo').value.trim();
-  const fecha = $('a_fecha').value;
-  if(!titulo || !fecha){ toast('Escribe título y fecha'); return; }
-  const payload = { 
-    titulo, fecha, 
-    hora: $('a_hora').value, 
-    nivel: $('a_nivel').value, 
-    lugar: $('a_lugar').value.trim(), 
-    enlace: $('a_enlace').value.trim(), 
-    descripcion: $('a_desc').value.trim() 
-  };
-  try {
-    if(editando.agenda) await pb.collection('agenda').update(editando.agenda, payload);
-    else await pb.collection('agenda').create(payload);
-    await cargarDatos(); renderTodo(); limpiarForm('agenda');
-    toast('✅ Guardado');
-  } catch (e) { toast('❌ Error al guardar'); }
-};
-$('a_cancel').onclick = () => { limpiarForm('agenda'); };
-
-$('r_save').onclick = async () => {
-  const titulo = $('r_titulo').value.trim();
-  if(!titulo){ toast('Escribe el título'); return; }
-  const payload = { 
-    titulo, 
-    descripcion: $('r_desc').value.trim(), 
-    enlace: $('r_url').value.trim(), 
-    texto: $('r_texto').value.trim() 
-  };
-  try {
-    if(editando.reglamentos) await pb.collection('reglamentos').update(editando.reglamentos, payload);
-    else await pb.collection('reglamentos').create(payload);
-    await cargarDatos(); renderTodo(); limpiarForm('reglamentos');
-    toast('✅ Reglamento guardado');
-  } catch (e) { 
-    console.error(e);
-    toast('❌ Error al guardar'); 
-  }
-};
-$('r_cancel').onclick = () => { limpiarForm('reglamentos'); };
-
-$('e_save').onclick = async () => {
-  const titulo = $('e_titulo').value.trim();
-  const url = $('e_url').value.trim();
-  if(!titulo || !url){ toast('Escribe título y enlace'); return; }
-  const payload = { 
-    titulo, url, 
-    plataforma: $('e_plat').value.trim(), 
-    activo: $('e_activo').value === 'si', 
-    descripcion: $('e_desc').value.trim() 
-  };
-  try {
-    if(editando.envivo) await pb.collection('envivo').update(editando.envivo, payload);
-    else await pb.collection('envivo').create(payload);
-    await cargarDatos(); renderTodo(); limpiarForm('envivo');
-    toast('✅ Transmisión guardada');
-  } catch (e) { toast('❌ Error al guardar'); }
-};
-$('e_cancel').onclick = () => { limpiarForm('envivo'); };
-
-$('s_save').onclick = async () => {
-  const nombre = $('s_nombre').value.trim();
-  const url = $('s_url').value.trim();
-  if(!nombre || !url){ toast('Escribe el nombre y la URL'); return; }
-  const payload = { nombre, url, icono: $('s_icono').value.trim() || '🔗' };
-  try {
-    if(editando.subapps) await pb.collection('subapps').update(editando.subapps, payload);
-    else await pb.collection('subapps').create(payload);
-    await cargarDatos(); renderTodo(); limpiarForm('subapps');
-    toast('✅ Sub-app guardada');
-  } catch (e) { toast('❌ Error al guardar'); }
-};
-$('s_cancel').onclick = () => { limpiarForm('subapps'); };
-
-function checkIntranetAuth() {
-  const loginView = $('intranetLoginView');
-  const chatView = $('intranetChatView');
-  
-  const esAdmin = currentUser && currentUser.role === 'admin';
-
-  if (esAdmin) {
-    loginView.style.display = 'none';
-    chatView.style.display = 'block';
-    $('intranetUserLabel').textContent = currentUser.nombre_completo || 'Admin';
-    loadIntranetContacts();
-  } else {
-    loginView.style.display = 'block';
-    chatView.style.display = 'none';
-  }
-}
-
-async function loadIntranetContacts() {
-  const select = $('intranetRecipient');
-  if (!select) return;
-
-  if (!currentUser || currentUser.role !== 'admin') return;
-
-  try {
-    const users = await pb.collection('users').getFullList({ 
-      sort: 'nombre_completo',
-      filter: `role = "admin" && id != "${currentUser.id}"`
-    });
-    
-    if (users.length === 0) {
-      select.innerHTML = '<option value="">No hay otros administradores disponibles</option>';
-      return;
-    }
-
-    select.innerHTML = '<option value="">Selecciona un destinatario...</option>' + 
-      users.map(u => {
-        const nombreVisible = u.nombre_completo || u.email || 'Admin';
-        return `<option value="${esc(u.id)}">${esc(nombreVisible)}</option>`;
-      }).join('');
-      
-    select.disabled = false;
-  } catch (e) {
-    console.error("Error cargando contactos:", e);
-    select.innerHTML = '<option value="">Error al cargar contactos</option>';
-  }
-}
-
-$('intranetLogoutBtn').onclick = () => {
-  cerrarSesion();
-  toast('Sesión de intranet cerrada');
-};
-
-$('intranetRecipient').onchange = () => {
-  const recipientId = $('intranetRecipient').value;
-  const input = $('intranetChatInput');
-  const btn = $('intranetSendBtn');
-  
-  if (recipientId) {
-    input.disabled = false;
-    btn.disabled = false;
-    input.focus();
-    renderIntranetChat();
-  } else {
-    input.disabled = true;
-    btn.disabled = true;
-    $('intranetChatBox').innerHTML = `
-      <div class="empty" style="margin:auto;background:transparent;border:0">
-        <h3>Selecciona un destinatario</h3>
-        <p>Elige a otro administrador de la lista para ver la conversación privada.</p>
-      </div>`;
-  }
-};
-
-async function renderIntranetChat() {
-  const box = $('intranetChatBox');
-  const recipientId = $('intranetRecipient').value;
-  
-  if (!box || !currentUser || !recipientId) return;
-
-  const myId = currentUser.id;
-
-  try {
-    const filter = `(user_id="${myId}" && destinatario="${recipientId}") || (user_id="${recipientId}" && destinatario="${myId}")`;
-    
-    const msgs = await pb.collection('chat_intranet').getList(1, 100, { 
-      filter: filter,
-      sort: 'created' 
-    });
-    
-    const alFinal = box.scrollTop + box.clientHeight >= box.scrollHeight - 70;
-
-    box.innerHTML = msgs.items.length
-      ? msgs.items.map(m => {
-          let archivoHTML = '';
-          if (m.archivo) {
-            const fileUrl = pb.files.getUrl(m, m.archivo);
-            archivoHTML = `<a href="${fileUrl}" target="_blank" class="btn sm" style="margin-top: 10px; display: inline-flex; background: var(--purple-800); border-color: var(--gold-400);"><svg class="ico"><use href="#i-download"/></svg> Descargar PDF</a>`;
-          }
-
-          return `
-          <div class="msg ${m.user_id === myId ? 'mine' : ''}">
-            <div class="msg-head">
-              <b style="color: var(--gold-400);">${m.user_id === myId ? 'Tú' : esc(m.usuario)}</b>
-              <span>${new Date(m.created).toLocaleString('es-VE',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</span>
-            </div>
-            <div class="msg-body">
-              ${m.texto ? esc(m.texto) : ''}
-              ${archivoHTML}
-            </div>
-          </div>`;
-      }).join('')
-      : '<div class="empty" style="margin:auto;background:transparent;border:0"><h3>Sin mensajes</h3><p>Inicia la conversación privada con este dirigente.</p></div>';
-
-    if (alFinal) box.scrollTop = box.scrollHeight;
-  } catch (e) {
-    console.error("Error cargando intranet:", e);
-    box.innerHTML = '<p class="muted">Error al cargar el chat privado.</p>';
-  }
-}
-
-$('btnAttachFile').onclick = () => $('intranetFile').click();
-
-$('intranetFile').onchange = () => {
-  const fileName = $('intranetFile').files[0]?.name;
-  const label = $('intranetFileName');
-  if (fileName) {
-    label.textContent = `Adjunto: ${fileName}`;
-    label.style.display = 'block';
-  } else {
-    label.style.display = 'none';
-  }
-};
-
-$('intranetChatForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const inp = $('intranetChatInput');
-  const fileInput = $('intranetFile');
-  const texto = inp.value.trim();
-  const archivo = fileInput.files[0];
-  const recipientId = $('intranetRecipient').value;
-
-  if ((!texto && !archivo) || !currentUser || !recipientId) return;
-
-  const btn = $('intranetSendBtn');
-  btn.disabled = true;
-  btn.textContent = 'Enviando...';
-
-  const myId = currentUser.id;
-  const myName = currentUser.nombre_completo || currentUser.email || 'Dirigente';
-
-  const formData = new FormData();
-  formData.append('usuario', myName);
-  formData.append('user_id', myId);
-  formData.append('destinatario', recipientId);
-  
-  if (texto) formData.append('texto', texto);
-  if (archivo) formData.append('archivo', archivo);
-
-  try {
-    await pb.collection('chat_intranet').create(formData);
-    inp.value = '';
-    fileInput.value = '';
-    $('intranetFileName').style.display = 'none';
-    renderIntranetChat(); 
-  } catch (error) {
-    console.error(error);
-    toast('❌ Error al enviar mensaje o archivo');
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = '<svg class="ico"><use href="#i-chat"/></svg>Enviar';
-  }
-});
-
-$('n_send').onclick = async () => {
-  const titulo = $('n_titulo').value.trim();
-  const mensaje = $('n_mensaje').value.trim();
-  
-  if (!titulo || !mensaje) { 
-    toast('Escribe título y mensaje'); 
-    return; 
-  }
-  
-  const btn = $('n_send');
-  const originalText = btn.innerHTML;
-  btn.disabled = true;
-  btn.textContent = 'Enviando...';
-
-  try {
-    await pb.collection('notificaciones').create({ titulo, mensaje });
-    $('n_titulo').value = '';
-    $('n_mensaje').value = '';
-    toast('✅ Notificación enviada con éxito');
-  } catch (err) {
-    console.error("Error detallado de notificación:", err);
-    toast('❌ Error al enviar. Revisa permisos de API.');
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = originalText;
-  }
-};
-
-function renderTodo(){
-  renderNavSubapps();
-  renderInicio();
-  renderAgenda();
-  renderReglamentos();
-  renderGaleria();
-  renderCarrusel();
-  renderEnVivo();
-  if(isAdmin) renderAdminListas();
-}
-
-async function init() {
-  await cargarDatos();
-  renderTodo();
-  
-  const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
-  if (!isStandalone && localStorage.getItem('mep_install_prompted') !== 'true') {
-      setTimeout(() => {
-          $('installBar').classList.add('show');
-      }, 3000);
-  }
-
-  if (pb.authStore.isValid) {
-    const loginTime = localStorage.getItem('mep_login_time');
-    const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
-    
-    if (loginTime && (Date.now() - parseInt(loginTime) > sevenDaysMs)) {
-        pb.authStore.clear();
-        localStorage.removeItem('mep_login_time');
-        toast('Sesión expirada. Por favor, ingresa nuevamente.');
-    } else if (!loginTime) {
-        localStorage.setItem('mep_login_time', Date.now());
-    }
-  }
-
-  const termsModal = $('termsModal');
-  if (localStorage.getItem('mep_terms_accepted_v1') !== 'true') {
-    termsModal.style.display = 'flex';
-  }
-  $('acceptTermsBtn').addEventListener('click', () => {
-    localStorage.setItem('mep_terms_accepted_v1', 'true');
-    termsModal.style.display = 'none';
-  });
-}
-
-let deferredPrompt = null;
-
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  if (!window.matchMedia('(display-mode: standalone)').matches && localStorage.getItem('mep_install_prompted') !== 'true') {
-    $('installBar').classList.add('show');
-  }
-});
-
-$('installOk').onclick = async () => {
-  $('installBar').classList.remove('show');
-  localStorage.setItem('mep_install_prompted', 'true');
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    await deferredPrompt.userChoice;
-    deferredPrompt = null;
-  } else {
-    toast('Usa el botón Compartir de tu navegador y elige "Agregar a inicio"');
-  }
-};
-
-$('installNo').onclick = () => {
-  $('installBar').classList.remove('show');
-  localStorage.setItem('mep_install_prompted', 'true');
-};
-
-window.addEventListener('load', () => {
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-  if (isIOS && !window.navigator.standalone && localStorage.getItem('mep_install_prompted') !== 'true') {
-    setTimeout(() => {
-        $('installBar').innerHTML = `
-          <p>📲 Para instalar la app: toca <b>Compartir</b> (⬆️) y elige <b>Agregar a inicio</b></p>
-          <button class="btn sm" id="iosClose">Entendido</button>
-        `;
-        $('installBar').classList.add('show');
-        const closeBtn = document.getElementById('iosClose');
-        if(closeBtn) closeBtn.onclick = () => {
-            $('installBar').classList.remove('show');
-            localStorage.setItem('mep_install_prompted', 'true');
-        };
-    }, 3000);
-  }
-});
-
-document.addEventListener('DOMContentLoaded', init);
-</script>
+<script src="app.js" defer></script>
 </body>
 </html>
