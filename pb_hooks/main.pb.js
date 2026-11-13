@@ -124,19 +124,6 @@ function mepEstaBloqueado(uid) {
 // 1-2. users: registro y edición
 // ------------------------------------------------------------------
 
-onRecordCreateRequest((e) => {
-  // El superusuario (panel Admin de PocketBase) sí puede crear admins.
-  if (mepIsSuperuser(e)) return e.next();
-
-  // Un registro público NO tiene rol. Los permisos se asignan únicamente
-  // desde el panel de PocketBase (superusuario); "admin" es imposible aquí.
-  e.record.set("role", "");
-  e.record.set("verified", false);
-  e.record.set("emailVisibility", false);
-
-  e.next();
-}, "users");
-
 onRecordUpdateRequest((e) => {
   if (mepIsSuperuser(e)) {
     // Solo el superusuario puede cambiar roles. Si lo hace, se invalidan
