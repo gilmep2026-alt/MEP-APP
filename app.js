@@ -1652,13 +1652,25 @@ async function registrarUsuario(e) {
     return;
   }
 
+  const foto = $('regFoto').files[0];
+  if (foto) {
+    if (!foto.type || !foto.type.startsWith('image/')) {
+      mostrarErrorAuth('El archivo debe ser una imagen (JPG, PNG, WEBP).');
+      return;
+    }
+    if (foto.size > 5 * 1024 * 1024) {
+      mostrarErrorAuth('La foto pesa más de 5 MB. Usa una imagen más pequeña.');
+      return;
+    }
+  }
+
   const btn = e.target.querySelector('button[type="submit"]');
   btn.disabled = true;
   btn.textContent = 'Creando cuenta...';
 
   const nivel = $('regCargoNivel').value;
   const detalle = $('regCargoDetalle').value.trim();
-  const cargoFinal = nivel === 'Militante' ? 'Militante' : (detalle ? `${nivel} - ${detalle}` : nivel);
+  const cargoFinal = detalle ? `${nivel} - ${detalle}` : nivel;
 
   const fd = new FormData();
   fd.append('email', $('regEmail').value.trim());
@@ -1669,7 +1681,6 @@ async function registrarUsuario(e) {
   fd.append('municipio', $('regMunicipio').value);
   fd.append('cargo', cargoFinal);
   fd.append('role', 'militante');
-  const foto = $('regFoto').files[0];
   if (foto) fd.append('foto', foto);
 
   try {
@@ -1679,11 +1690,25 @@ async function registrarUsuario(e) {
     toggleAuthForms(false);
     $('loginPass').focus();
   } catch (err) {
-    const campo = err && err.response && err.response.data;
-    let msg = 'No se pudo registrar. Revisa los datos.';
-    if (campo && campo.email && campo.email.code === 'validation_not_unique') msg = 'Este correo ya está registrado.';
-    else if (campo && campo.password) msg = 'La contraseña debe tener al menos 8 caracteres.';
-    else if (campo && campo.foto) msg = 'No se pudo subir la foto. Usa una imagen más pequeña.';
+    console.error('Registro falló:', err && err.status, err && err.response);
+
+    const data = (err && err.response && err.response.data) || {};
+    const servidor = (err && err.response && err.response.message) || '';
+    let msg = '';
+
+    if (data.email && data.email.code === 'validation_not_unique') msg = 'Este correo ya está registrado. Inicia sesión o usa otro correo.';
+    else if (data.email) msg = 'El correo no es válido.';
+    else if (data.passwordConfirm) msg = 'Las contraseñas no coinciden.';
+    else if (data.password) msg = 'La contraseña debe tener al menos 8 caracteres.';
+    else if (data.foto) msg = 'No se pudo subir la foto (imagen de hasta 5 MB).';
+    else if (data.estado || data.municipio) msg = 'Selecciona estado y municipio.';
+    else if (data.nombre_completo) msg = 'Escribe tu nombre y apellido.';
+    else if (data.cargo) msg = 'Revisa el cargo seleccionado.';
+    else if (err && err.status === 0) msg = 'Sin conexión con el servidor. Revisa tu red.';
+    else if (err && err.status === 403) msg = 'El registro no está permitido en este momento.';
+    else if (servidor && !/failed to create/i.test(servidor)) msg = servidor;
+    else msg = 'No se pudo registrar. Revisa los datos (correo único y contraseña de 8+ caracteres).';
+
     mostrarErrorAuth(msg);
   } finally {
     btn.disabled = false;
