@@ -1626,16 +1626,16 @@ function mostrarErrorAuth(msg) {
 
 async function iniciarSesion(e) {
   e.preventDefault();
-  const email = identidadLogin($('loginEmail').value);
+  const identidad = identidadLogin($('loginEmail').value);
   const pass = $('loginPass').value;
   const btn = e.target.querySelector('button[type="submit"]');
-  if (!email || !pass) { mostrarErrorAuth('Completa usuario y contraseña.'); return; }
+  if (!identidad || !pass) { mostrarErrorAuth('Completa usuario y contraseña.'); return; }
 
   btn.disabled = true;
   btn.textContent = 'Verificando...';
 
   try {
-    const auth = await pb.collection('users').authWithPassword(email, pass);
+    const auth = await pb.collection('users').authWithPassword(identidad, pass);
     const rec = auth.record || auth.user || authRecord();
     aplicarSesion(rec);
     cerrarModal('authModal');
@@ -1663,8 +1663,8 @@ async function registrarUsuario(e) {
     mostrarErrorAuth('Escribe tu nombre completo.');
     return;
   }
-  if (!/^[a-z0-9._-]{3,30}$/.test(username)) {
-    mostrarErrorAuth('El usuario debe tener entre 3 y 30 caracteres: minúsculas, números, punto, guion o guion bajo.');
+  if (!/^[a-z0-9][a-z0-9._-]{1,28}[a-z0-9]$/.test(username) || username.includes('..')) {
+    mostrarErrorAuth('El usuario debe tener entre 3 y 30 caracteres, empezar y terminar con letra o número, sin puntos dobles, y usar solo minúsculas, números, punto, guion o guion bajo.');
     return;
   }
   if (pass !== $('regPassConfirm').value) {
@@ -1695,6 +1695,7 @@ async function registrarUsuario(e) {
   fd.append('password', pass);
   fd.append('passwordConfirm', pass);
   fd.append('nombre_completo', nombre);
+  fd.append('name', nombre);
   fd.append('estado', $('regEstado').value);
   fd.append('municipio', $('regMunicipio').value);
   fd.append('telefono', $('regTelefono').value.trim());
@@ -1748,13 +1749,13 @@ function cerrarSesion() {
 
 async function entrarIntranet(e) {
   e.preventDefault();
-  const email = identidadLogin($('intranetEmail').value);
+  const identidad = identidadLogin($('intranetEmail').value);
   const pass = $('intranetPass').value;
   const btn = $('intranetLoginBtn');
   btn.disabled = true;
 
   try {
-    const auth = await pb.collection('users').authWithPassword(email, pass);
+    const auth = await pb.collection('users').authWithPassword(identidad, pass);
     const rec = auth.record || auth.user || authRecord();
     aplicarSesion(rec);
     if (!isAdmin) { toast('Esta cuenta no tiene acceso a la intranet', 'err'); pb.authStore.clear(); limpiarSesionUI(); return; }
