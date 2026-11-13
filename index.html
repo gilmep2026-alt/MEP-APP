@@ -658,7 +658,7 @@ body.modal-open{overflow:hidden}
       <div class="modal-field">
         <label>Usuario (con este entrarás a la app)</label>
         <input type="text" id="regUsername" placeholder="Ej: juan.perez" required minlength="3" maxlength="30"
-               pattern="[a-z0-9._\-]+" autocomplete="username" autocapitalize="none" spellcheck="false">
+               pattern="[a-z0-9][a-z0-9._\-]{1,28}[a-z0-9]" autocomplete="username" autocapitalize="none" spellcheck="false">
         <small style="display:block;margin-top:6px;font-size:11px;color:var(--text-mute)">Solo minúsculas, números, punto, guion y guion bajo.</small>
       </div>
 
