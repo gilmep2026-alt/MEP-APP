@@ -7,7 +7,7 @@
      Eso protege el realtime (SSE) y las descargas de /api/files/.
    ========================================================================== */
 
-const VERSION = 'mep-v14';
+const VERSION = 'mep-v16';
 const STATIC_CACHE = 'mep-static-' + VERSION;
 const RUNTIME_CACHE = 'mep-runtime-' + VERSION;
 const MAX_ESTATICOS = 90;
@@ -18,6 +18,7 @@ const PRECACHE = [
   '/index.html',
   '/app.js',
   '/manifest.json',
+  '/estatutos.html',
   '/logo.png',
   '/icon-192.png',
   '/icon-512.png',
@@ -92,17 +93,27 @@ function respuestaOffline() {
 
 /* ------------------------------------------------------------ navegación */
 async function manejarNavegacion(request) {
+  const url = new URL(request.url);
+  const esApp = url.pathname === '/' || url.pathname === '/index.html';
+
   try {
     const respuesta = await fetchConTimeout(request, TIMEOUT_NAVEGACION);
     if (respuesta && respuesta.ok) {
       const cache = await caches.open(STATIC_CACHE);
-      cache.put('/index.html', respuesta.clone());
+      // Solo la app se guarda bajo /index.html. Las demás páginas
+      // (estatutos.html) se guardan con su propia URL para no pisar la portada.
+      await cache.put(esApp ? '/index.html' : request, respuesta.clone());
     }
     return respuesta;
   } catch (_) {
     const cache = await caches.open(STATIC_CACHE);
-    const guardado = await cache.match('/index.html', { ignoreSearch: true });
-    return guardado || respuestaOffline();
+    const exacta = await cache.match(request, { ignoreSearch: true });
+    if (exacta) return exacta;
+    if (esApp) {
+      const portada = await cache.match('/index.html', { ignoreSearch: true });
+      if (portada) return portada;
+    }
+    return respuestaOffline();
   }
 }
 
