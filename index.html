@@ -141,11 +141,10 @@ body.subapp-mode { padding-top: 0 !important; overflow: hidden; } body.subapp-mo
   #btnProfile { padding: 4px 12px 4px 4px !important; gap: 6px; }
   #topbarAvatar { width: 34px; height: 34px; }
   #topbarName { font-size: 12px; max-width: 65px; }
-  #topbarCargo { font-size: 8px; max-width: 65px; display: block !important; } /* Forzar la visibilidad en móvil */
+  #topbarCargo { font-size: 8px; max-width: 65px; display: block !important; }
 }
 @media(max-width:540px){ .gal-grid{grid-template-columns:1fr} .ag-item{padding:16px;gap:16px} .ag-date{min-width:64px;height:64px} .ag-date b{font-size:22px} .persistent-gallery .pg-head{flex-direction:column;align-items:flex-start;gap:14px} .carousel-wrap{height:calc(100vh - var(--topbar-h));min-height:360px;max-height:none} .carousel-caption{padding:18px 18px 60px} .carousel-caption h3{font-size:18px} .carousel-caption p{font-size:13px} .carousel-btn{width:40px;height:40px;padding:0} .carousel-btn .ico{width:18px;height:18px} }
 @media(prefers-reduced-motion:reduce){ *,*::before,*::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important;} }
-/* ===== parches v2: rendimiento, accesibilidad y multimedia ===== */
 body.modal-open{overflow:hidden}
 :focus-visible{outline:2px solid var(--gold-400);outline-offset:2px}
 .toast.err{border-color:#ef4444}
@@ -168,7 +167,6 @@ body.modal-open{overflow:hidden}
   .carousel-track{transition:none!important}
   .carousel-progress-bar{transition:none!important}
 }
-/* ===== chat privado ===== */
 .chat-destino-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
 .chat-destino-label{margin:0;font-size:11px;color:var(--gold-300);font-weight:800;letter-spacing:1px;text-transform:uppercase;white-space:nowrap}
 #chatDestino{flex:1;min-width:200px;max-width:420px}
@@ -292,9 +290,14 @@ body.modal-open{overflow:hidden}
           <svg class="ico"><use href="#i-scroll"/></svg>
           <span class="label">Reglamentos</span>
         </div>
-        <div class="nav-item" data-link="/estatutos.html" role="button" tabindex="0">
+        <div class="nav-item" data-link="estatutos.html" role="button" tabindex="0">
           <svg class="ico"><use href="#i-scroll"/></svg>
           <span class="label">Estatutos</span>
+        </div>
+        <!-- AQUÍ ESTÁ EL NUEVO ENLACE AL CÓDIGO DE ÉTICA -->
+        <div class="nav-item" data-link="etica.html" role="button" tabindex="0">
+          <svg class="ico"><use href="#i-shield"/></svg>
+          <span class="label">Código de Ética</span>
         </div>
         <div class="nav-item" data-view="envivo">
           <svg class="ico"><use href="#i-broadcast"/></svg>
