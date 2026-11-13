@@ -1303,6 +1303,14 @@ function enlazarEventos() {
   aplicarSidebarColapsada();
   inicializarFormularioRegistro();
 
+  const regUsername = $('regUsername');
+  if (regUsername) {
+    regUsername.addEventListener('input', () => {
+      const limpio = regUsername.value.toLowerCase().replace(/[^a-z0-9._-]/g, '');
+      if (regUsername.value !== limpio) regUsername.value = limpio;
+    });
+  }
+
   $('btnMenu').addEventListener('click', () => (sidebar.classList.contains('open') ? cerrarMenu() : abrirMenu()));
   overlay.addEventListener('click', cerrarMenu);
 
@@ -1575,22 +1583,15 @@ function inicializarFormularioRegistro() {
 }
 
 /* ---------------------------------------------------------------- auth */
-function slugUsuario(texto) {
-  return String(texto || '')
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '.')
-    .replace(/^\.+|\.+$/g, '')
-    .slice(0, 24) || 'usuario';
-}
+/* Configuración del login:
+   true  → PocketBase valida el campo username como identidad (identityFields: ["username"]).
+   false → variante anterior: se envía <usuario>@mep.local (identityFields: ["email"]). */
+const LOGIN_POR_USERNAME = true;
 
-/* El login se hace con el usuario. Internamente se usa como correo
-   `<usuario>@mep.local`, así PocketBase sigue validando un email único
-   sin pedirle uno real a la persona. */
 function identidadLogin(valor) {
   const v = String(valor || '').trim().toLowerCase();
   if (!v) return '';
+  if (LOGIN_POR_USERNAME) return v;
   return v.includes('@') ? v : v + '@mep.local';
 }
 
@@ -1655,9 +1656,18 @@ async function registrarUsuario(e) {
   e.preventDefault();
 
   const nombre = $('regName').value.trim();
-  const apellido = $('regApellido').value.trim();
+  const username = $('regUsername').value.trim().toLowerCase();
+  const pass = $('regPass').value;
 
-  if ($('regPass').value !== $('regPassConfirm').value) {
+  if (!nombre) {
+    mostrarErrorAuth('Escribe tu nombre completo.');
+    return;
+  }
+  if (!/^[a-z0-9._-]{3,30}$/.test(username)) {
+    mostrarErrorAuth('El usuario debe tener entre 3 y 30 caracteres: minúsculas, números, punto, guion o guion bajo.');
+    return;
+  }
+  if (pass !== $('regPassConfirm').value) {
     mostrarErrorAuth('Las contraseñas no coinciden.');
     return;
   }
@@ -1679,69 +1689,52 @@ async function registrarUsuario(e) {
   btn.disabled = true;
   btn.textContent = 'Creando cuenta...';
 
-  const base = slugUsuario(`${nombre}.${apellido}`);
-  let username = base;
-  let creado = null;
-  let ultimoError = null;
+  const fd = new FormData();
+  fd.append('username', username);
+  fd.append('email', username + '@mep.local');
+  fd.append('password', pass);
+  fd.append('passwordConfirm', pass);
+  fd.append('nombre_completo', nombre);
+  fd.append('estado', $('regEstado').value);
+  fd.append('municipio', $('regMunicipio').value);
+  fd.append('telefono', $('regTelefono').value.trim());
+  if (foto) fd.append('foto', foto);
 
-  for (let intento = 1; intento <= 5 && !creado; intento++) {
-    const fd = new FormData();
-    fd.append('email', username + '@mep.local');
-    fd.append('username', username);
-    fd.append('password', $('regPass').value);
-    fd.append('passwordConfirm', $('regPass').value);
-    fd.append('nombre_completo', `${nombre} ${apellido}`.trim());
-    fd.append('estado', $('regEstado').value);
-    fd.append('municipio', $('regMunicipio').value);
-    fd.append('telefono', $('regTelefono').value.trim());
-    if (foto) fd.append('foto', foto);
-
-    try {
-      creado = await pb.collection('users').create(fd);
-    } catch (err) {
-      ultimoError = err;
-      const data = (err && err.response && err.response.data) || {};
-      const ocupado = (data.email && data.email.code === 'validation_not_unique') ||
-                      (data.username && data.username.code === 'validation_not_unique');
-      if (ocupado && intento < 5) {
-        username = base + (intento + 1);
-        continue;
-      }
-      break;
-    }
-  }
-
-  if (creado) {
+  try {
+    await pb.collection('users').create(fd);
     toggleAuthForms(false);
     $('loginEmail').value = username;
     $('authModalTitle').textContent = 'Cuenta creada';
-    $('authModalSubtitle').textContent = `Tu usuario es "${username}". Guárdalo: con él y tu contraseña entrarás.`;
+    $('authModalSubtitle').textContent = `Tu usuario es "${username}". Ya puedes entrar con él y tu contraseña.`;
     $('loginPass').focus();
     toast(`Cuenta creada. Tu usuario es: ${username}`);
-  } else {
-    console.error('Registro falló:', ultimoError && ultimoError.status, ultimoError && ultimoError.response);
-    const data = (ultimoError && ultimoError.response && ultimoError.response.data) || {};
-    const servidor = (ultimoError && ultimoError.response && ultimoError.response.message) || '';
+  } catch (err) {
+    console.error('Registro falló:', err && err.status, err && err.response);
+
+    const data = (err && err.response && err.response.data) || {};
+    const servidor = (err && err.response && err.response.message) || '';
     let msg = '';
 
-    if (data.email && data.email.code === 'validation_not_unique') msg = 'Ese nombre de usuario ya está en uso. Prueba escribiendo también tu segundo nombre o apellido.';
-    else if (data.email) msg = 'No se pudo generar el usuario. Revisa el nombre.';
+    if (data.username && data.username.code === 'validation_not_unique') msg = 'Ese usuario ya existe. Elige otro.';
+    else if (data.email && data.email.code === 'validation_not_unique') msg = 'Ese usuario ya existe. Elige otro.';
+    else if (data.username) msg = 'El usuario no es válido: 3 a 30 caracteres, minúsculas y sin espacios.';
+    else if (data.email) msg = 'El usuario no es válido. Revisa los caracteres.';
     else if (data.passwordConfirm) msg = 'Las contraseñas no coinciden.';
     else if (data.password) msg = 'La contraseña debe tener al menos 8 caracteres.';
     else if (data.foto) msg = 'No se pudo subir la foto (imagen de hasta 5 MB).';
     else if (data.telefono) msg = 'Revisa el número de teléfono.';
     else if (data.estado || data.municipio) msg = 'Selecciona estado y municipio.';
-    else if (data.nombre_completo) msg = 'Escribe tu nombre y apellido.';
-    else if (ultimoError && ultimoError.status === 0) msg = 'Sin conexión con el servidor. Revisa tu red.';
-    else if (ultimoError && ultimoError.status === 403) msg = 'El registro no está permitido en este momento.';
+    else if (data.nombre_completo) msg = 'Escribe tu nombre completo.';
+    else if (err && err.status === 0) msg = 'Sin conexión con el servidor. Revisa tu red.';
+    else if (err && err.status === 403) msg = 'El registro no está permitido en este momento.';
     else if (servidor && !/failed to create/i.test(servidor)) msg = servidor;
     else msg = 'No se pudo registrar. Revisa los datos e inténtalo de nuevo.';
 
     mostrarErrorAuth(msg);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = textoOriginal;
   }
-
-  btn.disabled = false;
-  btn.innerHTML = textoOriginal;
 }
 
 function cerrarSesion() {
