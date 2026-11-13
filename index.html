@@ -561,7 +561,7 @@ body.modal-open{overflow:hidden}
       <label>Título</label><input id="r_titulo" placeholder="Estatutos...">
       <label>Resumen</label><input id="r_desc" placeholder="Breve descripción...">
       <label>Enlace Externo</label><input id="r_url" placeholder="https://...">
-      <label>…o subir el PDF</label><input type="file" id="r_file" accept=.pdf,application/pdf">
+      <label>…o subir el PDF</label><input type="file" id="r_file" accept=".pdf,application/pdf">
       <label>Texto</label><textarea id="r_texto" placeholder="Escribe aquí..."></textarea>
       <div class="row">
         <button class="btn primary" id="r_save"><svg class="ico"><use href="#i-plus"/></svg>Agregar</button>
@@ -729,4 +729,17 @@ body.modal-open{overflow:hidden}
     <div style="font-size: 13px; color: var(--text-dim); max-height: 300px; overflow-y: auto; margin-bottom: 20px; padding-right: 10px; text-align: justify;">
       <p>Bienvenido a la plataforma oficial del <b>Movimiento Electoral del Pueblo (MEP)</b>...</p>
     </div>
-    <button class="modal-submit" id="acceptTermsBtn" style="width: 100%;"><svg class="ico"
+    <button class="modal-submit" id="acceptTermsBtn" style="width: 100%;"><svg class="ico"><use href="#i-check"/></svg> Aceptar y Continuar</button>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div id="installBar">
+  <p>📲 Instala la app oficial del MEP en tu dispositivo</p>
+  <button class="btn primary sm" id="installOk">Instalar</button>
+  <button class="btn sm" id="installNo">Luego</button>
+</div>
+
+<script src="app.js" defer></script>
+</body>
+</html>
