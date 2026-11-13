@@ -285,6 +285,10 @@ body.modal-open{overflow:hidden}
           <svg class="ico"><use href="#i-scroll"/></svg>
           <span class="label">Reglamentos</span>
         </div>
+        <div class="nav-item" data-link="/estatutos.html" role="button" tabindex="0">
+          <svg class="ico"><use href="#i-scroll"/></svg>
+          <span class="label">Estatutos</span>
+        </div>
         <div class="nav-item" data-view="envivo">
           <svg class="ico"><use href="#i-broadcast"/></svg>
           <span class="label">En Vivo</span>
@@ -452,7 +456,7 @@ body.modal-open{overflow:hidden}
       <h2>Acceso Restringido</h2>
       <p>Ingresa tus credenciales de administrador para acceder al chat interno.</p>
       <form id="intranetLoginForm">
-        <div class="modal-field"><input type="email" id="intranetEmail" placeholder="Correo Electrónico" required></div>
+        <div class="modal-field"><input type="text" id="intranetEmail" placeholder="Usuario (ej: juan.perez)" required autocomplete="username"></div>
         <div class="modal-field pass-wrap">
           <input type="password" id="intranetPass" placeholder="Contraseña" required>
           <button type="button" class="btn-toggle-pass" data-toggle-pass="intranetPass" aria-label="Mostrar contraseña"><svg class="ico"><use href="#i-eye"/></svg></button>
@@ -636,7 +640,7 @@ body.modal-open{overflow:hidden}
     </div>
 
     <form id="loginForm" autocomplete="off">
-      <div class="modal-field"><label>Correo Electrónico</label><input type="email" id="loginEmail" placeholder="admin@mep.com" required></div>
+      <div class="modal-field"><label>Usuario</label><input type="text" id="loginEmail" placeholder="Ej: juan.perez" required autocomplete="username"></div>
       <div class="modal-field">
         <label>Contraseña</label>
         <div class="pass-wrap">
@@ -649,8 +653,11 @@ body.modal-open{overflow:hidden}
     </form>
 
     <form id="registerForm" style="display:none;" autocomplete="off">
-      <div class="modal-field"><label>Nombre y Apellido</label><input type="text" id="regName" placeholder="Ej: Juan Pérez" required></div>
-      
+      <div class="grid2">
+        <div class="modal-field"><label>Nombre</label><input type="text" id="regName" placeholder="Ej: Juan" required></div>
+        <div class="modal-field"><label>Apellido</label><input type="text" id="regApellido" placeholder="Ej: Pérez" required></div>
+      </div>
+
       <div class="grid2">
         <div class="modal-field">
           <label>Estado</label>
@@ -666,25 +673,10 @@ body.modal-open{overflow:hidden}
         </div>
       </div>
 
-      <div class="grid2">
-        <div class="modal-field">
-          <label>Nivel del Cargo</label>
-          <select id="regCargoNivel" required>
-            <option value="Militante" selected>Militante</option>
-            <option value="Municipal">Municipal</option>
-            <option value="Regional">Regional</option>
-            <option value="Nacional">Nacional</option>
-          </select>
-        </div>
-        <div class="modal-field">
-          <label>Cargo Específico</label>
-          <input type="text" id="regCargoDetalle" placeholder="Lugar en la estructura" disabled>
-        </div>
-      </div>
+      <div class="modal-field"><label>Número de Teléfono</label><input type="tel" id="regTelefono" placeholder="0414-1234567" required></div>
 
-      <div class="modal-field"><label>Foto Tipo Carnet</label><input type="file" id="regFoto" accept="image/*" required style="padding: 10px;"></div>
-      <div class="modal-field"><label>Correo Electrónico</label><input type="email" id="regEmail" placeholder="correo@ejemplo.com" required></div>
-      
+      <div class="modal-field"><label>Fotografía (avatar del chat, opcional, máx. 5 MB)</label><input type="file" id="regFoto" accept="image/*" style="padding: 10px;"></div>
+
       <div class="modal-field">
         <label>Contraseña (mín. 8 caracteres)</label>
         <div class="pass-wrap">
@@ -692,7 +684,7 @@ body.modal-open{overflow:hidden}
           <button type="button" class="btn-toggle-pass" data-toggle-pass="regPass" aria-label="Mostrar contraseña"><svg class="ico"><use href="#i-eye"/></svg></button>
         </div>
       </div>
-      
+
       <div class="modal-field">
         <label>Confirmar Contraseña</label>
         <div class="pass-wrap">
