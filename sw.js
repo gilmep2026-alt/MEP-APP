@@ -19,6 +19,7 @@ const PRECACHE = [
   '/app.js',
   '/manifest.json',
   '/estatutos.html',
+  '/etica.html', /* <-- NUEVA LÍNEA AGREGADA AQUÍ */
   '/logo.png',
   '/icon-192.png',
   '/icon-512.png',
@@ -101,7 +102,7 @@ async function manejarNavegacion(request) {
     if (respuesta && respuesta.ok) {
       const cache = await caches.open(STATIC_CACHE);
       // Solo la app se guarda bajo /index.html. Las demás páginas
-      // (estatutos.html) se guardan con su propia URL para no pisar la portada.
+      // (estatutos.html, etica.html) se guardan con su propia URL para no pisar la portada.
       await cache.put(esApp ? '/index.html' : request, respuesta.clone());
     }
     return respuesta;
