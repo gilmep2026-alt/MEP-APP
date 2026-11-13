@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Código de Ética MEP</title>
+    <style>
+        :root { --mep-purple: #3b0954; --mep-yellow: #fcd116; --bg-color: #121212; --text-color: #e0e0e0; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 0; }
+        header { background-color: var(--mep-purple); padding: 20px; text-align: center; border-bottom: 4px solid var(--mep-yellow); position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 6px rgba(0,0,0,0.5); }
+        header h1 { color: var(--mep-yellow); margin: 0; font-size: 1.5rem; }
+        .btn-volver { display: inline-block; margin-top: 10px; color: white; text-decoration: none; background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; transition: background 0.3s; }
+        .btn-volver:hover { background: rgba(255,255,255,0.4); }
+        .container { max-width: 800px; margin: 20px auto; padding: 20px; background: #1e1e1e; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .intro { font-style: italic; color: #bbb; margin-bottom: 30px; border-left: 4px solid var(--mep-yellow); padding-left: 15px; line-height: 1.6; }
+        ol { padding-left: 20px; counter-reset: my-counter; list-style-type: none; }
+        li { margin-bottom: 20px; line-height: 1.6; color: #ddd; position: relative; padding-left: 35px; }
+        li::before { counter-increment: my-counter; content: counter(my-counter); position: absolute; left: 0; top: 0; background: var(--mep-purple); color: var(--mep-yellow); font-weight: bold; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 0.9rem; border: 1px solid var(--mep-yellow); }
+        .footer { text-align: center; margin-top: 40px; font-size: 0.9rem; color: #999; border-top: 1px solid #333; padding-top: 20px; line-height: 1.5; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Código de Ética del Militante</h1>
+    <a href="index.html" class="btn-volver">⬅ Volver a la App</a>
+</header>
+
+<div class="container">
+    <div class="intro">
+        En un partido político como el MEP en donde, entre sus principales figuras, tenemos a su fundador, el Maestro Luís Beltrán Prieto Figueroa, referente histórico en el país de honestidad, transparencia y comportamiento ético intachable, resulta necesario que el comportamiento de todo individuo que sea militante o cuadro político mepista, sea ajustado de acuerdo a las siguientes normas que conforman el presente código de ética:
+    </div>
+
+    <ol>
+        <li>Ser sincero o sincera, no ocultar ni tergiversar jamás la verdad. Luchar contra la mentira, el engaño, la demagogia y el fraude en cualquier circunstancia o lugar donde se presente.</li>
+        <li>Cultivar los valores y principios mepistas establecidos en la doctrina y estatutos del partido, el honor y la dignidad, por lo que debe rechazarse cualquier ofrecimiento que atente contra la dignidad, pese a cualquier carencia, limitación o aspiración personal que se tenga.</li>
+        <li>Fomentar y cumplir la disciplina, el respeto y la lealtad hacia nuestro partido, nuestra Constitución Nacional, hacia la Revolución y hacia la Patria.</li>
+        <li>Educar y practicar la exigencia y el respeto consigo mismo y con los demás, predicando siempre con el ejemplo.</li>
+        <li>Ser estricto cumplidor o cumplidora de los compromisos y de la palabra empeñada.</li>
+        <li>Combatir la apatía, la indolencia, el pesimismo, el hipercriticismo y el derrotismo.</li>
+        <li>Ser honrado y honrada, y practicar consecuentemente la sana crítica y autocrítica de manera constructiva.</li>
+        <li>Considerar como actitud dañina el espíritu justificativo, la inacción frente a las dificultades y errores, y la ausencia de iniciativas.</li>
+        <li>Saber rectificar buscando soluciones nuevas para viejos y nuevos problemas.</li>
+        <li>Vincularse con el Pueblo y sus diferentes sectores, trabajadores y trabajadoras, mujeres, jóvenes, adultos mayores, sexo-diversidad, afrodescendientes, entre otros, demostrarles respeto y confianza, así como sensibilidad para percibir y compartir con ellos sus sentimientos, sus expectativas, necesidades, opiniones, sueños, esperanzas, pero al igual sus frustraciones, tristezas y su drama cotidiano.</li>
+        <li>Basar las relaciones de amistad en la coincidencia de principios, de visión en un proyecto compartido y en la moral revolucionaria.</li>
+        <li>Mantener una correcta y transparente administración de los recursos que se nos encomienden. Ser ejemplo de honradez, modestia y austeridad.</li>
+        <li>Utilizar las prerrogativas y facultades inherentes al cargo que eventualmente se desempeñe (sea dentro del partido o fuera de él), así como los medios y recursos conferidos, para los requerimientos del partido o del trabajo.</li>
+        <li>Entregarse por entero y con amor al desempeño cabal de la responsabilidad encomendada.</li>
+        <li>Observar en su actividad política, laboral, social y familiar, un estilo de vida que le haga acreedor o acreedora del respeto y la confianza de los demás.</li>
+        <li>El hecho de ejercer un cargo de responsabilidad dentro del partido, en la administración pública o privada, no confiere ningún tipo de derechos especiales, privilegios o preferencias sobre los demás que no cumplan esas funciones.</li>
+        <li>La corrupción denigra tanto a quien incurre en ella como a quien la tolera, o peor aún, se hace cómplice de ella.</li>
+        <li>Se debe compartir con los militantes las dificultades y los grandes esfuerzos, aportando y exigiendo todo el empeño y consagración necesarios.</li>
+        <li>Apoyarse en el razonamiento colectivo y en la capacidad personal para la toma de decisiones, de acuerdo a los valores y principios mepistas.</li>
+        <li>Desarrollar la disposición al diálogo y a la comunicación eficaz con el colectivo.</li>
+        <li>Ser discreto o discreta y prudente en el manejo de la información interna del MEP, para salvaguardar los intereses de nuestro partido y evitar problemas o conflictos originados por rumores en el trabajo político y en las relaciones interpersonales.</li>
+        <li>Impulsar una política de cuadros sobre la base del trabajo y la capacidad del o las combatientes.</li>
+        <li>Mostrarse solícito o solícita y solidario o solidaria ante los problemas de los y las combatientes.</li>
+        <li>Ayudar a cuadros que hayan cometido errores en el desempeño de sus responsabilidades, siempre y cuando, mantengan una actitud revolucionaria y una disposición a enmendarlos.</li>
+        <li>Considerar la actitud política y la integridad moral del combatiente sobre la base de la idoneidad y la capacidad real demostrada.</li>
+        <li>Asumir la autoridad otorgada como un honor y un compromiso, y jamás como una ventaja personal sobre otros.</li>
+        <li>Asumir y contribuir conscientemente, desde la trinchera de lucha que le toque a cada combatiente, a defender, preservar y serle fiel a los principios que entrañan la tesis política de nuestro partido, al legado histórico de nuestros fundadores y desde luego a los principios y valores de la Patria, de la Revolución Bolivariana y del Socialismo desde la perspectiva mepista.</li>
+    </ol>
+
+    <div class="footer">
+        Aprobado por unanimidad en reunión ordinaria de Comando Político Nacional, CPN, el 21 de julio de 2023.<br>
+        El incumplimiento del presente Código de Ética es considerado una falta a la disciplina o a la ética partidista (Artículo 48, ordinal a) de los Estatutos vigentes) y se sancionará de acuerdo a lo que se establece en el Artículo 53.
+    </div>
+</div>
+
+</body>
+</html>
