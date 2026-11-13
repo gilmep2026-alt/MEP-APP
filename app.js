@@ -251,7 +251,7 @@ function aplicarSesion(rec) {
 
   $('topbarAvatar').src = rec.foto ? imgDe(rec, rec.foto) : 'logo.png';
   $('topbarName').textContent = rec.nombre_completo ? String(rec.nombre_completo).split(' ')[0] : 'Perfil';
-  $('topbarCargo').textContent = rec.cargo || 'Militante';
+  $('topbarCargo').textContent = rec.cargo || 'Usuario';
 
   actualizarZonaChat();
   if (isAdmin) renderAdminListas();
@@ -686,7 +686,7 @@ function mensajeHtml(m, admin) {
       <img src="${esc(avatarDe(m))}" class="msg-avatar" alt="" loading="lazy" decoding="async">
       <div class="msg-content">
         <div class="msg-head">
-          <b>${esc(m.usuario || 'Militante')} <span class="msg-cargo">${esc(m.cargo || 'Militante')}</span></b>
+          <b>${esc(m.usuario || 'Usuario')} <span class="msg-cargo">${esc(m.cargo || 'Usuario')}</span></b>
           <span>${esc(fmtCreado(m.created))}</span>
           ${admin && !esMio && m.user_id ? `<button type="button" class="btn sm danger" style="padding:2px 8px;margin-left:8px;font-size:10px" data-action="ban" data-userid="${esc(m.user_id)}" data-usuario="${esc(m.usuario || '')}">Suspender</button>` : ''}
         </div>
@@ -1394,7 +1394,7 @@ function enlazarEventos() {
     $('profCargo').textContent = currentUser.cargo || '';
     $('profEstado').textContent = currentUser.estado || '—';
     $('profMunicipio').textContent = currentUser.municipio || '—';
-    $('profRole').textContent = currentUser.role || 'militante';
+    $('profRole').textContent = currentUser.role || 'municipal';
     abrirModal('profileModal');
   });
 
@@ -1535,8 +1535,6 @@ function enlazarEventos() {
 function inicializarFormularioRegistro() {
   const selEstado = $('regEstado');
   const selMunicipio = $('regMunicipio');
-  const selNivel = $('regCargoNivel');
-  const inpDetalle = $('regCargoDetalle');
   if (!selEstado || !selMunicipio) return;
 
   // Estados (solo se cargan una vez)
@@ -1573,20 +1571,29 @@ function inicializarFormularioRegistro() {
     selMunicipio.disabled = false;
   });
 
-  // El detalle del cargo solo aplica a cargos distintos de "Militante"
-  if (selNivel && inpDetalle) {
-    const ajustarCargo = () => {
-      const esMilitante = selNivel.value === 'Militante';
-      inpDetalle.disabled = esMilitante;
-      inpDetalle.required = !esMilitante;
-      if (esMilitante) inpDetalle.value = '';
-    };
-    selNivel.addEventListener('change', ajustarCargo);
-    ajustarCargo();
-  }
+  // Los usuarios normales no tienen cargo: solo nombre, contacto y foto.
 }
 
 /* ---------------------------------------------------------------- auth */
+function slugUsuario(texto) {
+  return String(texto || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '.')
+    .replace(/^\.+|\.+$/g, '')
+    .slice(0, 24) || 'usuario';
+}
+
+/* El login se hace con el usuario. Internamente se usa como correo
+   `<usuario>@mep.local`, así PocketBase sigue validando un email único
+   sin pedirle uno real a la persona. */
+function identidadLogin(valor) {
+  const v = String(valor || '').trim().toLowerCase();
+  if (!v) return '';
+  return v.includes('@') ? v : v + '@mep.local';
+}
+
 function abrirModalAuth() {
   $('authError').classList.remove('show');
   abrirModal('authModal');
@@ -1618,10 +1625,10 @@ function mostrarErrorAuth(msg) {
 
 async function iniciarSesion(e) {
   e.preventDefault();
-  const email = $('loginEmail').value.trim();
+  const email = identidadLogin($('loginEmail').value);
   const pass = $('loginPass').value;
   const btn = e.target.querySelector('button[type="submit"]');
-  if (!email || !pass) { mostrarErrorAuth('Completa correo y contraseña.'); return; }
+  if (!email || !pass) { mostrarErrorAuth('Completa usuario y contraseña.'); return; }
 
   btn.disabled = true;
   btn.textContent = 'Verificando...';
@@ -1632,7 +1639,7 @@ async function iniciarSesion(e) {
     aplicarSesion(rec);
     cerrarModal('authModal');
     $('loginPass').value = '';
-    toast(isAdmin ? 'Bienvenido, administrador' : 'Bienvenido, militante');
+    toast(isAdmin ? 'Bienvenido, administrador' : 'Bienvenido al movimiento');
     go(isAdmin ? 'admin' : 'inicio');
   } catch (err) {
     if (err && err.status === 400) mostrarErrorAuth('Credenciales incorrectas o cuenta inexistente.');
@@ -1646,6 +1653,9 @@ async function iniciarSesion(e) {
 
 async function registrarUsuario(e) {
   e.preventDefault();
+
+  const nombre = $('regName').value.trim();
+  const apellido = $('regApellido').value.trim();
 
   if ($('regPass').value !== $('regPassConfirm').value) {
     mostrarErrorAuth('Las contraseñas no coinciden.');
@@ -1665,55 +1675,73 @@ async function registrarUsuario(e) {
   }
 
   const btn = e.target.querySelector('button[type="submit"]');
+  const textoOriginal = btn.innerHTML;
   btn.disabled = true;
   btn.textContent = 'Creando cuenta...';
 
-  const nivel = $('regCargoNivel').value;
-  const detalle = $('regCargoDetalle').value.trim();
-  const cargoFinal = detalle ? `${nivel} - ${detalle}` : nivel;
+  const base = slugUsuario(`${nombre}.${apellido}`);
+  let username = base;
+  let creado = null;
+  let ultimoError = null;
 
-  const fd = new FormData();
-  fd.append('email', $('regEmail').value.trim());
-  fd.append('password', $('regPass').value);
-  fd.append('passwordConfirm', $('regPass').value);
-  fd.append('nombre_completo', $('regName').value.trim());
-  fd.append('estado', $('regEstado').value);
-  fd.append('municipio', $('regMunicipio').value);
-  fd.append('cargo', cargoFinal);
-  fd.append('role', 'militante');
-  if (foto) fd.append('foto', foto);
+  for (let intento = 1; intento <= 5 && !creado; intento++) {
+    const fd = new FormData();
+    fd.append('email', username + '@mep.local');
+    fd.append('username', username);
+    fd.append('password', $('regPass').value);
+    fd.append('passwordConfirm', $('regPass').value);
+    fd.append('nombre_completo', `${nombre} ${apellido}`.trim());
+    fd.append('estado', $('regEstado').value);
+    fd.append('municipio', $('regMunicipio').value);
+    fd.append('telefono', $('regTelefono').value.trim());
+    if (foto) fd.append('foto', foto);
 
-  try {
-    await pb.collection('users').create(fd);
-    toast('Cuenta creada. Ya puedes iniciar sesión.');
-    $('loginEmail').value = $('regEmail').value;
+    try {
+      creado = await pb.collection('users').create(fd);
+    } catch (err) {
+      ultimoError = err;
+      const data = (err && err.response && err.response.data) || {};
+      const ocupado = (data.email && data.email.code === 'validation_not_unique') ||
+                      (data.username && data.username.code === 'validation_not_unique');
+      if (ocupado && intento < 5) {
+        username = base + (intento + 1);
+        continue;
+      }
+      break;
+    }
+  }
+
+  if (creado) {
     toggleAuthForms(false);
+    $('loginEmail').value = username;
+    $('authModalTitle').textContent = 'Cuenta creada';
+    $('authModalSubtitle').textContent = `Tu usuario es "${username}". Guárdalo: con él y tu contraseña entrarás.`;
     $('loginPass').focus();
-  } catch (err) {
-    console.error('Registro falló:', err && err.status, err && err.response);
-
-    const data = (err && err.response && err.response.data) || {};
-    const servidor = (err && err.response && err.response.message) || '';
+    toast(`Cuenta creada. Tu usuario es: ${username}`);
+  } else {
+    console.error('Registro falló:', ultimoError && ultimoError.status, ultimoError && ultimoError.response);
+    const data = (ultimoError && ultimoError.response && ultimoError.response.data) || {};
+    const servidor = (ultimoError && ultimoError.response && ultimoError.response.message) || '';
     let msg = '';
 
-    if (data.email && data.email.code === 'validation_not_unique') msg = 'Este correo ya está registrado. Inicia sesión o usa otro correo.';
-    else if (data.email) msg = 'El correo no es válido.';
+    if (data.email && data.email.code === 'validation_not_unique') msg = 'Ese nombre de usuario ya está en uso. Prueba escribiendo también tu segundo nombre o apellido.';
+    else if (data.email) msg = 'No se pudo generar el usuario. Revisa el nombre.';
     else if (data.passwordConfirm) msg = 'Las contraseñas no coinciden.';
     else if (data.password) msg = 'La contraseña debe tener al menos 8 caracteres.';
     else if (data.foto) msg = 'No se pudo subir la foto (imagen de hasta 5 MB).';
+    else if (data.telefono) msg = 'Revisa el número de teléfono.';
     else if (data.estado || data.municipio) msg = 'Selecciona estado y municipio.';
     else if (data.nombre_completo) msg = 'Escribe tu nombre y apellido.';
-    else if (data.cargo) msg = 'Revisa el cargo seleccionado.';
-    else if (err && err.status === 0) msg = 'Sin conexión con el servidor. Revisa tu red.';
-    else if (err && err.status === 403) msg = 'El registro no está permitido en este momento.';
+    else if (ultimoError && ultimoError.status === 0) msg = 'Sin conexión con el servidor. Revisa tu red.';
+    else if (ultimoError && ultimoError.status === 403) msg = 'El registro no está permitido en este momento.';
     else if (servidor && !/failed to create/i.test(servidor)) msg = servidor;
-    else msg = 'No se pudo registrar. Revisa los datos (correo único y contraseña de 8+ caracteres).';
+    else msg = 'No se pudo registrar. Revisa los datos e inténtalo de nuevo.';
 
     mostrarErrorAuth(msg);
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = '<svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>Crear Cuenta';
   }
+
+  btn.disabled = false;
+  btn.innerHTML = textoOriginal;
 }
 
 function cerrarSesion() {
@@ -1727,7 +1755,7 @@ function cerrarSesion() {
 
 async function entrarIntranet(e) {
   e.preventDefault();
-  const email = $('intranetEmail').value.trim();
+  const email = identidadLogin($('intranetEmail').value);
   const pass = $('intranetPass').value;
   const btn = $('intranetLoginBtn');
   btn.disabled = true;
