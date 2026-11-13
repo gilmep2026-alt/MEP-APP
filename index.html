@@ -653,9 +653,13 @@ body.modal-open{overflow:hidden}
     </form>
 
     <form id="registerForm" style="display:none;" autocomplete="off">
-      <div class="grid2">
-        <div class="modal-field"><label>Nombre</label><input type="text" id="regName" placeholder="Ej: Juan" required></div>
-        <div class="modal-field"><label>Apellido</label><input type="text" id="regApellido" placeholder="Ej: Pérez" required></div>
+      <div class="modal-field"><label>Nombre completo</label><input type="text" id="regName" placeholder="Ej: Juan Pérez" required autocomplete="name"></div>
+
+      <div class="modal-field">
+        <label>Usuario (con este entrarás a la app)</label>
+        <input type="text" id="regUsername" placeholder="Ej: juan.perez" required minlength="3" maxlength="30"
+               pattern="[a-z0-9._\-]+" autocomplete="username" autocapitalize="none" spellcheck="false">
+        <small style="display:block;margin-top:6px;font-size:11px;color:var(--text-mute)">Solo minúsculas, números, punto, guion y guion bajo.</small>
       </div>
 
       <div class="grid2">
@@ -673,14 +677,14 @@ body.modal-open{overflow:hidden}
         </div>
       </div>
 
-      <div class="modal-field"><label>Número de Teléfono</label><input type="tel" id="regTelefono" placeholder="0414-1234567" required></div>
+      <div class="modal-field"><label>Número de Teléfono</label><input type="tel" id="regTelefono" placeholder="0414-1234567" required autocomplete="tel"></div>
 
       <div class="modal-field"><label>Fotografía (avatar del chat, opcional, máx. 5 MB)</label><input type="file" id="regFoto" accept="image/*" style="padding: 10px;"></div>
 
       <div class="modal-field">
         <label>Contraseña (mín. 8 caracteres)</label>
         <div class="pass-wrap">
-          <input type="password" id="regPass" placeholder="••••••••" required minlength="8">
+          <input type="password" id="regPass" placeholder="••••••••" required minlength="8" autocomplete="new-password">
           <button type="button" class="btn-toggle-pass" data-toggle-pass="regPass" aria-label="Mostrar contraseña"><svg class="ico"><use href="#i-eye"/></svg></button>
         </div>
       </div>
@@ -688,7 +692,7 @@ body.modal-open{overflow:hidden}
       <div class="modal-field">
         <label>Confirmar Contraseña</label>
         <div class="pass-wrap">
-          <input type="password" id="regPassConfirm" placeholder="••••••••" required minlength="8">
+          <input type="password" id="regPassConfirm" placeholder="••••••••" required minlength="8" autocomplete="new-password">
           <button type="button" class="btn-toggle-pass" data-toggle-pass="regPassConfirm" aria-label="Mostrar contraseña"><svg class="ico"><use href="#i-eye"/></svg></button>
         </div>
       </div>
@@ -725,17 +729,4 @@ body.modal-open{overflow:hidden}
     <div style="font-size: 13px; color: var(--text-dim); max-height: 300px; overflow-y: auto; margin-bottom: 20px; padding-right: 10px; text-align: justify;">
       <p>Bienvenido a la plataforma oficial del <b>Movimiento Electoral del Pueblo (MEP)</b>...</p>
     </div>
-    <button class="modal-submit" id="acceptTermsBtn" style="width: 100%;"><svg class="ico"><use href="#i-check"/></svg> Aceptar y Continuar</button>
-  </div>
-</div>
-
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
-<div id="installBar">
-  <p>📲 Instala la app oficial del MEP en tu dispositivo</p>
-  <button class="btn primary sm" id="installOk">Instalar</button>
-  <button class="btn sm" id="installNo">Luego</button>
-</div>
-
-<script src="app.js" defer></script>
-</body>
-</html>
+    <button class="modal-submit" id="acceptTermsBtn" style="width: 100%;"><svg class="ico"
