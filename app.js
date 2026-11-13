@@ -72,7 +72,7 @@ const VENEZUELA_DATA = {
 };
 
 /* ----------------------------------------------------------------- estado */
-const DB = { galeria: [], agenda: [], reglamentos: [], envivo: [], subapps: [] };
+const DB = { galeria: [], agenda: [], reglamentos: [], envivo: [], subapps: [], directorio: [] };
 const VIEWS = ['galeria', 'inicio', 'subapp', 'agenda', 'reglamentos', 'envivo', 'chat', 'intranet', 'admin'];
 const editando = { galeria: null, envivo: null, agenda: null, reglamentos: null, subapps: null };
 
@@ -228,6 +228,14 @@ async function cargarDatos() {
 
     DB.envivo = envivo.map((r) => ({ ...r }));
     DB.subapps = subapps.map((r) => ({ ...r }));
+
+    // El directorio es opcional: si aún no existe la colección, no rompe la carga.
+    try {
+      DB.directorio = await pb.collection('directorio').getFullList({ sort: 'nombre' });
+    } catch (_) {
+      DB.directorio = [];
+    }
+
     cargado = true;
   } catch (e) {
     console.error('Error cargando datos:', e);
@@ -261,6 +269,9 @@ function aplicarSesion(rec) {
 function limpiarSesionUI() {
   currentUser = null;
   isAdmin = false;
+  chatModo.tipo = 'publico';
+  chatModo.con = null;
+  chatModo.nombre = '';
 
   $('btnLogin').style.display = 'inline-flex';
   $('btnProfile').style.display = 'none';
@@ -303,8 +314,16 @@ function actualizarZonaChat() {
   const logueado = !!currentUser;
   $('chatLoginPrompt').style.display = logueado ? 'none' : 'block';
   $('chatForm').style.display = logueado ? 'flex' : 'none';
-  if (logueado) renderChat();
-  else $('chatBox').innerHTML = '';
+
+  const barra = $('chatDestinoBar');
+  if (barra) barra.style.display = logueado ? 'flex' : 'none';
+
+  if (logueado) {
+    pintarDestinosChat();
+    renderChat();
+  } else {
+    $('chatBox').innerHTML = '';
+  }
 }
 
 /* --------------------------------------------------------------- router */
@@ -331,6 +350,10 @@ function go(view, opts = {}) {
   }
 
   currentView = view;
+
+  // Suscripción de realtime solo mientras se usa el chat o el panel admin.
+  if (view === 'chat' || view === 'admin') suscribirMensajes();
+  else desuscribirMensajes();
 
   document.querySelectorAll('.view').forEach((v) => v.classList.toggle('active', v.id === 'view-' + view));
   document.querySelectorAll('.nav-item').forEach((n) => n.classList.toggle('active', n.dataset.view === view));
@@ -679,14 +702,18 @@ function avatarDe(m) {
   return safeUrl(m.foto_url) || 'logo.png';
 }
 
+/* Modo de conversación: público ("Todos") o privado con un destinatario */
+const chatModo = { tipo: 'publico', con: null, nombre: '' };
+
 function mensajeHtml(m, admin) {
   const esMio = !!currentUser && m.user_id === currentUser.id;
+  const privado = !!m.receptor_id;
   return `
     <div class="msg ${esMio ? 'mine' : ''}" data-msg="${esc(m.id)}">
       <img src="${esc(avatarDe(m))}" class="msg-avatar" alt="" loading="lazy" decoding="async">
       <div class="msg-content">
         <div class="msg-head">
-          <b>${esc(m.usuario || 'Usuario')} <span class="msg-cargo">${esc(m.cargo || 'Usuario')}</span></b>
+          <b>${esc(m.usuario || 'Usuario')} <span class="msg-cargo">${esc(m.cargo || 'Usuario')}</span>${privado ? '<span class="msg-privado">Privado</span>' : ''}</b>
           <span>${esc(fmtCreado(m.created))}</span>
           ${admin && !esMio && m.user_id ? `<button type="button" class="btn sm danger" style="padding:2px 8px;margin-left:8px;font-size:10px" data-action="ban" data-userid="${esc(m.user_id)}" data-usuario="${esc(m.usuario || '')}">Suspender</button>` : ''}
         </div>
@@ -699,12 +726,12 @@ function vacioChat(titulo, texto) {
   return `<div class="empty" style="margin:auto;background:transparent;border:0"><h3>${esc(titulo)}</h3><p>${esc(texto)}</p></div>`;
 }
 
-function pintarMensajes(box, items, admin) {
+function pintarMensajes(box, items, admin, tituloVacio, textoVacio) {
   if (!box) return;
   const alFinal = box.scrollTop + box.clientHeight >= box.scrollHeight - 80;
   box.innerHTML = items.length
     ? items.map((m) => mensajeHtml(m, admin)).join('')
-    : vacioChat('Sin mensajes', 'Envía el primer mensaje.');
+    : vacioChat(tituloVacio || 'Sin mensajes', textoVacio || 'Envía el primer mensaje.');
   setFallbacks(box);
   if (alFinal) box.scrollTop = box.scrollHeight;
 }
@@ -712,9 +739,21 @@ function pintarMensajes(box, items, admin) {
 async function renderChat() {
   const box = $('chatBox');
   if (!box || !currentUser) return;
+
+  const esPrivado = chatModo.tipo === 'privado' && !!chatModo.con;
+
   try {
-    const res = await pb.collection('mensajes').getList(1, 100, { sort: 'created' });
-    pintarMensajes(box, res.items, false);
+    const filtro = esPrivado
+      ? pb.filter('(user_id = {:yo} && receptor_id = {:otro}) || (user_id = {:otro} && receptor_id = {:yo})', { yo: currentUser.id, otro: chatModo.con })
+      : 'receptor_id = ""';
+
+    const res = await pb.collection('mensajes').getList(1, 100, { filter: filtro, sort: 'created' });
+
+    pintarMensajes(
+      box, res.items, false,
+      esPrivado ? 'Sin mensajes privados' : 'Sin mensajes',
+      esPrivado ? `Todavía no hay mensajes en tu conversación con ${chatModo.nombre}.` : 'Envía el primer mensaje.'
+    );
   } catch (e) {
     console.error('Error cargando chat:', e);
     box.innerHTML = '<p class="muted">No se pudo cargar el chat.</p>';
@@ -725,11 +764,97 @@ async function renderAdminChat() {
   const box = $('adminChatBox');
   if (!box) return;
   try {
-    const res = await pb.collection('mensajes').getList(1, 100, { sort: 'created' });
+    const res = await pb.collection('mensajes').getList(1, 100, { filter: 'receptor_id = ""', sort: 'created' });
     pintarMensajes(box, res.items, true);
   } catch (e) {
     box.innerHTML = '<p class="muted">No se pudo cargar el chat.</p>';
   }
+}
+
+/* Destinatarios del chat público: administradores (directorio) y, para un
+   admin, las conversaciones privadas que ha recibido. */
+async function cargarConversacionesPrivadas() {
+  if (!isAdmin || !currentUser) return [];
+  try {
+    const msgs = await pb.collection('mensajes').getFullList({
+      filter: pb.filter('receptor_id = {:yo} && user_id != {:yo}', { yo: currentUser.id }),
+      sort: '-created',
+      fields: 'user_id,usuario,cargo'
+    });
+    const vistos = new Map();
+    msgs.forEach((m) => {
+      if (m.user_id && !vistos.has(m.user_id)) {
+        vistos.set(m.user_id, { id: m.user_id, nombre: m.usuario || 'Usuario', cargo: m.cargo || '' });
+      }
+    });
+    return [...vistos.values()];
+  } catch (e) {
+    console.warn('Conversaciones privadas:', e);
+    return [];
+  }
+}
+
+async function pintarDestinosChat() {
+  const sel = $('chatDestino');
+  if (!sel || !currentUser) return;
+
+  const anterior = sel.value;
+  sel.innerHTML = '<option value="">Todos (público)</option>';
+
+  const admins = (DB.directorio || []).filter((d) => d.user_id && d.user_id !== currentUser.id);
+  if (admins.length) {
+    const grupo = document.createElement('optgroup');
+    grupo.label = 'Administradores';
+    admins.forEach((d) => {
+      const o = document.createElement('option');
+      o.value = d.user_id;
+      o.dataset.nombre = d.nombre || 'Administrador';
+      o.dataset.cargo = d.cargo || '';
+      o.textContent = `${d.nombre || 'Administrador'}${d.cargo ? ' · ' + d.cargo : ''}`;
+      grupo.appendChild(o);
+    });
+    sel.appendChild(grupo);
+  }
+
+  if (isAdmin) {
+    const convs = await cargarConversacionesPrivadas();
+    if (convs.length) {
+      const grupo = document.createElement('optgroup');
+      grupo.label = 'Conversaciones privadas';
+      convs.forEach((c) => {
+        const o = document.createElement('option');
+        o.value = c.id;
+        o.dataset.nombre = c.nombre;
+        o.dataset.cargo = c.cargo;
+        o.textContent = `${c.nombre}${c.cargo ? ' · ' + c.cargo : ''}`;
+        grupo.appendChild(o);
+      });
+      sel.appendChild(grupo);
+    }
+  }
+
+  if (anterior && Array.from(sel.options).some((o) => o.value === anterior)) sel.value = anterior;
+}
+
+function aplicarDestinoChat() {
+  const sel = $('chatDestino');
+  if (!sel) return;
+  const opt = sel.options[sel.selectedIndex];
+  const info = $('chatDestinoInfo');
+
+  if (!sel.value) {
+    chatModo.tipo = 'publico';
+    chatModo.con = null;
+    chatModo.nombre = '';
+    if (info) info.textContent = 'Todos los usuarios ven estos mensajes';
+  } else {
+    chatModo.tipo = 'privado';
+    chatModo.con = sel.value;
+    chatModo.nombre = (opt && opt.dataset.nombre) || 'usuario';
+    if (info) info.textContent = `Conversación privada con ${chatModo.nombre}`;
+  }
+
+  if (currentView === 'chat') renderChat();
 }
 
 function appendMensaje(box, m, admin) {
@@ -747,12 +872,19 @@ async function enviarMensaje(texto, input) {
   if (!texto) return;
   const textoLimpio = texto.trim().slice(0, 600);
   if (!textoLimpio) return;
+
+  const payload = { user_id: currentUser.id, texto: textoLimpio };
+  if (chatModo.tipo === 'privado' && chatModo.con) payload.receptor_id = chatModo.con;
+
   try {
-    const creado = await pb.collection('mensajes').create({ user_id: currentUser.id, texto: textoLimpio });
+    const creado = await pb.collection('mensajes').create(payload);
     if (input) input.value = '';
     if (creado) {
-      if (currentView === 'chat') appendMensaje($('chatBox'), creado, false);
-      if (currentView === 'admin') appendMensaje($('adminChatBox'), creado, true);
+      const esPrivado = !!creado.receptor_id;
+      if (currentView === 'chat' && esPrivado === (chatModo.tipo === 'privado')) {
+        appendMensaje($('chatBox'), creado, false);
+      }
+      if (currentView === 'admin' && !esPrivado) appendMensaje($('adminChatBox'), creado, true);
     }
   } catch (e) {
     toast(mensajeError(e, 'No se pudo enviar el mensaje'), 'err');
@@ -801,25 +933,62 @@ async function renderBlockedUsers() {
 }
 
 /* ------------------------------------------------------------ realtime */
-async function suscribirRealtime() {
-  if (!pb.authStore.isValid || rtMensajes) return;
+/* Realtime del chat: la suscripción se abre SOLO mientras el usuario está en
+   el chat o en el panel de administración, y se cierra al salir. Con 5.000
+   conectados esto reduce las conexiones SSE al porcentaje que chatea. */
+async function suscribirMensajes() {
+  if (rtMensajes || !pb.authStore.isValid || !currentUser) return;
   try {
-    rtMensajes = await pb.collection('mensajes').subscribe('*', (e) => {
-      if (e.action === 'create') {
-        if (currentView === 'chat') appendMensaje($('chatBox'), e.record, false);
-        if (currentView === 'admin') appendMensaje($('adminChatBox'), e.record, true);
-      } else if (e.action === 'delete') {
-        const nodo = document.querySelector(`[data-msg="${e.record.id}"]`);
-        if (nodo) nodo.remove();
-        else if (currentView === 'chat') renderChat();
-        else if (currentView === 'admin') renderAdminChat();
-      }
-    });
-  } catch (e) { console.warn('Realtime mensajes:', e); }
+    rtMensajes = await pb.collection('mensajes').subscribe('*', manejarEventoMensaje);
+  } catch (e) {
+    console.warn('Realtime mensajes:', e);
+  }
+}
+
+async function desuscribirMensajes() {
+  if (rtMensajes) {
+    try { await rtMensajes(); } catch (_) {}
+    rtMensajes = null;
+  }
+}
+
+function manejarEventoMensaje(e) {
+  if (e.action === 'create') {
+    const m = e.record;
+    const esPrivado = !!m.receptor_id;
+    const mio = !!currentUser && m.user_id === currentUser.id;
+
+    if (!esPrivado) {
+      if (currentView === 'chat' && chatModo.tipo === 'publico') appendMensaje($('chatBox'), m, false);
+      if (currentView === 'admin') appendMensaje($('adminChatBox'), m, true);
+      return;
+    }
+
+    // Mensaje privado: solo interesa al emisor y al receptor.
+    const enEstaConversacion = chatModo.tipo === 'privado' && chatModo.con &&
+      ((mio && m.receptor_id === chatModo.con) ||
+       (m.user_id === chatModo.con && m.receptor_id === (currentUser && currentUser.id)));
+
+    if (currentView === 'chat' && enEstaConversacion) {
+      appendMensaje($('chatBox'), m, false);
+    } else if (currentUser && m.receptor_id === currentUser.id) {
+      toast(`🔒 Mensaje privado de ${m.usuario || 'un usuario'}`);
+      if (isAdmin) pintarDestinosChat();
+    }
+  } else if (e.action === 'delete') {
+    const nodo = document.querySelector(`[data-msg="${e.record.id}"]`);
+    if (nodo) nodo.remove();
+    else if (currentView === 'chat') renderChat();
+    else if (currentView === 'admin') renderAdminChat();
+  }
+}
+
+async function suscribirRealtime() {
+  if (currentView === 'chat' || currentView === 'admin') suscribirMensajes();
 }
 
 async function desuscribirRealtime() {
-  if (rtMensajes) { try { await rtMensajes(); } catch { } rtMensajes = null; }
+  await desuscribirMensajes();
   desuscribirIntranet();
 }
 
@@ -1410,6 +1579,7 @@ function enlazarEventos() {
   $('registerForm').addEventListener('submit', registrarUsuario);
 
   /* chat */
+  $('chatDestino').addEventListener('change', aplicarDestinoChat);
   $('chatForm').addEventListener('submit', (e) => {
     e.preventDefault();
     enviarMensaje($('chatInput').value, $('chatInput'));
