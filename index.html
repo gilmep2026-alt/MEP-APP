@@ -167,7 +167,14 @@ body.modal-open{overflow:hidden}
 @media(prefers-reduced-motion:reduce){
   .carousel-track{transition:none!important}
   .carousel-progress-bar{transition:none!important}
-}</style>
+}
+/* ===== chat privado ===== */
+.chat-destino-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.chat-destino-label{margin:0;font-size:11px;color:var(--gold-300);font-weight:800;letter-spacing:1px;text-transform:uppercase;white-space:nowrap}
+#chatDestino{flex:1;min-width:200px;max-width:420px}
+.chat-destino-info{font-size:12px;color:var(--text-mute)}
+.msg-privado{font-size:9px;font-weight:800;background:rgba(143,46,237,.25);border:1px solid rgba(255,215,0,.35);color:var(--gold-300);padding:1px 6px;border-radius:4px;margin-left:6px;text-transform:uppercase;letter-spacing:.5px;vertical-align:middle}
+</style>
 </head>
 <body>
 
@@ -433,6 +440,13 @@ body.modal-open{overflow:hidden}
     <div class="page-head">
       <h1>Chat del <span class="accent">Movimiento</span></h1>
       <p>Normas de uso: Respeto mutuo, no lenguaje ofensivo, no spam. El incumplimiento resultará en suspensión.</p>
+    </div>
+    <div class="chat-destino-bar" id="chatDestinoBar" style="display:none">
+      <label class="chat-destino-label" for="chatDestino">Enviar a</label>
+      <select id="chatDestino" aria-label="Destinatario del mensaje">
+        <option value="">Todos (público)</option>
+      </select>
+      <span class="chat-destino-info" id="chatDestinoInfo">Todos los usuarios ven estos mensajes</span>
     </div>
     <div class="chat-wrap">
       <div class="chat-box" id="chatBox"></div>
