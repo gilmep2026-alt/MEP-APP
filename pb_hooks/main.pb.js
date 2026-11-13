@@ -73,7 +73,7 @@ function mepNombre(a, fallback) {
   let n = "";
   try { n = String(a.getString("nombre_completo") || "").trim(); } catch (_) {}
   if (!n) { try { n = String(a.getString("email") || "").trim(); } catch (_) {} }
-  if (!n) n = fallback || "Militante";
+  if (!n) n = fallback || "Usuario";
   return n.slice(0, 120);
 }
 
@@ -128,8 +128,9 @@ onRecordCreateRequest((e) => {
   // El superusuario (panel Admin de PocketBase) sí puede crear admins.
   if (mepIsSuperuser(e)) return e.next();
 
-  // Pase lo que pase en el body, el rol de un registro público es militante.
-  e.record.set("role", "militante");
+  // Un registro público NO tiene rol. Los permisos se asignan únicamente
+  // desde el panel de PocketBase (superusuario); "admin" es imposible aquí.
+  e.record.set("role", "");
   e.record.set("verified", false);
   e.record.set("emailVisibility", false);
 
@@ -175,7 +176,7 @@ onRecordCreateRequest((e) => {
   // La identidad SIEMPRE sale del registro autenticado, nunca del body.
   e.record.set("user_id", uid);
   e.record.set("usuario", mepNombre(auth));
-  e.record.set("cargo", String(auth.getString("cargo") || "Militante").slice(0, 120));
+  e.record.set("cargo", String(auth.getString("cargo") || "Usuario").slice(0, 120));
 
   let foto = "";
   try { foto = String(auth.getString("foto") || ""); } catch (_) {}
