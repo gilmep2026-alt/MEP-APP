@@ -1,34 +1,35 @@
 # ============================================================================
-# MEP · PocketBase con hooks, superusuario idempotente y datos persistentes
+# MEP · PocketBase para Railway  (TODO EN UN SOLO ARCHIVO)
 # ----------------------------------------------------------------------------
-# Contexto de build: esta carpeta (Dockerfile + pb_hooks/ + entrypoint.sh).
+# No necesita entrypoint.sh en el repositorio: el script de arranque va
+# incrustado abajo en base64. Solo requiere la carpeta pb_hooks/ al lado
+# de este Dockerfile.
 #
-# >>> Fija el tag de la versión que ya tienes desplegada
-# >>> (Admin UI -> Settings -> About). Ejemplo: :0.23.12
-# >>> Un salto de versión migra la base de datos y no se deshace sin backup.
+# Qué hace el script incrustado, en orden:
+#   1. Localiza el binario de PocketBase.
+#   2. Verifica que la carpeta de datos exista y se pueda escribir.
+#   3. Avisa en el log si esa carpeta NO es el volumen persistente.
+#   4. Crea o actualiza el superusuario con PB_ADMIN_EMAIL / PB_ADMIN_PASSWORD.
+#   5. Arranca PocketBase con --dir apuntando a esa misma carpeta.
 # ============================================================================
 
 ARG PB_IMAGE=ghcr.io/muchobien/pocketbase:latest
 FROM ${PB_IMAGE}
 
-# Ruta INTERNA del data dir. Debe coincidir con el "Mount path" del volumen
-# de Railway. Si tu volumen está montado en /data, define PB_DATA_DIR=/data
-# en las variables del servicio.
 ENV PB_DATA_DIR=/pb_data
-
-# Puerto interno. Debe coincidir con el "Target Port" del servicio en Railway.
 ENV PB_HTTP_PORT=8090
 
-# Hooks (este proyecto). Se copian a las dos rutas posibles para que funcione
-# tanto con la imagen muchobien (--hooksDir=/pb_hooks) como con la oficial
-# (WORKDIR /pb, hooksDir por defecto). PocketBase solo carga una de las dos.
+# Hooks de la aplicación
 COPY pb_hooks /pb_hooks
-COPY pb_hooks /pb/pb_hooks
 
-COPY entrypoint.sh /usr/local/bin/mep-entrypoint.sh
-# sed elimina posibles CRLF (si el archivo se editó en Windows) y luego da permisos.
-RUN sed -i 's/\r$//' /usr/local/bin/mep-entrypoint.sh && chmod +x /usr/local/bin/mep-entrypoint.sh
+# Script de arranque incrustado: se decodifica, se limpian los CRLF y se le
+# dan permisos de ejecución en el mismo paso. No hay ningún COPY que pueda
+# fallar por un archivo que no esté en el contexto de compilación.
+RUN echo 'IyEvYmluL3NoCiMgPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQojIE1FUCDCtyBFbnRyeXBvaW50IGRlIFBvY2tldEJhc2UKIyAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCiMgMS4gTG9jYWxpemEgZWwgYmluYXJpby4KIyAyLiBDb21wcnVlYmEgcXVlIGVsIGRhdGEgZGlyIHNlYSBlc2NyaWJpYmxlIHkgYXZpc2Egc2kgTk8gcGFyZWNlIHVuIHZvbHVtZW4uCiMgMy4gQ3JlYS9hY3R1YWxpemEgZWwgc3VwZXJ1c3VhcmlvIGRlc2RlIFBCX0FETUlOX0VNQUlMIC8gUEJfQURNSU5fUEFTU1dPUkQKIyAgICAoaWRlbXBvdGVudGU6IHNlIGVqZWN1dGEgZW4gY2FkYSBhcnJhbnF1ZSkuCiMgNC4gQXJyYW5jYSBlbCBzZXJ2aWRvciBjb24gLS1kaXIgYXB1bnRhbmRvIFNJRU1QUkUgYWwgZGF0YSBkaXIgY29ycmVjdG8uCiMgPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQpzZXQgLWV1CgojIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0gYmluYXJpbwpQQl9CSU49IiIKZm9yIGNhbmRpZGF0byBpbiAvdXNyL2xvY2FsL2Jpbi9wb2NrZXRiYXNlIC9wb2NrZXRiYXNlIC9wYi9wb2NrZXRiYXNlIC9hcHAvcG9ja2V0YmFzZTsgZG8KICBpZiBbIC14ICIkY2FuZGlkYXRvIiBdOyB0aGVuIFBCX0JJTj0iJGNhbmRpZGF0byI7IGJyZWFrOyBmaQpkb25lCmlmIFsgLXogIiRQQl9CSU4iIF07IHRoZW4KICBQQl9CSU49IiQoY29tbWFuZCAtdiBwb2NrZXRiYXNlIDI+L2Rldi9udWxsIHx8IHRydWUpIgpmaQppZiBbIC16ICIkUEJfQklOIiBdOyB0aGVuCiAgZWNobyAiW21lcF0gRVJST1I6IG5vIHNlIGVuY29udHLDsyBlbCBiaW5hcmlvIGRlIFBvY2tldEJhc2UuIiA+JjIKICBleGl0IDEKZmkKCiMgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSBjb25maWcKREFUQV9ESVI9IiR7UEJfREFUQV9ESVI6LS9wYl9kYXRhfSIKSFRUUF9QT1JUPSIke1BCX0hUVFBfUE9SVDotODA5MH0iCkhPT0tTX0RJUj0iJHtQQl9IT09LU19ESVI6LS9wYl9ob29rc30iCgplY2hvICJbbWVwXSBiaW5hcmlvICAgOiAkUEJfQklOIgplY2hvICJbbWVwXSBkYXRhIGRpciAgOiAkREFUQV9ESVIiCmVjaG8gIlttZXBdIHB1ZXJ0byAgICA6ICRIVFRQX1BPUlQiCmVjaG8gIlttZXBdIGhvb2tzIGRpciA6ICRIT09LU19ESVIiCgpta2RpciAtcCAiJERBVEFfRElSIiAiJEhPT0tTX0RJUiIgL3BiX3B1YmxpYyAvcGJfbWlncmF0aW9ucyAyPi9kZXYvbnVsbCB8fCB0cnVlCmNob3duICIkKGlkIC11KTokKGlkIC1nKSIgIiREQVRBX0RJUiIgMj4vZGV2L251bGwgfHwgdHJ1ZQoKIyAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tIMK/ZXN0w6EgZWwgZGF0YSBkaXIgZW4gZWwgdm9sdW1lbj8KaWYgISB0b3VjaCAiJERBVEFfRElSLy5tZXBfd3JpdGVfdGVzdCIgMj4vZGV2L251bGw7IHRoZW4KICBlY2hvICJbbWVwXSBFUlJPUjogbm8gc2UgcHVlZGUgZXNjcmliaXIgZW4gJERBVEFfRElSLiBSZXZpc2EgZWwgbW9udGFqZSBkZWwgdm9sdW1lbi4iID4mMgplbHNlCiAgcm0gLWYgIiREQVRBX0RJUi8ubWVwX3dyaXRlX3Rlc3QiCmZpCgpERVZfUk9PVD0iJChzdGF0IC1jICVkIC8gMj4vZGV2L251bGwgfHwgZWNobyByb290KSIKREVWX0RBVEE9IiQoc3RhdCAtYyAlZCAiJERBVEFfRElSIiAyPi9kZXYvbnVsbCB8fCBlY2hvIGRhdGEpIgppZiBbICIkREVWX1JPT1QiID0gIiRERVZfREFUQSIgXTsgdGhlbgogIGVjaG8gIlttZXBdIEFWSVNPOiAkREFUQV9ESVIgcGFyZWNlIGVzdGFyIGVuIGVsIHNpc3RlbWEgZGUgYXJjaGl2b3MgZWbDrW1lcm8gZGVsIGNvbnRlbmVkb3IuIgogIGVjaG8gIlttZXBdICAgICAgICBTaSBubyBlcyBlbCB2b2x1bWVuIGRlIFJhaWx3YXksIGxhIGJhc2Ugc2UgcGVyZGVyw6EgZW4gY2FkYSBkZXBsb3kuIgpmaQoKaWYgWyAtZiAiJERBVEFfRElSL2RhdGEuZGIiIF07IHRoZW4KICBlY2hvICJbbWVwXSBiYXNlIGRlIGRhdG9zIGVuY29udHJhZGE6ICREQVRBX0RJUi9kYXRhLmRiIgplbHNlCiAgZWNobyAiW21lcF0gUFJJTUVSIEFSUkFOUVVFOiBubyBleGlzdGUgZGF0YS5kYiB0b2RhdsOtYS4iCmZpCgojIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0gc3VwZXJ1c3VhcmlvCmlmIFsgLW4gIiR7UEJfQURNSU5fRU1BSUw6LX0iIF0gJiYgWyAtbiAiJHtQQl9BRE1JTl9QQVNTV09SRDotfSIgXTsgdGhlbgogIGVjaG8gIlttZXBdIGFzZWd1cmFuZG8gc3VwZXJ1c3VhcmlvOiAkUEJfQURNSU5fRU1BSUwiCiAgaWYgIiRQQl9CSU4iIHN1cGVydXNlciB1cHNlcnQgIiRQQl9BRE1JTl9FTUFJTCIgIiRQQl9BRE1JTl9QQVNTV09SRCIgLS1kaXI9IiREQVRBX0RJUiI7IHRoZW4KICAgIGVjaG8gIlttZXBdIHN1cGVydXN1YXJpbyBPSyAoc3VwZXJ1c2VyIHVwc2VydCkiCiAgZWxpZiAiJFBCX0JJTiIgYWRtaW4gdXBzZXJ0ICIkUEJfQURNSU5fRU1BSUwiICIkUEJfQURNSU5fUEFTU1dPUkQiIC0tZGlyPSIkREFUQV9ESVIiOyB0aGVuCiAgICBlY2hvICJbbWVwXSBzdXBlcnVzdWFyaW8gT0sgKGFkbWluIHVwc2VydCwgdmVyc2nDs24gYW50aWd1YSkiCiAgZWxzZQogICAgZWNobyAiW21lcF0gRVJST1I6IG5vIHNlIHB1ZG8gY3JlYXIvYWN0dWFsaXphciBlbCBzdXBlcnVzdWFyaW8uIiA+JjIKICBmaQplbHNlCiAgZWNobyAiW21lcF0gc2luIFBCX0FETUlOX0VNQUlMIC8gUEJfQURNSU5fUEFTU1dPUkQ6IG5vIHNlIHRvY2EgZWwgc3VwZXJ1c3VhcmlvLiIKZmkKCiMgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tIHNlcnZpZG9yCmV4ZWMgIiRQQl9CSU4iIHNlcnZlIFwKICAtLWh0dHA9IjAuMC4wLjA6JHtIVFRQX1BPUlR9IiBcCiAgLS1kaXI9IiREQVRBX0RJUiIgXAogIC0taG9va3NEaXI9IiRIT09LU19ESVIiIFwKICAtLXB1YmxpY0Rpcj0vcGJfcHVibGljIFwKICAtLW1pZ3JhdGlvbnNEaXI9L3BiX21pZ3JhdGlvbnMK' | base64 -d > /entrypoint.sh \
+ && sed -i 's/\r$//' /entrypoint.sh \
+ && chmod 755 /entrypoint.sh
 
 EXPOSE 8090
 
-ENTRYPOINT ["/usr/local/bin/mep-entrypoint.sh"]
+# Al encender el contenedor se ejecuta siempre este script.
+ENTRYPOINT ["/entrypoint.sh"]
