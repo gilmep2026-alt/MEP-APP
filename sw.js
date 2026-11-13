@@ -7,7 +7,7 @@
      Eso protege el realtime (SSE) y las descargas de /api/files/.
    ========================================================================== */
 
-const VERSION = 'mep-v17';
+const VERSION = 'mep-v21';
 const STATIC_CACHE = 'mep-static-' + VERSION;
 const RUNTIME_CACHE = 'mep-runtime-' + VERSION;
 const MAX_ESTATICOS = 90;
