@@ -1703,7 +1703,6 @@ function inicializarFormularioRegistro() {
   const selMunicipio = $('regMunicipio');
   if (!selEstado || !selMunicipio) return;
 
-  // Estados (solo se cargan una vez)
   if (selEstado.options.length <= 1) {
     Object.keys(VENEZUELA_DATA)
       .sort((a, b) => a.localeCompare(b, 'es'))
@@ -1715,7 +1714,6 @@ function inicializarFormularioRegistro() {
       });
   }
 
-  // Municipios dependientes del estado
   selEstado.addEventListener('change', () => {
     const estado = selEstado.value;
     const municipios = (VENEZUELA_DATA[estado] || []).slice().sort((a, b) => a.localeCompare(b, 'es'));
@@ -1736,8 +1734,6 @@ function inicializarFormularioRegistro() {
     });
     selMunicipio.disabled = false;
   });
-
-  // Los usuarios normales no tienen cargo: solo nombre, contacto y foto.
 }
 
 /* ---------------------------------------------------------------- auth */
