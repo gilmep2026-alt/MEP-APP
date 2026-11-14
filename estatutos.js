@@ -16,25 +16,35 @@ themeToggle.addEventListener('click', () => {
     themeToggle.innerHTML = newTheme === 'dark' ? '☀️ Modo Claro' : '🌙 Modo Oscuro';
 });
 
-// 2. Lógica para Descargar PDF (Abre todos los acordeones antes de imprimir)
+// 2. Lógica para Descargar PDF
 document.getElementById('downloadPdf').addEventListener('click', () => {
     const details = document.querySelectorAll('details');
     const wasOpen = [];
     
-    // Guardar estado actual y abrir todos para que el PDF muestre todo
+    // Guardar estado y abrir todo
     details.forEach((d, i) => {
         wasOpen[i] = d.open;
         d.open = true; 
+        d.style.display = 'block'; // Asegurar que nada esté oculto por la búsqueda
     });
 
-    // Llamar a la ventana de impresión
+    // Ocultar barra de búsqueda temporalmente para el PDF
+    const searchCont = document.getElementById('searchContainer');
+    const originalSearchDisplay = searchCont.style.display;
+    searchCont.style.display = 'none';
+
     window.print();
 
-    // Restaurar estado después de imprimir
+    // Restaurar estado
     setTimeout(() => {
         details.forEach((d, i) => {
             d.open = wasOpen[i];
         });
+        searchCont.style.display = originalSearchDisplay;
+        // Re-aplicar búsqueda si había texto
+        if (document.getElementById('searchInput').value.trim() !== '') {
+            document.getElementById('searchInput').dispatchEvent(new Event('input'));
+        }
     }, 500);
 });
 
@@ -45,3 +55,38 @@ window.onscroll = function() {
     const scrolled = (winScroll / height) * 100;
     document.getElementById("progress-bar").style.width = scrolled + "%";
 };
+
+// 4. MOTOR DE BÚSQUEDA
+const searchInput = document.getElementById('searchInput');
+const detailsElements = document.querySelectorAll('details');
+const noResults = document.getElementById('noResults');
+
+searchInput.addEventListener('input', function(e) {
+    const term = e.target.value.toLowerCase().trim();
+    let hasResults = false;
+
+    detailsElements.forEach(details => {
+        const text = details.textContent.toLowerCase();
+        
+        if (text.includes(term)) {
+            details.style.display = 'block';
+            // Si hay término de búsqueda, abrimos el capítulo automáticamente
+            if (term !== '') {
+                details.open = true;
+                hasResults = true;
+            } else {
+                details.open = false; // Cerrar todo si se borra la búsqueda
+                hasResults = true;
+            }
+        } else {
+            details.style.display = 'none';
+        }
+    });
+
+    // Mostrar mensaje si no hay resultados
+    if (!hasResults && term !== '') {
+        noResults.style.display = 'block';
+    } else {
+        noResults.style.display = 'none';
+    }
+});
