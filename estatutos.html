@@ -6,232 +6,98 @@
     <title>Estatutos MEP</title>
     <style>
         :root[data-theme="dark"] {
-            --bg-body: #0d0418;
-            --bg-surface: rgba(42, 16, 80, 0.4);
-            --bg-header: rgba(13, 4, 24, 0.85);
-            --text-main: #f8f6fc;
-            --text-dim: #c8bce0;
-            --accent: #fcd116;
-            --accent-hover: #ffe57f;
-            --border: rgba(252, 209, 22, 0.25);
-            --shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
-            --glossy-gradient: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
-            --glass-blur: blur(16px);
+            --bg-body: #0d0418; --bg-surface: rgba(42, 16, 80, 0.4); --bg-header: rgba(13, 4, 24, 0.85);
+            --text-main: #f8f6fc; --text-dim: #c8bce0; --accent: #fcd116; --border: rgba(252, 209, 22, 0.25);
+            --shadow: 0 15px 35px rgba(0, 0, 0, 0.6); --glass-blur: blur(16px);
         }
-
         :root[data-theme="light"] {
-            --bg-body: #eef2f6;
-            --bg-surface: rgba(255, 255, 255, 0.6);
-            --bg-header: rgba(255, 255, 255, 0.85);
-            --text-main: #1a0b2e;
-            --text-dim: #4a3b60;
-            --accent: #3b0954;
-            --accent-hover: #51139e;
-            --border: rgba(59, 9, 84, 0.2);
-            --shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            --glossy-gradient: linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.2) 100%);
-            --glass-blur: blur(16px);
+            --bg-body: #eef2f6; --bg-surface: rgba(255, 255, 255, 0.6); --bg-header: rgba(255, 255, 255, 0.85);
+            --text-main: #1a0b2e; --text-dim: #4a3b60; --accent: #3b0954; --border: rgba(59, 9, 84, 0.2);
+            --shadow: 0 15px 35px rgba(0, 0, 0, 0.1); --glass-blur: blur(16px);
         }
-
         * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background-color: var(--bg-body); background-image: radial-gradient(circle at 15% 50%, rgba(114, 27, 196, 0.15), transparent 25%), radial-gradient(circle at 85% 30%, rgba(252, 209, 22, 0.1), transparent 25%); background-attachment: fixed; color: var(--text-main); line-height: 1.7; transition: 0.4s ease; overflow-x: hidden; }
         
-        body { 
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
-            background-color: var(--bg-body); 
-            background-image: radial-gradient(circle at 15% 50%, rgba(114, 27, 196, 0.15), transparent 25%), radial-gradient(circle at 85% 30%, rgba(252, 209, 22, 0.1), transparent 25%);
-            background-attachment: fixed;
-            color: var(--text-main); 
-            line-height: 1.7;
-            transition: background-color 0.4s ease, color 0.4s ease;
-            overflow-x: hidden;
-        }
-
-        /* EFECTO DE RESALTADO EN LA BÚSQUEDA */
-        mark.resaltado {
-            background-color: var(--accent);
-            color: var(--bg-body);
-            padding: 2px 4px;
-            border-radius: 4px;
-            font-weight: bold;
-            box-shadow: 0 0 12px var(--accent);
-            animation: pulseGlow 1.5s infinite alternate;
-        }
-
-        @keyframes pulseGlow {
-            from { box-shadow: 0 0 5px var(--accent); }
-            to { box-shadow: 0 0 15px var(--accent); }
-        }
-
-        #progress-bar {
-            position: fixed; top: 0; left: 0; height: 4px; background: var(--accent);
-            width: 0%; z-index: 9999; transition: width 0.1s ease; box-shadow: 0 0 15px var(--accent);
-        }
-
-        header { 
-            position: sticky; top: 0; z-index: 100; 
-            background: var(--bg-header); 
-            backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
-            border-bottom: 1px solid var(--border);
-            padding: 15px 20px; 
-            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2), inset 0 -1px 0 rgba(255,255,255,0.1);
-        }
-
-        header h1 { color: var(--accent); font-size: 1.3rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 800; }
+        mark.resaltado { background-color: var(--accent); color: var(--bg-body); padding: 2px 4px; border-radius: 4px; font-weight: bold; box-shadow: 0 0 12px var(--accent); animation: pulseGlow 1.5s infinite alternate; }
+        @keyframes pulseGlow { from { box-shadow: 0 0 5px var(--accent); } to { box-shadow: 0 0 15px var(--accent); } }
+        
+        #progress-bar { position: fixed; top: 0; left: 0; height: 4px; background: var(--accent); width: 0%; z-index: 9999; transition: width 0.1s; box-shadow: 0 0 15px var(--accent); }
+        header { position: sticky; top: 0; z-index: 100; background: var(--bg-header); backdrop-filter: var(--glass-blur); border-bottom: 1px solid var(--border); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        header h1 { color: var(--accent); font-size: 1.3rem; text-transform: uppercase; font-weight: 800; }
         .header-actions { display: flex; gap: 10px; flex-wrap: wrap; }
-
-        .btn { 
-            display: inline-flex; align-items: center; gap: 8px;
-            padding: 10px 18px; border-radius: 30px; font-size: 0.9rem; font-weight: 700;
-            text-decoration: none; cursor: pointer; border: 1px solid var(--border); 
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            background: var(--glossy-gradient); backdrop-filter: blur(5px);
-            box-shadow: inset 0 1px 1px rgba(255,255,255,0.2), 0 4px 10px rgba(0,0,0,0.1);
-        }
-
+        .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 30px; font-size: 0.9rem; font-weight: 700; text-decoration: none; cursor: pointer; border: 1px solid var(--border); transition: 0.3s; background: transparent; backdrop-filter: blur(5px); color: var(--text-main); }
         .btn-primary { background: var(--accent); color: var(--bg-body); border: none; }
         :root[data-theme="light"] .btn-primary { color: #fff; }
-        .btn-primary:hover { transform: translateY(-2px); filter: brightness(1.1); box-shadow: 0 6px 15px rgba(252, 209, 22, 0.4); }
+        .btn:hover { transform: translateY(-2px); filter: brightness(1.1); box-shadow: 0 6px 15px rgba(252, 209, 22, 0.4); }
         
-        .btn-outline { color: var(--text-main); }
-        .btn-outline:hover { background: rgba(255,255,255,0.1); transform: translateY(-2px); }
-
-        .search-container {
-            max-width: 950px; margin: 30px auto 10px auto; padding: 0 20px;
-            position: sticky; top: 80px; z-index: 90;
-        }
-        .search-box {
-            position: relative; width: 100%;
-            background: var(--bg-surface);
-            backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 50px;
-            box-shadow: var(--shadow), inset 0 2px 5px rgba(255,255,255,0.1);
-            display: flex; align-items: center;
-            transition: all 0.3s ease;
-        }
-        .search-box:focus-within {
-            border-color: var(--accent);
-            box-shadow: 0 0 20px rgba(252, 209, 22, 0.3), inset 0 2px 5px rgba(255,255,255,0.1);
-            transform: translateY(-2px);
-        }
+        .search-container { max-width: 950px; margin: 30px auto 10px auto; padding: 0 20px; position: sticky; top: 80px; z-index: 90; }
+        .search-box { position: relative; width: 100%; background: var(--bg-surface); backdrop-filter: var(--glass-blur); border: 1px solid rgba(255,255,255,0.2); border-radius: 50px; box-shadow: var(--shadow); display: flex; align-items: center; transition: 0.3s; }
+        .search-box:focus-within { border-color: var(--accent); box-shadow: 0 0 20px rgba(252, 209, 22, 0.3); transform: translateY(-2px); }
         .search-icon { padding: 0 15px 0 20px; color: var(--text-dim); font-size: 1.2rem; }
-        #searchInput {
-            flex: 1; padding: 16px 20px 16px 0; border: none; background: transparent;
-            color: var(--text-main); font-size: 1rem; font-family: inherit; outline: none;
-        }
+        #searchInput { flex: 1; padding: 16px 20px 16px 0; border: none; background: transparent; color: var(--text-main); font-size: 1rem; outline: none; }
         #searchInput::placeholder { color: var(--text-dim); opacity: 0.7; }
+        #noResults { display: none; text-align: center; padding: 40px; color: var(--text-dim); font-size: 1.1rem; font-weight: bold; }
         
-        #noResults {
-            display: none; text-align: center; padding: 40px; color: var(--text-dim);
-            font-size: 1.1rem; font-weight: bold;
-        }
-
         .container { max-width: 950px; margin: 10px auto 40px auto; padding: 0 20px; }
-
-        .portada {
-            text-align: center; margin-bottom: 40px; padding: 40px 20px;
-            background: var(--bg-surface); 
-            backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
-            border: 1px solid rgba(255,255,255,0.15); border-radius: 16px;
-            box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,0.2);
-        }
-        .portada h2 { color: var(--accent); font-size: 1.6rem; margin-bottom: 15px; line-height: 1.3; text-transform: uppercase; }
+        .portada { text-align: center; margin-bottom: 40px; padding: 40px 20px; background: var(--bg-surface); backdrop-filter: var(--glass-blur); border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; box-shadow: var(--shadow); }
+        .portada h2 { color: var(--accent); font-size: 1.6rem; margin-bottom: 15px; text-transform: uppercase; }
         .portada p { color: var(--text-dim); font-size: 1rem; }
-
-        h2.titulo { 
-            color: var(--accent); font-size: 1.3rem; margin: 40px 0 20px 0; 
-            padding-bottom: 10px; border-bottom: 2px solid var(--border);
-            text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-
-        details {
-            background: var(--bg-surface); 
-            backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
-            border: 1px solid rgba(255,255,255,0.15); border-radius: 12px;
-            margin-bottom: 15px; 
-            box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,0.2);
-            overflow: hidden; transition: all 0.3s ease;
-        }
+        h2.titulo { color: var(--accent); font-size: 1.3rem; margin: 40px 0 20px 0; padding-bottom: 10px; border-bottom: 2px solid var(--border); text-transform: uppercase; }
         
-        summary {
-            padding: 20px; font-weight: 800; font-size: 1.05rem; color: var(--accent);
-            cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center;
-            background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%);
-            transition: background 0.3s ease;
-        }
-        summary:hover { background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.02) 100%); }
+        details { background: var(--bg-surface); backdrop-filter: var(--glass-blur); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; margin-bottom: 15px; box-shadow: var(--shadow); overflow: hidden; }
+        summary { padding: 20px; font-weight: 800; font-size: 1.05rem; color: var(--accent); cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); }
         summary::-webkit-details-marker { display: none; }
-        summary::after { content: '▼'; font-size: 0.8rem; transition: transform 0.3s ease; }
+        summary::after { content: '▼'; font-size: 0.8rem; transition: transform 0.3s; }
         details[open] summary::after { transform: rotate(180deg); }
         details[open] summary { border-bottom: 1px solid var(--border); }
-
-        .content { padding: 25px; background: transparent; }
-
-        .article {
-            margin-bottom: 25px; padding-bottom: 25px;
-            border-bottom: 1px dashed var(--border);
-            font-size: 0.95rem; color: var(--text-main);
-        }
+        
+        .content { padding: 25px; }
+        .article { margin-bottom: 25px; padding-bottom: 25px; border-bottom: 1px dashed var(--border); font-size: 0.95rem; color: var(--text-main); }
         .article:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
         .article strong { color: var(--accent); font-size: 1rem; }
         .article p { margin-bottom: 10px; }
-        
         .article ol, .article ul { margin-top: 10px; margin-left: 25px; }
         .article li { margin-bottom: 8px; line-height: 1.6; }
         .article h3 { color: var(--text-main); font-size: 1.05rem; margin: 20px 0 10px 0; font-style: italic; }
-
-        .firmas { 
-            text-align: center; margin-top: 50px; padding: 30px 20px;
-            background: var(--bg-surface); backdrop-filter: var(--glass-blur);
-            border: 1px solid rgba(255,255,255,0.15); border-radius: 12px;
-            font-size: 0.9rem; color: var(--text-dim); line-height: 1.8; box-shadow: var(--shadow);
-        }
+        .firmas { text-align: center; margin-top: 50px; padding: 30px 20px; background: var(--bg-surface); border-radius: 12px; font-size: 0.9rem; color: var(--text-dim); box-shadow: var(--shadow); }
         .firmas strong { color: var(--accent); }
 
         @media print {
             body { background: white !important; color: black !important; }
             #progress-bar, header .header-actions, .search-container { display: none !important; }
-            header { position: static; background: transparent; border-bottom: 2px solid #000; padding-bottom: 10px; }
+            header { position: static; border-bottom: 2px solid #000; }
             header h1 { color: #000 !important; }
-            .container { margin: 0; padding: 0; max-width: 100%; }
-            .portada, details, .content, .firmas, .article {
-                background: transparent !important; border-color: #ccc !important; box-shadow: none !important; color: black !important;
-            }
+            .portada, details, .content, .firmas, .article { background: transparent !important; border-color: #ccc !important; box-shadow: none !important; color: black !important; }
             details { page-break-inside: avoid; }
             summary { color: black !important; background: transparent !important; border-bottom: 1px solid #000; }
             summary::after { display: none; }
-            .article strong, h2.titulo, .portada h2 { color: black !important; }
             mark.resaltado { background: transparent !important; color: black !important; box-shadow: none !important; font-weight: bold; }
         }
-
         @media (max-width: 600px) {
             header { flex-direction: column; align-items: flex-start; }
             .header-actions { width: 100%; justify-content: space-between; }
-            .content { padding: 15px; }
-            .portada h2 { font-size: 1.3rem; }
             .search-container { top: 140px; }
         }
     </style>
 </head>
 <body>
-
     <div id="progress-bar"></div>
 
     <header>
         <h1>Estatutos Oficiales</h1>
         <div class="header-actions">
-            <button id="themeToggle" class="btn btn-outline">☀️ Modo Claro</button>
-            <button id="downloadPdf" class="btn btn-outline">📥 Descargar PDF</button>
+            <button id="themeToggle" class="btn">☀️ Modo Claro</button>
+            <button id="downloadPdf" class="btn">📥 Descargar PDF</button>
             <a href="index.html" class="btn btn-primary">⬅ Volver</a>
         </div>
     </header>
 
-    <!-- BARRA DE BÚSQUEDA CON EVENTO ONINPUT DIRECTO -->
+    <!-- Input limpio, SIN oninput ni onkeyup -->
     <div class="search-container" id="searchContainer">
         <div class="search-box">
             <span class="search-icon">🔍</span>
             <input type="search" id="searchInput" placeholder="Buscar artículo, palabra o tema...">
+        </div>
     </div>
 
     <div class="container">
