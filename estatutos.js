@@ -1,6 +1,6 @@
-console.log("¡Buscador con resaltado v4 activo!");
+console.log("¡Buscador v4 con scroll automático activo!");
 
-// 1. FUNCIÓN DE BÚSQUEDA CON RESALTADO
+// 1. FUNCIÓN DE BÚSQUEDA CON RESALTADO Y SCROLL
 function buscarEnEstatutos() {
     const inputVal = document.getElementById('searchInput').value.trim();
     const term = inputVal.toLowerCase();
@@ -9,13 +9,14 @@ function buscarEnEstatutos() {
     const allArticles = document.querySelectorAll('.article');
     
     let hasGlobalResults = false;
+    let primerResultado = null; // Para guardar dónde hacer scroll
 
     // Limpiar resaltados anteriores y restaurar texto original
     allArticles.forEach(article => {
         if (article.dataset.original) {
             article.innerHTML = article.dataset.original;
         } else {
-            article.dataset.original = article.innerHTML; // Guardar original en la primera búsqueda
+            article.dataset.original = article.innerHTML;
         }
     });
 
@@ -29,15 +30,20 @@ function buscarEnEstatutos() {
         return;
     }
 
-    // Escapar caracteres especiales para evitar errores en la búsqueda
+    // Escapar caracteres especiales y buscar en el texto
     const safeTerm = inputVal.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    // Expresión regular que ignora las etiquetas HTML y busca solo en el texto
     const regex = new RegExp(`(?![^<]*>)(${safeTerm})`, 'gi');
 
     allArticles.forEach(article => {
         if (article.dataset.original.toLowerCase().includes(term)) {
-            // Reemplazar la palabra con la etiqueta <mark> para el resaltado
+            // Resaltar la palabra encontrada
             article.innerHTML = article.dataset.original.replace(regex, '<mark class="resaltado">$1</mark>');
+            
+            // Guardar la primera coincidencia para hacer scroll hasta ella
+            if (!primerResultado) {
+                const mark = article.querySelector('mark.resaltado');
+                if (mark) primerResultado = mark;
+            }
             hasGlobalResults = true;
         }
     });
@@ -48,7 +54,7 @@ function buscarEnEstatutos() {
         
         if (tieneResaltado) {
             details.style.display = 'block';
-            details.open = true; // Abrir automáticamente si hay coincidencia
+            details.open = true; // Abrir automáticamente
         } else {
             details.style.display = 'none';
             details.open = false;
@@ -57,6 +63,13 @@ function buscarEnEstatutos() {
 
     if (noResults) {
         noResults.style.display = hasGlobalResults ? 'none' : 'block';
+    }
+
+    // EL TRUCO: Si encontramos algo, bajamos suavemente hasta el resaltado
+    if (primerResultado) {
+        setTimeout(() => {
+            primerResultado.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 150); // Pequeña espera para que los acordeones terminen de abrirse
     }
 }
 
@@ -80,23 +93,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const downloadPdf = document.getElementById('downloadPdf');
     if (downloadPdf) {
         downloadPdf.addEventListener('click', () => {
-            // Abrir todos los capítulos para que el PDF salga completo
             const details = document.querySelectorAll('details');
             const wasOpen = [];
             details.forEach((d, i) => { wasOpen[i] = d.open; d.open = true; d.style.display = 'block'; });
             
-            // Ocultar barra de búsqueda temporalmente
             const searchCont = document.getElementById('searchContainer');
             if(searchCont) searchCont.style.display = 'none';
             
             window.print();
             
-            // Restaurar estado
             setTimeout(() => {
                 details.forEach((d, i) => { d.open = wasOpen[i]; });
                 if(searchCont) searchCont.style.display = 'block';
                 if (document.getElementById('searchInput').value.trim() !== '') {
-                    buscarEnEstatutos(); // Volver a aplicar el filtro
+                    buscarEnEstatutos(); 
                 }
             }, 500);
         });
