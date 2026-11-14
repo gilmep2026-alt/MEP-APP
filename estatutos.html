@@ -5,28 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Estatutos MEP</title>
     <style>
+        /* =========================================
+           VARIABLES Y TEMAS
+           ========================================= */
         :root[data-theme="dark"] {
             --bg-body: #0d0418;
-            --bg-surface: rgba(42, 16, 80, 0.6);
-            --bg-header: rgba(13, 4, 24, 0.9);
+            --bg-surface: rgba(42, 16, 80, 0.4);
+            --bg-header: rgba(13, 4, 24, 0.85);
             --text-main: #f8f6fc;
             --text-dim: #c8bce0;
             --accent: #fcd116;
-            --border: rgba(252, 209, 22, 0.2);
-            --shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-            --card-hover: rgba(59, 9, 84, 0.8);
+            --accent-hover: #ffe57f;
+            --border: rgba(252, 209, 22, 0.25);
+            --shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+            --glossy-gradient: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+            --glass-blur: blur(16px);
         }
 
         :root[data-theme="light"] {
-            --bg-body: #f0f2f5;
-            --bg-surface: #ffffff;
-            --bg-header: rgba(255, 255, 255, 0.9);
+            --bg-body: #eef2f6;
+            --bg-surface: rgba(255, 255, 255, 0.6);
+            --bg-header: rgba(255, 255, 255, 0.85);
             --text-main: #1a0b2e;
             --text-dim: #4a3b60;
             --accent: #3b0954;
-            --border: rgba(59, 9, 84, 0.15);
-            --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-            --card-hover: #f9f9fb;
+            --accent-hover: #51139e;
+            --border: rgba(59, 9, 84, 0.2);
+            --shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            --glossy-gradient: linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.2) 100%);
+            --glass-blur: blur(16px);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -34,54 +41,99 @@
         body { 
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
             background-color: var(--bg-body); 
+            /* Fondo con gradientes para resaltar el efecto glossy */
+            background-image: radial-gradient(circle at 15% 50%, rgba(114, 27, 196, 0.15), transparent 25%), radial-gradient(circle at 85% 30%, rgba(252, 209, 22, 0.1), transparent 25%);
+            background-attachment: fixed;
             color: var(--text-main); 
             line-height: 1.7;
             transition: background-color 0.4s ease, color 0.4s ease;
             overflow-x: hidden;
         }
 
+        /* Barra de progreso de lectura */
         #progress-bar {
-            position: fixed;
-            top: 0; left: 0;
-            height: 4px;
-            background: var(--accent);
-            width: 0%;
-            z-index: 9999;
-            transition: width 0.1s ease;
-            box-shadow: 0 0 10px var(--accent);
+            position: fixed; top: 0; left: 0; height: 4px; background: var(--accent);
+            width: 0%; z-index: 9999; transition: width 0.1s ease; box-shadow: 0 0 15px var(--accent);
         }
 
+        /* =========================================
+           HEADER GLOSSY
+           ========================================= */
         header { 
             position: sticky; top: 0; z-index: 100; 
             background: var(--bg-header); 
-            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
             border-bottom: 1px solid var(--border);
             padding: 15px 20px; 
             display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2), inset 0 -1px 0 rgba(255,255,255,0.1);
         }
 
         header h1 { color: var(--accent); font-size: 1.3rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 800; }
         .header-actions { display: flex; gap: 10px; flex-wrap: wrap; }
 
+        /* Botones Glossy */
         .btn { 
             display: inline-flex; align-items: center; gap: 8px;
             padding: 10px 18px; border-radius: 30px; font-size: 0.9rem; font-weight: 700;
-            text-decoration: none; cursor: pointer; border: none; transition: all 0.3s ease;
+            text-decoration: none; cursor: pointer; border: 1px solid var(--border); 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--glossy-gradient); backdrop-filter: blur(5px);
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.2), 0 4px 10px rgba(0,0,0,0.1);
         }
 
-        .btn-primary { background: var(--accent); color: var(--bg-body); box-shadow: 0 4px 15px rgba(252, 209, 22, 0.3); }
-        :root[data-theme="light"] .btn-primary { color: #fff; box-shadow: 0 4px 15px rgba(59, 9, 84, 0.3); }
-        .btn-primary:hover { transform: translateY(-2px); filter: brightness(1.1); }
-        .btn-outline { background: transparent; color: var(--text-main); border: 1px solid var(--border); }
-        .btn-outline:hover { background: var(--card-hover); }
+        .btn-primary { background: var(--accent); color: var(--bg-body); border: none; }
+        :root[data-theme="light"] .btn-primary { color: #fff; }
+        .btn-primary:hover { transform: translateY(-2px); filter: brightness(1.1); box-shadow: 0 6px 15px rgba(252, 209, 22, 0.4); }
+        
+        .btn-outline { color: var(--text-main); }
+        .btn-outline:hover { background: rgba(255,255,255,0.1); transform: translateY(-2px); }
 
-        .container { max-width: 950px; margin: 40px auto; padding: 0 20px; }
+        /* =========================================
+           CONTENEDOR DE BÚSQUEDA GLOSSY
+           ========================================= */
+        .search-container {
+            max-width: 950px; margin: 30px auto 10px auto; padding: 0 20px;
+            position: sticky; top: 80px; z-index: 90;
+        }
+        .search-box {
+            position: relative; width: 100%;
+            background: var(--bg-surface);
+            backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50px;
+            box-shadow: var(--shadow), inset 0 2px 5px rgba(255,255,255,0.1);
+            display: flex; align-items: center;
+            transition: all 0.3s ease;
+        }
+        .search-box:focus-within {
+            border-color: var(--accent);
+            box-shadow: 0 0 20px rgba(252, 209, 22, 0.3), inset 0 2px 5px rgba(255,255,255,0.1);
+            transform: translateY(-2px);
+        }
+        .search-icon { padding: 0 15px 0 20px; color: var(--text-dim); font-size: 1.2rem; }
+        #searchInput {
+            flex: 1; padding: 16px 20px 16px 0; border: none; background: transparent;
+            color: var(--text-main); font-size: 1rem; font-family: inherit; outline: none;
+        }
+        #searchInput::placeholder { color: var(--text-dim); opacity: 0.7; }
+        
+        #noResults {
+            display: none; text-align: center; padding: 40px; color: var(--text-dim);
+            font-size: 1.1rem; font-weight: bold;
+        }
+
+        /* =========================================
+           CONTENEDOR PRINCIPAL Y TARJETAS GLOSSY
+           ========================================= */
+        .container { max-width: 950px; margin: 10px auto 40px auto; padding: 0 20px; }
 
         .portada {
             text-align: center; margin-bottom: 40px; padding: 40px 20px;
-            background: var(--bg-surface); border: 1px solid var(--border); border-radius: 16px;
-            box-shadow: var(--shadow); backdrop-filter: blur(10px);
+            background: var(--bg-surface); 
+            backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid rgba(255,255,255,0.15); border-radius: 16px;
+            box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,0.2);
         }
         .portada h2 { color: var(--accent); font-size: 1.6rem; margin-bottom: 15px; line-height: 1.3; text-transform: uppercase; }
         .portada p { color: var(--text-dim); font-size: 1rem; }
@@ -89,21 +141,26 @@
         h2.titulo { 
             color: var(--accent); font-size: 1.3rem; margin: 40px 0 20px 0; 
             padding-bottom: 10px; border-bottom: 2px solid var(--border);
-            text-transform: uppercase; letter-spacing: 1px;
+            text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
+        /* Acordeones Glossy */
         details {
-            background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px;
-            margin-bottom: 15px; box-shadow: var(--shadow); backdrop-filter: blur(10px);
+            background: var(--bg-surface); 
+            backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid rgba(255,255,255,0.15); border-radius: 12px;
+            margin-bottom: 15px; 
+            box-shadow: var(--shadow), inset 0 1px 0 rgba(255,255,255,0.2);
             overflow: hidden; transition: all 0.3s ease;
         }
         
         summary {
             padding: 20px; font-weight: 800; font-size: 1.05rem; color: var(--accent);
             cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center;
-            background: rgba(0,0,0,0.1); transition: background 0.3s ease;
+            background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%);
+            transition: background 0.3s ease;
         }
-        summary:hover { background: var(--card-hover); }
+        summary:hover { background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.02) 100%); }
         summary::-webkit-details-marker { display: none; }
         summary::after { content: '▼'; font-size: 0.8rem; transition: transform 0.3s ease; }
         details[open] summary::after { transform: rotate(180deg); }
@@ -126,15 +183,18 @@
 
         .firmas { 
             text-align: center; margin-top: 50px; padding: 30px 20px;
-            background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px;
+            background: var(--bg-surface); backdrop-filter: var(--glass-blur);
+            border: 1px solid rgba(255,255,255,0.15); border-radius: 12px;
             font-size: 0.9rem; color: var(--text-dim); line-height: 1.8; box-shadow: var(--shadow);
         }
         .firmas strong { color: var(--accent); }
 
-        /* ESTILOS DE IMPRESIÓN */
+        /* =========================================
+           ESTILOS DE IMPRESIÓN
+           ========================================= */
         @media print {
             body { background: white !important; color: black !important; }
-            #progress-bar, header .header-actions { display: none !important; }
+            #progress-bar, header .header-actions, .search-container { display: none !important; }
             header { position: static; background: transparent; border-bottom: 2px solid #000; padding-bottom: 10px; }
             header h1 { color: #000 !important; }
             .container { margin: 0; padding: 0; max-width: 100%; }
@@ -153,6 +213,7 @@
             .header-actions { width: 100%; justify-content: space-between; }
             .content { padding: 15px; }
             .portada h2 { font-size: 1.3rem; }
+            .search-container { top: 140px; }
         }
     </style>
 </head>
@@ -169,7 +230,17 @@
         </div>
     </header>
 
+    <!-- BUSCADOR FLOTANTE -->
+    <div class="search-container" id="searchContainer">
+        <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="search" id="searchInput" placeholder="Buscar artículo, palabra o tema (ej. 'Asamblea', 'Artículo 48')...">
+        </div>
+    </div>
+
     <div class="container">
+        <div id="noResults">No se encontraron resultados para tu búsqueda.</div>
+
         <div class="portada">
             <h2>MOVIMIENTO ELECTORAL DEL PUEBLO<br>PARTIDO SOCIALISTA DE VENEZUELA (MEP)</h2>
             <p><strong>ESTATUTOS</strong><br>
