@@ -1,18 +1,6 @@
 /* ============================================================================
    MEP · Movimiento Electoral del Pueblo — app.js
    PWA vanilla JS + PocketBase
-   ----------------------------------------------------------------------------
-   Cambios de esta versión (respecto al script inline original):
-   · Sin handlers inline: toda la interacción usa addEventListener.
-   · Escape y validación de URLs en todo HTML dinámico (XSS).
-   · Identidad del chat firmada en el servidor; el cliente solo envía user_id.
-   · Realtime: se suscribe tras login, se desuscribe al salir, append incremental.
-   · Router con History API (botón atrás de Android ya no cierra la app).
-   · Carrusel real: autoplay, flechas, puntos, progreso, iframe solo del slide activo.
-   · Galería sin duplicar DOM; videos con póster y click-to-play (menos RAM).
-   · Formularios admin de En Vivo / Reglamentos / Sub-Apps implementados.
-   · Edición de elementos (cargarParaEditar) y monitoreo de chat admin.
-   · Service worker registrado + aviso de actualización + instalación PWA.
    ========================================================================== */
 'use strict';
 
@@ -41,8 +29,6 @@ const PLACEHOLDER = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(
 );
 
 /* ------------------------------------------- división político-territorial */
-/* 24 entidades federales (23 estados + Distrito Capital) + Guayana Esequiba.
-   Fuente: Anexo:Municipios de Venezuela (Wikipedia, 335 municipios). */
 const VENEZUELA_DATA = {
   'Amazonas': ['Alto Orinoco', 'Atabapo', 'Atures', 'Autana', 'Manapiare', 'Maroa', 'Río Negro'],
   'Anzoátegui': ['Anaco', 'Aragua', 'Bolívar', 'Bruzual', 'Cajigal', 'Carvajal', 'Freites', 'Guanipa', 'Guanta', 'Independencia', 'Libertad', 'McGregor', 'Miranda', 'Monagas', 'Peñalver', 'Píritu', 'San Juan de Capistrano', 'Santa Ana', 'Simón Rodríguez', 'Sotillo', 'Diego Bautista Urbaneja'],
@@ -229,7 +215,6 @@ async function cargarDatos() {
     DB.envivo = envivo.map((r) => ({ ...r }));
     DB.subapps = subapps.map((r) => ({ ...r }));
 
-    // El directorio es opcional: si aún no existe la colección, no rompe la carga.
     try {
       DB.directorio = await pb.collection('directorio').getFullList({ sort: 'nombre' });
     } catch (_) {
@@ -351,7 +336,6 @@ function go(view, opts = {}) {
 
   currentView = view;
 
-  // Suscripción de realtime solo mientras se usa el chat o el panel admin.
   if (view === 'chat' || view === 'admin') suscribirMensajes();
   else desuscribirMensajes();
 
@@ -417,6 +401,15 @@ function renderNavSubapps() {
 }
 
 function itemAgenda(a, conFecha) {
+  const linkVideo = a.enlace ? safeUrl(a.enlace) : null;
+  const botonVideo = linkVideo ? `
+    <div style="margin-top: 15px;">
+      <a href="${esc(linkVideo)}" target="_blank" rel="noopener noreferrer" class="btn sm primary" style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none;">
+        <svg class="ico" aria-hidden="true"><use href="#i-video"/></svg> Unirse a Videoconferencia
+      </a>
+    </div>
+  ` : '';
+
   return `
     <div class="ag-item">
       <div class="ag-date">
@@ -432,6 +425,7 @@ function itemAgenda(a, conFecha) {
           ${!conFecha ? `<span><svg class="ico" aria-hidden="true"><use href="#i-shield"/></svg>${esc(a.nivel || 'Nacional')}</span>` : ''}
         </div>
         ${conFecha && a.descripcion ? `<p>${esc(a.descripcion)}</p>` : ''}
+        ${botonVideo}
       </div>
     </div>`;
 }
@@ -702,7 +696,6 @@ function avatarDe(m) {
   return safeUrl(m.foto_url) || 'logo.png';
 }
 
-/* Modo de conversación: público ("Todos") o privado con un destinatario */
 const chatModo = { tipo: 'publico', con: null, nombre: '' };
 
 function mensajeHtml(m, admin) {
@@ -771,8 +764,6 @@ async function renderAdminChat() {
   }
 }
 
-/* Destinatarios del chat público: administradores (directorio) y, para un
-   admin, las conversaciones privadas que ha recibido. */
 async function cargarConversacionesPrivadas() {
   if (!isAdmin || !currentUser) return [];
   try {
@@ -933,9 +924,6 @@ async function renderBlockedUsers() {
 }
 
 /* ------------------------------------------------------------ realtime */
-/* Realtime del chat: la suscripción se abre SOLO mientras el usuario está en
-   el chat o en el panel de administración, y se cierra al salir. Con 5.000
-   conectados esto reduce las conexiones SSE al porcentaje que chatea. */
 async function suscribirMensajes() {
   if (rtMensajes || !pb.authStore.isValid || !currentUser) return;
   try {
@@ -964,7 +952,6 @@ function manejarEventoMensaje(e) {
       return;
     }
 
-    // Mensaje privado: solo interesa al emisor y al receptor.
     const enEstaConversacion = chatModo.tipo === 'privado' && chatModo.con &&
       ((mio && m.receptor_id === chatModo.con) ||
        (m.user_id === chatModo.con && m.receptor_id === (currentUser && currentUser.id)));
@@ -1201,7 +1188,7 @@ async function limpiarForm(type) {
     $('e_cancel').style.display = 'none';
   }
   if (type === 'agenda') {
-    ['a_titulo', 'a_fecha', 'a_hora', 'a_lugar', 'a_desc'].forEach((i) => { $(i).value = ''; });
+    ['a_titulo', 'a_fecha', 'a_hora', 'a_lugar', 'a_link', 'a_desc'].forEach((i) => { $(i).value = ''; });
     $('a_nivel').value = 'Nacional';
     setEtiquetaBoton('a_save', 'Agregar');
     $('a_cancel').style.display = 'none';
@@ -1251,6 +1238,7 @@ function cargarParaEditar(type, id) {
     $('a_fecha').value = String(it.fecha || '').split(' ')[0];
     $('a_hora').value = it.hora || '';
     $('a_lugar').value = it.lugar || '';
+    $('a_link').value = it.enlace || '';
     $('a_desc').value = it.descripcion || '';
     $('a_nivel').value = it.nivel || 'Nacional';
     setEtiquetaBoton('a_save', 'Actualizar');
@@ -1334,6 +1322,7 @@ async function guardarAgenda() {
     hora: $('a_hora').value,
     nivel: $('a_nivel').value,
     lugar: $('a_lugar').value.trim(),
+    enlace: $('a_link') ? $('a_link').value.trim() : '',
     descripcion: $('a_desc').value.trim()
   };
 
@@ -1715,7 +1704,6 @@ function inicializarFormularioRegistro() {
   const selMunicipio = $('regMunicipio');
   if (!selEstado || !selMunicipio) return;
 
-  // Estados (solo se cargan una vez)
   if (selEstado.options.length <= 1) {
     Object.keys(VENEZUELA_DATA)
       .sort((a, b) => a.localeCompare(b, 'es'))
@@ -1727,7 +1715,6 @@ function inicializarFormularioRegistro() {
       });
   }
 
-  // Municipios dependientes del estado
   selEstado.addEventListener('change', () => {
     const estado = selEstado.value;
     const municipios = (VENEZUELA_DATA[estado] || []).slice().sort((a, b) => a.localeCompare(b, 'es'));
@@ -1748,14 +1735,9 @@ function inicializarFormularioRegistro() {
     });
     selMunicipio.disabled = false;
   });
-
-  // Los usuarios normales no tienen cargo: solo nombre, contacto y foto.
 }
 
 /* ---------------------------------------------------------------- auth */
-/* Configuración del login:
-   true  → PocketBase valida el campo username como identidad (identityFields: ["username"]).
-   false → variante anterior: se envía <usuario>@mep.local (identityFields: ["email"]). */
 const LOGIN_POR_USERNAME = true;
 
 function identidadLogin(valor) {
