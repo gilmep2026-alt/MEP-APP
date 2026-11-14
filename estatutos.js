@@ -1,4 +1,4 @@
-console.log("¡Buscador v5 sin errores de CSP activo!");
+console.log("¡Buscador definitivo activo!");
 
 // 1. FUNCIÓN DE BÚSQUEDA CON RESALTADO Y SCROLL
 function buscarEnEstatutos() {
@@ -46,7 +46,6 @@ function buscarEnEstatutos() {
 
     detailsElements.forEach(details => {
         const tieneResaltado = details.querySelector('mark.resaltado') !== null;
-        
         if (tieneResaltado) {
             details.style.display = 'block';
             details.open = true;
@@ -68,9 +67,9 @@ function buscarEnEstatutos() {
     }
 }
 
-// 2. INICIALIZACIÓN SEGURA (Añade los Event Listeners aquí)
+// 2. INICIALIZACIÓN (Aquí enganchamos los botones sin usar HTML)
 document.addEventListener('DOMContentLoaded', () => {
-    // Evento para el buscador (reemplaza el oninput del HTML)
+    // Buscador
     const searchInput = document.getElementById('searchInput');
     if (searchInput) {
         searchInput.addEventListener('input', buscarEnEstatutos);
