@@ -1,15 +1,19 @@
-console.log("¡Buscador definitivo activo!");
+console.log("¡Buscador avanzado con navegación activo!");
 
-// 1. FUNCIÓN DE BÚSQUEDA CON RESALTADO Y SCROLL
+let matches = [];
+let currentMatchIndex = -1;
+let timeoutId = null;
+
+// 1. FUNCIÓN DE BÚSQUEDA
 function buscarEnEstatutos() {
     const inputVal = document.getElementById('searchInput').value.trim();
     const term = inputVal.toLowerCase();
     const detailsElements = document.querySelectorAll('details');
     const noResults = document.getElementById('noResults');
     const allArticles = document.querySelectorAll('.article');
+    const navControls = document.getElementById('searchNav');
     
     let hasGlobalResults = false;
-    let primerResultado = null;
 
     // Limpiar resaltados anteriores
     allArticles.forEach(article => {
@@ -20,12 +24,16 @@ function buscarEnEstatutos() {
         }
     });
 
+    // Si la barra está vacía, resetear todo
     if (term === '') {
         detailsElements.forEach(details => {
             details.style.display = 'block';
             details.open = false;
         });
         if (noResults) noResults.style.display = 'none';
+        if (navControls) navControls.style.display = 'none';
+        matches = [];
+        currentMatchIndex = -1;
         return;
     }
 
@@ -35,50 +43,91 @@ function buscarEnEstatutos() {
     allArticles.forEach(article => {
         if (article.dataset.original.toLowerCase().includes(term)) {
             article.innerHTML = article.dataset.original.replace(regex, '<mark class="resaltado">$1</mark>');
-            
-            if (!primerResultado) {
-                const mark = article.querySelector('mark.resaltado');
-                if (mark) primerResultado = mark;
-            }
             hasGlobalResults = true;
         }
     });
 
+    // Mostrar/Ocultar capítulos
     detailsElements.forEach(details => {
         const tieneResaltado = details.querySelector('mark.resaltado') !== null;
         if (tieneResaltado) {
             details.style.display = 'block';
-            details.open = true;
+            details.open = true; 
         } else {
             details.style.display = 'none';
             details.open = false;
         }
     });
 
-    if (noResults) {
-        noResults.style.display = hasGlobalResults ? 'none' : 'block';
-    }
-
-    // Scroll suave hasta la primera coincidencia
-    if (primerResultado) {
-        setTimeout(() => {
-            primerResultado.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 150);
+    // Manejo de resultados y navegación
+    matches = Array.from(document.querySelectorAll('mark.resaltado'));
+    
+    if (matches.length > 0) {
+        if (noResults) noResults.style.display = 'none';
+        if (navControls) navControls.style.display = 'flex';
+        
+        currentMatchIndex = 0; // Reiniciar al primer resultado
+        actualizarNavegacion();
+    } else {
+        if (noResults) noResults.style.display = 'block';
+        if (navControls) navControls.style.display = 'none';
+        currentMatchIndex = -1;
     }
 }
 
-// 2. INICIALIZACIÓN (Aquí enganchamos los botones sin usar HTML)
+// 2. FUNCIONES DE NAVEGACIÓN (Siguiente / Anterior)
+function actualizarNavegacion() {
+    // Quitar el resaltado "activo" de todas las coincidencias
+    matches.forEach(m => m.classList.remove('resaltado-activo'));
+
+    if (matches.length > 0 && currentMatchIndex >= 0) {
+        // Iluminar la coincidencia actual
+        const currentMark = matches[currentMatchIndex];
+        currentMark.classList.add('resaltado-activo');
+        
+        // Actualizar el contador
+        const counter = document.getElementById('matchCounter');
+        if (counter) counter.textContent = `${currentMatchIndex + 1} de ${matches.length}`;
+        
+        // Hacer scroll suave a la coincidencia actual
+        currentMark.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+}
+
+function irSiguiente() {
+    if (currentMatchIndex < matches.length - 1) {
+        currentMatchIndex++;
+        actualizarNavegacion();
+    }
+}
+
+function irAnterior() {
+    if (currentMatchIndex > 0) {
+        currentMatchIndex--;
+        actualizarNavegacion();
+    }
+}
+
+// 3. INICIALIZACIÓN
 document.addEventListener('DOMContentLoaded', () => {
-    // Buscador
     const searchInput = document.getElementById('searchInput');
     if (searchInput) {
-        searchInput.addEventListener('input', buscarEnEstatutos);
+        // Usamos un "Debounce" para que no busque en cada letra y así evitar lentitud
+        searchInput.addEventListener('input', () => {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(buscarEnEstatutos, 300); // Espera 300ms
+        });
     }
+
+    // Botones de navegación
+    const btnNext = document.getElementById('btnNextMatch');
+    const btnPrev = document.getElementById('btnPrevMatch');
+    if (btnNext) btnNext.addEventListener('click', irSiguiente);
+    if (btnPrev) btnPrev.addEventListener('click', irAnterior);
 
     // Modo Oscuro / Claro
     const themeToggle = document.getElementById('themeToggle');
     const htmlElement = document.documentElement;
-    
     if (themeToggle) {
         const savedTheme = localStorage.getItem('mep-estatutos-theme') || 'dark';
         htmlElement.setAttribute('data-theme', savedTheme);
