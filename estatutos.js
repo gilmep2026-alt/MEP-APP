@@ -1,13 +1,35 @@
-console.log("¡Buscador avanzado con navegación activo!");
+console.log("¡Buscador optimizado sin acentos y con navegación activo!");
 
 let matches = [];
 let currentMatchIndex = -1;
 let timeoutId = null;
 
+// Función para quitar acentos (ej. 'á' -> 'a')
+function removeAccents(str) {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
+// Función para crear expresión regular que ignora acentos
+function buildAccentInsensitiveRegex(str) {
+    const safeStr = str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const map = {
+        'a': '[aáàäâAÁÀÄÂ]', 'e': '[eéèëêEÉÈËÊ]', 'i': '[iíìïîIÍÌÏÎ]',
+        'o': '[oóòöôOÓÒÖÔ]', 'u': '[uúùüûUÚÙÜÛ]', 'n': '[nñNÑ]'
+    };
+    let pattern = '';
+    for (let i = 0; i < safeStr.length; i++) {
+        const char = safeStr[i];
+        const lowerChar = char.toLowerCase();
+        pattern += map[lowerChar] ? map[lowerChar] : char;
+    }
+    return new RegExp(`(?![^<]*>)(${pattern})`, 'gi');
+}
+
 // 1. FUNCIÓN DE BÚSQUEDA
 function buscarEnEstatutos() {
     const inputVal = document.getElementById('searchInput').value.trim();
     const term = inputVal.toLowerCase();
+    const normalizedTerm = removeAccents(term); 
     const detailsElements = document.querySelectorAll('details');
     const noResults = document.getElementById('noResults');
     const allArticles = document.querySelectorAll('.article');
@@ -24,7 +46,7 @@ function buscarEnEstatutos() {
         }
     });
 
-    // Si la barra está vacía, resetear todo
+    // Si la barra está vacía, resetear
     if (term === '') {
         detailsElements.forEach(details => {
             details.style.display = 'block';
@@ -37,36 +59,29 @@ function buscarEnEstatutos() {
         return;
     }
 
-    const safeTerm = inputVal.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const regex = new RegExp(`(?![^<]*>)(${safeTerm})`, 'gi');
+    const regex = buildAccentInsensitiveRegex(inputVal);
 
     allArticles.forEach(article => {
-        if (article.dataset.original.toLowerCase().includes(term)) {
+        const normalizedOriginal = removeAccents(article.dataset.original.toLowerCase());
+        
+        if (normalizedOriginal.includes(normalizedTerm)) {
             article.innerHTML = article.dataset.original.replace(regex, '<mark class="resaltado">$1</mark>');
             hasGlobalResults = true;
         }
     });
 
-    // Mostrar/Ocultar capítulos
     detailsElements.forEach(details => {
         const tieneResaltado = details.querySelector('mark.resaltado') !== null;
-        if (tieneResaltado) {
-            details.style.display = 'block';
-            details.open = true; 
-        } else {
-            details.style.display = 'none';
-            details.open = false;
-        }
+        details.style.display = tieneResaltado ? 'block' : 'none';
+        if (tieneResaltado) details.open = true;
     });
 
-    // Manejo de resultados y navegación
     matches = Array.from(document.querySelectorAll('mark.resaltado'));
     
     if (matches.length > 0) {
         if (noResults) noResults.style.display = 'none';
-        if (navControls) navControls.style.display = 'flex';
-        
-        currentMatchIndex = 0; // Reiniciar al primer resultado
+        if (navControls) navControls.style.display = 'flex'; // Muestra los controles
+        currentMatchIndex = 0;
         actualizarNavegacion();
     } else {
         if (noResults) noResults.style.display = 'block';
@@ -75,21 +90,17 @@ function buscarEnEstatutos() {
     }
 }
 
-// 2. FUNCIONES DE NAVEGACIÓN (Siguiente / Anterior)
+// 2. FUNCIONES DE NAVEGACIÓN
 function actualizarNavegacion() {
-    // Quitar el resaltado "activo" de todas las coincidencias
     matches.forEach(m => m.classList.remove('resaltado-activo'));
 
     if (matches.length > 0 && currentMatchIndex >= 0) {
-        // Iluminar la coincidencia actual
         const currentMark = matches[currentMatchIndex];
         currentMark.classList.add('resaltado-activo');
         
-        // Actualizar el contador
         const counter = document.getElementById('matchCounter');
         if (counter) counter.textContent = `${currentMatchIndex + 1} de ${matches.length}`;
         
-        // Hacer scroll suave a la coincidencia actual
         currentMark.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 }
@@ -112,14 +123,12 @@ function irAnterior() {
 document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('searchInput');
     if (searchInput) {
-        // Usamos un "Debounce" para que no busque en cada letra y así evitar lentitud
         searchInput.addEventListener('input', () => {
             clearTimeout(timeoutId);
-            timeoutId = setTimeout(buscarEnEstatutos, 300); // Espera 300ms
+            timeoutId = setTimeout(buscarEnEstatutos, 300); 
         });
     }
 
-    // Botones de navegación
     const btnNext = document.getElementById('btnNextMatch');
     const btnPrev = document.getElementById('btnPrevMatch');
     if (btnNext) btnNext.addEventListener('click', irSiguiente);
