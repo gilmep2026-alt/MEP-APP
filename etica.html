@@ -5,18 +5,156 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Código de Ética MEP</title>
     <style>
-        :root { --mep-purple: #3b0954; --mep-yellow: #fcd116; --bg-color: #121212; --text-color: #e0e0e0; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 0; }
-        header { background-color: var(--mep-purple); padding: 20px; text-align: center; border-bottom: 4px solid var(--mep-yellow); position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 6px rgba(0,0,0,0.5); }
-        header h1 { color: var(--mep-yellow); margin: 0; font-size: 1.5rem; }
-        .btn-volver { display: inline-block; margin-top: 10px; color: white; text-decoration: none; background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; transition: background 0.3s; }
-        .btn-volver:hover { background: rgba(255,255,255,0.4); }
-        .container { max-width: 800px; margin: 20px auto; padding: 20px; background: #1e1e1e; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        .intro { font-style: italic; color: #bbb; margin-bottom: 30px; border-left: 4px solid var(--mep-yellow); padding-left: 15px; line-height: 1.6; }
-        ol { padding-left: 20px; counter-reset: my-counter; list-style-type: none; }
-        li { margin-bottom: 20px; line-height: 1.6; color: #ddd; position: relative; padding-left: 35px; }
-        li::before { counter-increment: my-counter; content: counter(my-counter); position: absolute; left: 0; top: 0; background: var(--mep-purple); color: var(--mep-yellow); font-weight: bold; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 0.9rem; border: 1px solid var(--mep-yellow); }
-        .footer { text-align: center; margin-top: 40px; font-size: 0.9rem; color: #999; border-top: 1px solid #333; padding-top: 20px; line-height: 1.5; }
+        /* Variables de color basadas en la identidad del partido */
+        :root { 
+            --mep-purple-dark: #1a0b2e; 
+            --mep-purple-mid: #330b69; 
+            --mep-purple-light: #51139e;
+            --mep-yellow: #fcd116; 
+            --mep-yellow-hover: #ffd700;
+            --text-main: #f8f6fc;
+            --text-dim: #c8bce0;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: linear-gradient(135deg, var(--mep-purple-dark) 0%, var(--mep-purple-mid) 100%);
+            background-attachment: fixed;
+            color: var(--text-main); 
+            margin: 0; 
+            padding: 0; 
+            min-height: 100vh;
+        }
+
+        /* Encabezado fijo */
+        header { 
+            background-color: rgba(26, 11, 46, 0.95); 
+            backdrop-filter: blur(10px);
+            padding: 20px; 
+            text-align: center; 
+            border-bottom: 4px solid var(--mep-yellow); 
+            position: sticky; 
+            top: 0; 
+            z-index: 100; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.6); 
+        }
+
+        header h1 { 
+            color: var(--mep-yellow); 
+            margin: 0; 
+            font-size: 1.5rem; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 10px rgba(252, 209, 22, 0.3);
+        }
+
+        /* Botón de volver */
+        .btn-volver { 
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px; 
+            color: var(--mep-purple-dark); 
+            text-decoration: none; 
+            background: var(--mep-yellow); 
+            padding: 8px 20px; 
+            border-radius: 25px; 
+            font-weight: bold;
+            font-size: 0.9rem; 
+            transition: all 0.3s ease; 
+            box-shadow: 0 4px 15px rgba(252, 209, 22, 0.3);
+        }
+
+        .btn-volver:hover { 
+            background: var(--mep-yellow-hover); 
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(252, 209, 22, 0.5);
+        }
+
+        /* Contenedor principal estilo cristal */
+        .container { 
+            max-width: 850px; 
+            margin: 30px auto; 
+            padding: 30px; 
+            background: rgba(51, 11, 105, 0.6); 
+            border: 1px solid rgba(252, 209, 22, 0.2);
+            border-radius: 16px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Texto introductorio */
+        .intro { 
+            font-style: italic; 
+            color: var(--text-main); 
+            margin-bottom: 35px; 
+            border-left: 4px solid var(--mep-yellow); 
+            padding: 15px 20px; 
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 0 8px 8px 0;
+            line-height: 1.7; 
+            font-size: 0.95rem;
+        }
+
+        /* Lista de normas */
+        ol { 
+            padding-left: 0; 
+            counter-reset: my-counter; 
+            list-style-type: none; 
+            margin: 0;
+        }
+
+        li { 
+            margin-bottom: 24px; 
+            line-height: 1.6; 
+            color: var(--text-main); 
+            position: relative; 
+            padding-left: 50px; 
+            font-size: 0.95rem;
+        }
+
+        /* Números personalizados en amarillo */
+        li::before { 
+            counter-increment: my-counter; 
+            content: counter(my-counter); 
+            position: absolute; 
+            left: 0; 
+            top: 0; 
+            background: var(--mep-yellow); 
+            color: var(--mep-purple-dark); 
+            font-weight: 900; 
+            width: 32px; 
+            height: 32px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            border-radius: 50%; 
+            font-size: 1rem; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        /* Pie de página */
+        .footer { 
+            text-align: center; 
+            margin-top: 50px; 
+            font-size: 0.85rem; 
+            color: var(--text-dim); 
+            border-top: 1px solid rgba(252, 209, 22, 0.2); 
+            padding-top: 25px; 
+            line-height: 1.6; 
+        }
+
+        .footer strong {
+            color: var(--mep-yellow);
+        }
+
+        /* Ajustes para móviles */
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.2rem; }
+            .container { margin: 15px; padding: 20px; }
+            li { padding-left: 45px; }
+            li::before { width: 28px; height: 28px; font-size: 0.9rem; }
+        }
     </style>
 </head>
 <body>
@@ -62,7 +200,7 @@
     </ol>
 
     <div class="footer">
-        Aprobado por unanimidad en reunión ordinaria de Comando Político Nacional, CPN, el 21 de julio de 2023.<br>
+        <strong>Aprobado por unanimidad</strong> en reunión ordinaria de Comando Político Nacional, CPN, el 21 de julio de 2023.<br>
         El incumplimiento del presente Código de Ética es considerado una falta a la disciplina o a la ética partidista (Artículo 48, ordinal a) de los Estatutos vigentes) y se sancionará de acuerdo a lo que se establece en el Artículo 53.
     </div>
 </div>
