@@ -1,4 +1,4 @@
-console.log("¡Buscador v4 con scroll automático activo!");
+console.log("¡Buscador v5 sin errores de CSP activo!");
 
 // 1. FUNCIÓN DE BÚSQUEDA CON RESALTADO Y SCROLL
 function buscarEnEstatutos() {
@@ -9,9 +9,9 @@ function buscarEnEstatutos() {
     const allArticles = document.querySelectorAll('.article');
     
     let hasGlobalResults = false;
-    let primerResultado = null; // Para guardar dónde hacer scroll
+    let primerResultado = null;
 
-    // Limpiar resaltados anteriores y restaurar texto original
+    // Limpiar resaltados anteriores
     allArticles.forEach(article => {
         if (article.dataset.original) {
             article.innerHTML = article.dataset.original;
@@ -20,7 +20,6 @@ function buscarEnEstatutos() {
         }
     });
 
-    // Si la barra está vacía, mostrar todo y cerrar acordeones
     if (term === '') {
         detailsElements.forEach(details => {
             details.style.display = 'block';
@@ -30,16 +29,13 @@ function buscarEnEstatutos() {
         return;
     }
 
-    // Escapar caracteres especiales y buscar en el texto
     const safeTerm = inputVal.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const regex = new RegExp(`(?![^<]*>)(${safeTerm})`, 'gi');
 
     allArticles.forEach(article => {
         if (article.dataset.original.toLowerCase().includes(term)) {
-            // Resaltar la palabra encontrada
             article.innerHTML = article.dataset.original.replace(regex, '<mark class="resaltado">$1</mark>');
             
-            // Guardar la primera coincidencia para hacer scroll hasta ella
             if (!primerResultado) {
                 const mark = article.querySelector('mark.resaltado');
                 if (mark) primerResultado = mark;
@@ -48,13 +44,12 @@ function buscarEnEstatutos() {
         }
     });
 
-    // Mostrar/Ocultar capítulos dependiendo de si tienen coincidencias
     detailsElements.forEach(details => {
         const tieneResaltado = details.querySelector('mark.resaltado') !== null;
         
         if (tieneResaltado) {
             details.style.display = 'block';
-            details.open = true; // Abrir automáticamente
+            details.open = true;
         } else {
             details.style.display = 'none';
             details.open = false;
@@ -65,16 +60,23 @@ function buscarEnEstatutos() {
         noResults.style.display = hasGlobalResults ? 'none' : 'block';
     }
 
-    // EL TRUCO: Si encontramos algo, bajamos suavemente hasta el resaltado
+    // Scroll suave hasta la primera coincidencia
     if (primerResultado) {
         setTimeout(() => {
             primerResultado.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 150); // Pequeña espera para que los acordeones terminen de abrirse
+        }, 150);
     }
 }
 
-// 2. FUNCIONES DE TEMA, PDF Y SCROLL
+// 2. INICIALIZACIÓN SEGURA (Añade los Event Listeners aquí)
 document.addEventListener('DOMContentLoaded', () => {
+    // Evento para el buscador (reemplaza el oninput del HTML)
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', buscarEnEstatutos);
+    }
+
+    // Modo Oscuro / Claro
     const themeToggle = document.getElementById('themeToggle');
     const htmlElement = document.documentElement;
     
@@ -82,6 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const savedTheme = localStorage.getItem('mep-estatutos-theme') || 'dark';
         htmlElement.setAttribute('data-theme', savedTheme);
         themeToggle.innerHTML = savedTheme === 'dark' ? '☀️ Modo Claro' : '🌙 Modo Oscuro';
+        
         themeToggle.addEventListener('click', () => {
             const newTheme = htmlElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
             htmlElement.setAttribute('data-theme', newTheme);
@@ -90,6 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Descargar PDF
     const downloadPdf = document.getElementById('downloadPdf');
     if (downloadPdf) {
         downloadPdf.addEventListener('click', () => {
@@ -112,6 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Barra de Progreso
     window.onscroll = function() {
         const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
         const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
