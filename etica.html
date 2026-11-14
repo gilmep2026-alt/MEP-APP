@@ -228,7 +228,6 @@
            ESTILOS PARA IMPRIMIR / GUARDAR PDF
            ========================================= */
         @media print {
-            /* Forzar colores blancos y texto negro para ahorrar tinta */
             body { background: white !important; color: black !important; }
             #progress-bar, header .header-actions { display: none !important; }
             header { position: static; background: transparent; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; }
@@ -317,39 +316,7 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT PARA INTERACTIVIDAD -->
-    <script>
-        // 1. Lógica del Modo Oscuro / Claro
-        const themeToggle = document.getElementById('themeToggle');
-        const htmlElement = document.documentElement;
-        
-        // Cargar tema guardado
-        const savedTheme = localStorage.getItem('mep-etica-theme') || 'dark';
-        htmlElement.setAttribute('data-theme', savedTheme);
-        themeToggle.innerHTML = savedTheme === 'dark' ? '☀️ Modo Claro' : '🌙 Modo Oscuro';
-
-        themeToggle.addEventListener('click', () => {
-            const currentTheme = htmlElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            
-            htmlElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('mep-etica-theme', newTheme);
-            
-            themeToggle.innerHTML = newTheme === 'dark' ? '☀️ Modo Claro' : '🌙 Modo Oscuro';
-        });
-
-        // 2. Lógica para Descargar PDF (Usa la función nativa de impresión)
-        document.getElementById('downloadPdf').addEventListener('click', () => {
-            window.print();
-        });
-
-        // 3. Barra de Progreso de Lectura
-        window.onscroll = function() {
-            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrolled = (winScroll / height) * 100;
-            document.getElementById("progress-bar").style.width = scrolled + "%";
-        };
-    </script>
+    <!-- Enlace al archivo JavaScript externo (No bloquea la seguridad de Cloudflare) -->
+    <script src="etica.js"></script>
 </body>
 </html>
