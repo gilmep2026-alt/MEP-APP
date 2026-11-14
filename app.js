@@ -1,6 +1,5 @@
 /* ============================================================================
    MEP · Movimiento Electoral del Pueblo — app.js
-   PWA vanilla JS + PocketBase
    ========================================================================== */
 'use strict';
 
@@ -401,7 +400,7 @@ function renderNavSubapps() {
 }
 
 function itemAgenda(a, conFecha) {
-  const linkVideo = a.enlace ? safeUrl(a.enlace) : null;
+  const linkVideo = a.enlace_video ? safeUrl(a.enlace_video) : null;
   const botonVideo = linkVideo ? `
     <div style="margin-top: 15px;">
       <a href="${esc(linkVideo)}" target="_blank" rel="noopener noreferrer" class="btn sm primary" style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none;">
@@ -1238,7 +1237,7 @@ function cargarParaEditar(type, id) {
     $('a_fecha').value = String(it.fecha || '').split(' ')[0];
     $('a_hora').value = it.hora || '';
     $('a_lugar').value = it.lugar || '';
-    $('a_link').value = it.enlace || '';
+    $('a_link').value = it.enlace_video || '';
     $('a_desc').value = it.descripcion || '';
     $('a_nivel').value = it.nivel || 'Nacional';
     setEtiquetaBoton('a_save', 'Actualizar');
@@ -1322,7 +1321,7 @@ async function guardarAgenda() {
     hora: $('a_hora').value,
     nivel: $('a_nivel').value,
     lugar: $('a_lugar').value.trim(),
-    enlace: $('a_link') ? $('a_link').value.trim() : '',
+    enlace_video: $('a_link') ? $('a_link').value.trim() : '',
     descripcion: $('a_desc').value.trim()
   };
 
@@ -1704,6 +1703,7 @@ function inicializarFormularioRegistro() {
   const selMunicipio = $('regMunicipio');
   if (!selEstado || !selMunicipio) return;
 
+  // Estados (solo se cargan una vez)
   if (selEstado.options.length <= 1) {
     Object.keys(VENEZUELA_DATA)
       .sort((a, b) => a.localeCompare(b, 'es'))
@@ -1715,6 +1715,7 @@ function inicializarFormularioRegistro() {
       });
   }
 
+  // Municipios dependientes del estado
   selEstado.addEventListener('change', () => {
     const estado = selEstado.value;
     const municipios = (VENEZUELA_DATA[estado] || []).slice().sort((a, b) => a.localeCompare(b, 'es'));
@@ -1735,6 +1736,8 @@ function inicializarFormularioRegistro() {
     });
     selMunicipio.disabled = false;
   });
+
+  // Los usuarios normales no tienen cargo: solo nombre, contacto y foto.
 }
 
 /* ---------------------------------------------------------------- auth */
