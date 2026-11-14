@@ -1,4 +1,4 @@
-console.log("¡Cargando el buscador v2!");
+console.log("¡Cargando buscador v3 con búsqueda sin acentos!");
 
 document.addEventListener('DOMContentLoaded', () => {
     const themeToggle = document.getElementById('themeToggle');
@@ -41,20 +41,33 @@ document.addEventListener('DOMContentLoaded', () => {
         if (progressBar) progressBar.style.width = (winScroll / height) * 100 + "%";
     };
 
+    // --- BUSCADOR INTELIGENTE ---
     const searchInput = document.getElementById('searchInput');
     const detailsElements = document.querySelectorAll('details');
     const noResults = document.getElementById('noResults');
 
+    // Función para quitar acentos (tildes)
+    const limpiarTexto = (texto) => {
+        return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+    };
+
     if (searchInput) {
         searchInput.addEventListener('input', function(e) {
-            const term = e.target.value.toLowerCase().trim();
+            const term = limpiarTexto(e.target.value);
             let hasResults = false;
+            
             detailsElements.forEach(details => {
-                const text = details.textContent.toLowerCase();
+                const text = limpiarTexto(details.textContent);
+                
                 if (text.includes(term)) {
                     details.style.display = 'block';
-                    if (term !== '') { details.open = true; hasResults = true; } 
-                    else { details.open = false; hasResults = true; }
+                    if (term !== '') { 
+                        details.open = true; 
+                        hasResults = true; 
+                    } else { 
+                        details.open = false; 
+                        hasResults = true; 
+                    }
                 } else {
                     details.style.display = 'none';
                 }
