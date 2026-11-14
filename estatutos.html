@@ -6,74 +6,104 @@
     <title>Estatutos MEP</title>
     <style>
         :root[data-theme="dark"] {
-            --bg-body: #0d0418; --bg-surface: rgba(42, 16, 80, 0.4); --bg-header: rgba(13, 4, 24, 0.85);
+            --bg-body: #0d0418; --bg-surface: #1e0b36; --bg-header: rgba(13, 4, 24, 0.95);
             --text-main: #f8f6fc; --text-dim: #c8bce0; --accent: #fcd116; --border: rgba(252, 209, 22, 0.25);
-            --shadow: 0 15px 35px rgba(0, 0, 0, 0.6); --glass-blur: blur(16px);
-            --active-match: #ff8c00;
+            --shadow: 0 8px 20px rgba(0, 0, 0, 0.4); --active-match: #ff8c00;
+            --search-bg: rgba(30, 11, 54, 0.9);
         }
         :root[data-theme="light"] {
-            --bg-body: #eef2f6; --bg-surface: rgba(255, 255, 255, 0.6); --bg-header: rgba(255, 255, 255, 0.85);
+            --bg-body: #eef2f6; --bg-surface: #ffffff; --bg-header: rgba(255, 255, 255, 0.95);
             --text-main: #1a0b2e; --text-dim: #4a3b60; --accent: #3b0954; --border: rgba(59, 9, 84, 0.2);
-            --shadow: 0 15px 35px rgba(0, 0, 0, 0.1); --glass-blur: blur(16px);
-            --active-match: #d97706;
+            --shadow: 0 8px 20px rgba(0, 0, 0, 0.08); --active-match: #d97706;
+            --search-bg: rgba(255, 255, 255, 0.95);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', system-ui, sans-serif; background-color: var(--bg-body); background-image: radial-gradient(circle at 15% 50%, rgba(114, 27, 196, 0.15), transparent 25%), radial-gradient(circle at 85% 30%, rgba(252, 209, 22, 0.1), transparent 25%); background-attachment: fixed; color: var(--text-main); line-height: 1.7; transition: 0.4s ease; overflow-x: hidden; }
+        body { 
+            font-family: 'Segoe UI', system-ui, sans-serif; 
+            background-color: var(--bg-body); 
+            background-image: radial-gradient(circle at 15% 50%, rgba(114, 27, 196, 0.15), transparent 25%), radial-gradient(circle at 85% 30%, rgba(252, 209, 22, 0.1), transparent 25%); 
+            background-attachment: fixed; 
+            color: var(--text-main); 
+            line-height: 1.7; 
+            transition: 0.3s ease; 
+            overflow-x: hidden;
+        }
         
-        /* RESALTADO NORMAL Y ACTIVO (EL NARANJA) */
-        mark.resaltado { background-color: var(--accent); color: var(--bg-body); padding: 2px 4px; border-radius: 4px; font-weight: bold; transition: background 0.3s; }
+        /* RESALTADO */
+        mark.resaltado { background-color: var(--accent); color: var(--bg-body); padding: 2px 4px; border-radius: 4px; font-weight: bold; transition: background 0.2s; }
         mark.resaltado-activo { background-color: var(--active-match); color: #fff; box-shadow: 0 0 15px var(--active-match); transform: scale(1.05); display: inline-block; }
         
         #progress-bar { position: fixed; top: 0; left: 0; height: 4px; background: var(--accent); width: 0%; z-index: 9999; transition: width 0.1s; box-shadow: 0 0 15px var(--accent); }
-        header { position: sticky; top: 0; z-index: 100; background: var(--bg-header); backdrop-filter: var(--glass-blur); border-bottom: 1px solid var(--border); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        
+        header { position: sticky; top: 0; z-index: 100; background: var(--bg-header); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
         header h1 { color: var(--accent); font-size: 1.3rem; text-transform: uppercase; font-weight: 800; }
         .header-actions { display: flex; gap: 10px; flex-wrap: wrap; }
-        .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 30px; font-size: 0.9rem; font-weight: 700; text-decoration: none; cursor: pointer; border: 1px solid var(--border); transition: 0.3s; background: transparent; color: var(--text-main); }
+        .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 30px; font-size: 0.9rem; font-weight: 700; text-decoration: none; cursor: pointer; border: 1px solid var(--border); transition: 0.2s; background: transparent; color: var(--text-main); }
         .btn-primary { background: var(--accent); color: var(--bg-body); border: none; }
         :root[data-theme="light"] .btn-primary { color: #fff; }
-        .btn:hover { transform: translateY(-2px); filter: brightness(1.1); box-shadow: 0 6px 15px rgba(252, 209, 22, 0.4); }
+        .btn:hover { transform: translateY(-2px); filter: brightness(1.1); box-shadow: 0 4px 10px rgba(252, 209, 22, 0.3); }
         
-        /* BARRA DE BÚSQUEDA CON NAVEGACIÓN */
-        .search-container { max-width: 950px; margin: 30px auto 10px auto; padding: 0 20px; position: sticky; top: 80px; z-index: 90; }
-        .search-box { position: relative; width: 100%; background: var(--bg-surface); backdrop-filter: var(--glass-blur); border: 1px solid rgba(255,255,255,0.2); border-radius: 50px; box-shadow: var(--shadow); display: flex; align-items: center; transition: 0.3s; padding-right: 10px; }
-        .search-box:focus-within { border-color: var(--accent); box-shadow: 0 0 20px rgba(252, 209, 22, 0.3); transform: translateY(-2px); }
-        .search-icon { padding: 0 10px 0 20px; color: var(--text-dim); font-size: 1.2rem; }
-        #searchInput { flex: 1; padding: 16px 0; border: none; background: transparent; color: var(--text-main); font-size: 1rem; outline: none; min-width: 100px; }
+        /* BARRA DE BÚSQUEDA */
+        .search-container { max-width: 950px; margin: 20px auto; padding: 0 20px; position: sticky; top: 80px; z-index: 90; }
+        .search-box { position: relative; width: 100%; background: var(--search-bg); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); display: flex; align-items: center; transition: 0.3s; padding: 5px; flex-wrap: wrap; }
+        .search-box:focus-within { border-color: var(--accent); box-shadow: 0 0 15px rgba(252, 209, 22, 0.2); }
+        .search-icon { padding: 0 10px 0 15px; color: var(--text-dim); font-size: 1.2rem; }
+        #searchInput { flex: 1; padding: 12px 0; border: none; background: transparent; color: var(--text-main); font-size: 1rem; outline: none; min-width: 150px; }
         #searchInput::placeholder { color: var(--text-dim); opacity: 0.7; }
         
-        /* Controles de Navegación */
-        #searchNav { display: none; align-items: center; gap: 5px; background: rgba(0,0,0,0.2); padding: 4px 8px; border-radius: 20px; margin-right: 5px; }
-        #matchCounter { font-size: 0.85rem; color: var(--text-dim); font-weight: bold; padding: 0 5px; white-space: nowrap; }
-        .nav-arrow { background: transparent; border: none; color: var(--accent); cursor: pointer; font-size: 1.2rem; padding: 5px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: 0.2s; }
-        .nav-arrow:hover { background: rgba(255,255,255,0.1); transform: scale(1.1); }
+        /* CONTROLES DE NAVEGACIÓN (Se ocultan si no hay búsqueda) */
+        #searchNav { display: none; align-items: center; gap: 8px; background: rgba(0,0,0,0.2); padding: 5px 10px; border-radius: 8px; margin-right: 5px; }
+        #matchCounter { font-size: 0.9rem; color: var(--text-dim); font-weight: bold; padding: 0 5px; white-space: nowrap; }
+        .nav-arrow { background: var(--accent); color: var(--bg-body); border: none; cursor: pointer; font-size: 1.2rem; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 8px; transition: 0.2s; font-weight: bold; }
+        .nav-arrow:hover { transform: scale(1.1); filter: brightness(1.1); }
         
         #noResults { display: none; text-align: center; padding: 40px; color: var(--text-dim); font-size: 1.1rem; font-weight: bold; }
         
         .container { max-width: 950px; margin: 10px auto 40px auto; padding: 0 20px; }
-        .portada { text-align: center; margin-bottom: 40px; padding: 40px 20px; background: var(--bg-surface); backdrop-filter: var(--glass-blur); border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; box-shadow: var(--shadow); }
-        .portada h2 { color: var(--accent); font-size: 1.6rem; margin-bottom: 15px; text-transform: uppercase; }
-        .portada p { color: var(--text-dim); font-size: 1rem; }
-        h2.titulo { color: var(--accent); font-size: 1.3rem; margin: 40px 0 20px 0; padding-bottom: 10px; border-bottom: 2px solid var(--border); text-transform: uppercase; }
         
-        details { background: var(--bg-surface); backdrop-filter: var(--glass-blur); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; margin-bottom: 15px; box-shadow: var(--shadow); overflow: hidden; }
-        summary { padding: 20px; font-weight: 800; font-size: 1.05rem; color: var(--accent); cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); }
+        /* TARJETAS SIN DESENFOQUE PESADO (MÁS RÁPIDO EN MÓVIL) */
+        .portada { text-align: center; margin-bottom: 30px; padding: 30px 20px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); }
+        .portada h2 { color: var(--accent); font-size: 1.5rem; margin-bottom: 15px; text-transform: uppercase; }
+        .portada p { color: var(--text-dim); font-size: 0.95rem; }
+        h2.titulo { color: var(--accent); font-size: 1.2rem; margin: 30px 0 15px 0; padding-bottom: 10px; border-bottom: 2px solid var(--border); text-transform: uppercase; }
+        
+        details { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 12px; box-shadow: var(--shadow); overflow: hidden; }
+        summary { padding: 18px; font-weight: 800; font-size: 1.05rem; color: var(--accent); cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.1); }
         summary::-webkit-details-marker { display: none; }
-        summary::after { content: '▼'; font-size: 0.8rem; transition: transform 0.3s; }
+        summary::after { content: '▼'; font-size: 0.8rem; transition: transform 0.2s; }
         details[open] summary::after { transform: rotate(180deg); }
         details[open] summary { border-bottom: 1px solid var(--border); }
         
-        .content { padding: 25px; }
+        .content { padding: 20px; }
         .article { margin-bottom: 25px; padding-bottom: 25px; border-bottom: 1px dashed var(--border); font-size: 1rem; color: var(--text-main); }
         .article:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
         .article strong { color: var(--accent); font-size: 1.05rem; }
         .article p { margin-bottom: 15px; line-height: 1.8; }
-        .article ol, .article ul { margin-top: 10px; margin-bottom: 15px; margin-left: 25px; }
+        .article ol, .article ul { margin-top: 10px; margin-bottom: 15px; margin-left: 20px; }
         .article li { margin-bottom: 12px; line-height: 1.8; }
-        .article h3 { color: var(--text-main); font-size: 1.1rem; margin: 25px 0 15px 0; font-style: italic; }
-        .firmas { text-align: center; margin-top: 50px; padding: 30px 20px; background: var(--bg-surface); border-radius: 12px; font-size: 0.9rem; color: var(--text-dim); box-shadow: var(--shadow); }
+        .article h3 { color: var(--text-main); font-size: 1.1rem; margin: 20px 0 15px 0; font-style: italic; }
+        .firmas { text-align: center; margin-top: 40px; padding: 25px 20px; background: var(--bg-surface); border-radius: 12px; font-size: 0.9rem; color: var(--text-dim); box-shadow: var(--shadow); }
         .firmas strong { color: var(--accent); }
 
-        /* ESTILOS DE IMPRESIÓN */
+        /* DISEÑO MÓVIL OPTIMIZADO */
+        @media (max-width: 600px) {
+            header { flex-direction: column; align-items: flex-start; padding: 15px; }
+            .header-actions { width: 100%; justify-content: space-between; }
+            .search-container { top: 140px; padding: 0 15px; }
+            .search-box { padding: 8px; border-radius: 10px; }
+            #searchInput { font-size: 16px; width: 100%; padding: 8px 0; }
+            
+            /* Controles en su propia línea para que sean grandes en móvil */
+            #searchNav { width: 100%; justify-content: space-between; margin-top: 10px; margin-right: 0; background: transparent; padding: 0; }
+            .nav-arrow { width: 45px; height: 45px; font-size: 1.5rem; }
+            
+            .content { padding: 15px; }
+            .article { font-size: 1.05rem; line-height: 1.9; margin-bottom: 30px; padding-bottom: 30px; }
+            .article p { margin-bottom: 18px; }
+            .article li { margin-bottom: 15px; }
+        }
+
+        /* IMPRESIÓN */
         @media print {
             body { background: white !important; color: black !important; }
             #progress-bar, header .header-actions, .search-container { display: none !important; }
@@ -84,22 +114,6 @@
             summary { color: black !important; background: transparent !important; border-bottom: 1px solid #000; }
             summary::after { display: none; }
             mark.resaltado, mark.resaltado-activo { background: transparent !important; color: black !important; box-shadow: none !important; font-weight: bold; }
-        }
-
-        /* DISEÑO MÓVIL MEJORADO (MÁS ESPACIO Y AIRE) */
-        @media (max-width: 600px) {
-            header { flex-direction: column; align-items: flex-start; }
-            .header-actions { width: 100%; justify-content: space-between; }
-            .search-container { top: 150px; } /* Ajuste para que no choque con el header */
-            .search-box { border-radius: 20px; padding: 10px; flex-wrap: wrap; }
-            #searchInput { padding: 10px 0; font-size: 16px; width: 100%; }
-            #searchNav { width: 100%; justify-content: space-between; margin-top: 10px; margin-right: 0; }
-            
-            .content { padding: 20px 15px; }
-            .article { font-size: 1.05rem; line-height: 1.9; margin-bottom: 30px; padding-bottom: 30px; }
-            .article p { margin-bottom: 18px; }
-            .article li { margin-bottom: 15px; }
-            .article ol, .article ul { margin-left: 15px; }
         }
     </style>
 </head>
@@ -115,17 +129,16 @@
         </div>
     </header>
 
-    <!-- BARRA DE BÚSQUEDA CON CONTROLES DE NAVEGACIÓN -->
     <div class="search-container" id="searchContainer">
         <div class="search-box">
             <span class="search-icon">🔍</span>
-            <input type="search" id="searchInput" placeholder="Buscar artículo, palabra...">
+            <input type="search" id="searchInput" placeholder="Buscar artículo, palabra o tema...">
             
-            <!-- Controles para navegar entre resultados -->
+            <!-- Los controles inician ocultos hasta que busques algo -->
             <div id="searchNav">
                 <span id="matchCounter">0 de 0</span>
-                <button type="button" id="btnPrevMatch" class="nav-arrow" title="Anterior coincidencia">▲</button>
-                <button type="button" id="btnNextMatch" class="nav-arrow" title="Siguiente coincidencia">▼</button>
+                <button type="button" id="btnPrevMatch" class="nav-arrow" title="Anterior coincidencia">↑</button>
+                <button type="button" id="btnNextMatch" class="nav-arrow" title="Siguiente coincidencia">↓</button>
             </div>
         </div>
     </div>
