@@ -1,192 +1,355 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="dark">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Código de Ética del Militante Mepista - Movimiento Electoral del Pueblo (MEP)">
-<meta name="theme-color" content="#1a0b2e">
-<title>Código de Ética del Militante Mepista | MEP</title>
-<style>
-  :root{
-    --purple-dark:#1a0b2e;
-    --purple-mid:#330b69;
-    --purple-light:#51139e;
-    --yellow:#fcd116;
-    --yellow-hover:#ffd700;
-    --text-main:#f8f6fc;
-    --text-dim:#c8bce0;
-    --card-bg:rgba(81,19,158,.28);
-    --card-border:rgba(252,209,22,.18);
-    --glass:rgba(51,11,105,.55);
-    --header-bg:rgba(26,11,46,.92);
-    --shadow:0 10px 40px rgba(0,0,0,.5);
-    --fs:16px;
-    --radius:16px;
-  }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Código de Ética MEP</title>
+    <style>
+        /* =========================================
+           VARIABLES DE COLOR (MODO OSCURO Y CLARO)
+           ========================================= */
+        :root[data-theme="dark"] {
+            --bg-body: #0d0418;
+            --bg-surface: rgba(42, 16, 80, 0.6);
+            --bg-header: rgba(13, 4, 24, 0.9);
+            --text-main: #f8f6fc;
+            --text-dim: #c8bce0;
+            --accent: #fcd116;
+            --accent-hover: #ffe57f;
+            --border: rgba(252, 209, 22, 0.2);
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            --card-hover: rgba(59, 9, 84, 0.8);
+        }
 
-  html[data-theme="light"]{
-    --purple-dark:#f3eefb;
-    --purple-mid:#e7dcf7;
-    --purple-light:#d8c7f0;
-    --text-main:#24104a;
-    --text-dim:#5c4a80;
-    --card-bg:rgba(255,255,255,.75);
-    --card-border:rgba(81,19,158,.18);
-    --glass:rgba(255,255,255,.65);
-    --header-bg:rgba(255,255,255,.92);
-    --shadow:0 10px 30px rgba(81,19,158,.18);
-  }
+        :root[data-theme="light"] {
+            --bg-body: #f0f2f5;
+            --bg-surface: #ffffff;
+            --bg-header: rgba(255, 255, 255, 0.9);
+            --text-main: #1a0b2e;
+            --text-dim: #4a3b60;
+            --accent: #3b0954;
+            --accent-hover: #51139e;
+            --border: rgba(59, 9, 84, 0.15);
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --card-hover: #f9f9fb;
+        }
 
-  *{box-sizing:border-box;}
+        /* =========================================
+           ESTILOS GENERALES
+           ========================================= */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body { 
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
+            background-color: var(--bg-body); 
+            color: var(--text-main); 
+            line-height: 1.7;
+            transition: background-color 0.4s ease, color 0.4s ease;
+            overflow-x: hidden;
+        }
 
-  html{scroll-behavior:smooth;scroll-padding-top:140px;}
+        /* Barra de progreso de lectura */
+        #progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: var(--accent);
+            width: 0%;
+            z-index: 9999;
+            transition: width 0.1s ease;
+            box-shadow: 0 0 10px var(--accent);
+        }
 
-  body{
-    font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
-    background:linear-gradient(135deg,var(--purple-dark) 0%,var(--purple-mid) 55%,var(--purple-dark) 100%);
-    background-attachment:fixed;
-    color:var(--text-main);
-    margin:0;
-    padding:0;
-    min-height:100vh;
-    font-size:var(--fs);
-    transition:background .4s ease,color .4s ease;
-  }
+        /* =========================================
+           ENCABEZADO Y BOTONES
+           ========================================= */
+        header { 
+            position: sticky; 
+            top: 0; 
+            z-index: 100; 
+            background: var(--bg-header); 
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 15px 20px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
 
-  /* ===== Barra de progreso ===== */
-  #progressBar{
-    position:fixed;top:0;left:0;height:4px;width:0%;
-    background:linear-gradient(90deg,var(--yellow),#fff3a8);
-    z-index:300;transition:width .1s linear;
-  }
+        header h1 { 
+            color: var(--accent); 
+            font-size: 1.3rem; 
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 800;
+        }
 
-  /* ===== Encabezado ===== */
-  header{
-    background:var(--header-bg);
-    backdrop-filter:blur(12px);
-    -webkit-backdrop-filter:blur(12px);
-    padding:18px 16px 14px;
-    text-align:center;
-    border-bottom:4px solid var(--yellow);
-    position:sticky;top:0;z-index:200;
-    box-shadow:0 4px 24px rgba(0,0,0,.45);
-  }
-  header h1{
-    color:var(--yellow);margin:0 0 4px;
-    font-size:clamp(1.05rem,3.4vw,1.6rem);
-    text-transform:uppercase;letter-spacing:1.2px;
-    text-shadow:0 2px 12px rgba(252,209,22,.3);
-  }
-  html[data-theme="light"] header h1{color:var(--purple-mid);text-shadow:none;}
-  header .sub{color:var(--text-dim);font-size:.8rem;margin:0 0 12px;letter-spacing:.5px;}
+        .header-actions { display: flex; gap: 10px; flex-wrap: wrap; }
 
-  .toolbar{
-    display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;
-  }
+        .btn { 
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-  .btn{
-    display:inline-flex;align-items:center;gap:7px;
-    border:1px solid var(--card-border);
-    background:rgba(252,209,22,.12);
-    color:var(--text-main);
-    padding:8px 14px;border-radius:25px;
-    font-size:.82rem;font-weight:600;cursor:pointer;
-    text-decoration:none;transition:all .25s ease;
-  }
-  .btn:hover,.btn:focus-visible{
-    background:var(--yellow);color:var(--purple-dark);
-    transform:translateY(-2px);
-    box-shadow:0 6px 18px rgba(252,209,22,.35);
-    outline:none;
-  }
-  .btn-primary{
-    background:var(--yellow);color:#1a0b2e;border-color:var(--yellow);
-    box-shadow:0 4px 14px rgba(252,209,22,.28);
-  }
-  .btn-primary:hover{background:var(--yellow-hover);}
+        .btn-primary {
+            background: var(--accent);
+            color: var(--bg-body);
+            box-shadow: 0 4px 15px rgba(252, 209, 22, 0.3);
+        }
+        :root[data-theme="light"] .btn-primary { color: #fff; box-shadow: 0 4px 15px rgba(59, 9, 84, 0.3); }
 
-  /* ===== Buscador ===== */
-  .search-wrap{position:relative;flex:1 1 230px;max-width:330px;}
-  #search{
-    width:100%;padding:9px 34px 9px 36px;border-radius:25px;
-    border:1px solid var(--card-border);
-    background:rgba(0,0,0,.22);color:var(--text-main);
-    font-size:.85rem;outline:none;transition:.25s;
-  }
-  html[data-theme="light"] #search{background:rgba(255,255,255,.8);}
-  #search:focus{border-color:var(--yellow);box-shadow:0 0 0 3px rgba(252,209,22,.22);}
-  #search::placeholder{color:var(--text-dim);}
-  .search-ico{position:absolute;left:13px;top:50%;transform:translateY(-50%);opacity:.7;font-size:.9rem;}
-  #clearSearch{
-    position:absolute;right:10px;top:50%;transform:translateY(-50%);
-    background:none;border:none;color:var(--text-dim);cursor:pointer;
-    font-size:1rem;display:none;line-height:1;
-  }
+        .btn-primary:hover { transform: translateY(-2px); filter: brightness(1.1); }
 
-  /* ===== Panel de estado ===== */
-  .status-bar{
-    max-width:880px;margin:18px auto 0;padding:0 16px;
-    display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;
-    font-size:.8rem;color:var(--text-dim);
-  }
-  .chip{
-    background:var(--glass);border:1px solid var(--card-border);
-    padding:6px 14px;border-radius:20px;
-  }
-  .chip b{color:var(--yellow);}
-  html[data-theme="light"] .chip b{color:var(--purple-light);}
+        .btn-outline {
+            background: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--border);
+        }
+        .btn-outline:hover { background: var(--card-hover); }
 
-  /* ===== Contenedor ===== */
-  .container{
-    max-width:880px;margin:18px auto 60px;padding:30px;
-    background:var(--glass);
-    border:1px solid var(--card-border);
-    border-radius:var(--radius);
-    box-shadow:var(--shadow);
-    backdrop-filter:blur(10px);
-    -webkit-backdrop-filter:blur(10px);
-  }
+        /* =========================================
+           CONTENEDOR PRINCIPAL Y TARJETAS
+           ========================================= */
+        .container { 
+            max-width: 900px; 
+            margin: 40px auto; 
+            padding: 0 20px; 
+        }
 
-  .intro{
-    font-style:italic;color:var(--text-main);
-    margin:0 0 30px;border-left:4px solid var(--yellow);
-    padding:16px 20px;background:rgba(0,0,0,.18);
-    border-radius:0 10px 10px 0;line-height:1.75;font-size:.97rem;
-  }
-  html[data-theme="light"] .intro{background:rgba(81,19,158,.07);}
+        .intro-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-left: 6px solid var(--accent);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+            font-size: 1.05rem;
+            color: var(--text-main);
+            position: relative;
+            overflow: hidden;
+        }
 
-  /* ===== Lista de normas ===== */
-  ol.normas{list-style:none;padding:0;margin:0;counter-reset:n;}
+        .intro-card::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            right: 20px;
+            font-size: 150px;
+            color: var(--accent);
+            opacity: 0.1;
+            font-family: serif;
+        }
 
-  li.norma{
-    position:relative;
-    display:grid;
-    grid-template-columns:46px 1fr;
-    gap:14px;
-    margin-bottom:16px;
-    padding:18px 16px 18px 14px;
-    background:var(--card-bg);
-    border:1px solid transparent;
-    border-left:3px solid rgba(252,209,22,.35);
-    border-radius:12px;
-    line-height:1.68;
-    opacity:0;transform:translateY(18px);
-    transition:opacity .5s ease,transform .5s ease,background .25s,border-color .25s,box-shadow .25s;
-  }
-  li.norma.visible{opacity:1;transform:none;}
-  li.norma:hover{
-    background:rgba(81,19,158,.45);
-    border-color:var(--card-border);
-    border-left-color:var(--yellow);
-    box-shadow:0 8px 24px rgba(0,0,0,.3);
-  }
-  html[data-theme="light"] li.norma:hover{background:rgba(255,255,255,.95);box-shadow:0 8px 20px rgba(81,19,158,.15);}
-  li.norma:target{border-color:var(--yellow);box-shadow:0 0 0 2px rgba(252,209,22,.35);}
-  li.norma.leida{border-left-color:#4ade80;}
-  li.norma.leida .num{background:#4ade80;}
-  li.norma.oculta{display:none;}
+        /* Lista de artículos */
+        .lista-etica {
+            list-style: none;
+            padding: 0;
+            counter-reset: custom-counter;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
 
-  .num{
-    grid-row:1 / span 2;
-    width:36px;height:36px;border-radius:50%;
-    background:var(--yellow);color:#1a
+        .lista-etica li {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 25px 25px 25px 85px;
+            position: relative;
+            counter-increment: custom-counter;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .lista-etica li:hover {
+            transform: translateX(5px) translateY(-2px);
+            background: var(--card-hover);
+            border-color: var(--accent);
+        }
+
+        /* Números personalizados */
+        .lista-etica li::before {
+            content: counter(custom-counter);
+            position: absolute;
+            left: 25px;
+            top: 25px;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent) 0%, #ffb700 100%);
+            color: #1a0b2e;
+            font-weight: 900;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            box-shadow: 0 4px 15px rgba(252, 209, 22, 0.4);
+        }
+
+        :root[data-theme="light"] .lista-etica li::before {
+            color: #fff;
+        }
+
+        /* =========================================
+           PIE DE PÁGINA
+           ========================================= */
+        .footer { 
+            text-align: center; 
+            margin-top: 60px; 
+            padding: 30px 20px;
+            font-size: 0.9rem; 
+            color: var(--text-dim); 
+            border-top: 1px solid var(--border); 
+            line-height: 1.8;
+            background: var(--bg-surface);
+            border-radius: 12px 12px 0 0;
+        }
+
+        .footer strong { color: var(--accent); }
+
+        /* =========================================
+           ESTILOS PARA IMPRIMIR / GUARDAR PDF
+           ========================================= */
+        @media print {
+            /* Forzar colores blancos y texto negro para ahorrar tinta */
+            body { background: white !important; color: black !important; }
+            #progress-bar, header .header-actions { display: none !important; }
+            header { position: static; background: transparent; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; }
+            header h1 { color: #000 !important; }
+            .container { margin: 0; padding: 0; max-width: 100%; }
+            .intro-card, .lista-etica li, .footer { 
+                background: transparent !important; 
+                border: 1px solid #ccc !important; 
+                box-shadow: none !important;
+                color: black !important;
+                page-break-inside: avoid;
+            }
+            .intro-card::before { display: none; }
+            .lista-etica li::before { 
+                background: #000 !important; 
+                color: #fff !important;
+                box-shadow: none !important;
+            }
+        }
+
+        /* Ajustes para móviles */
+        @media (max-width: 600px) {
+            header { flex-direction: column; align-items: flex-start; }
+            .header-actions { width: 100%; justify-content: space-between; }
+            .lista-etica li { padding: 60px 20px 20px 20px; }
+            .lista-etica li::before { top: 15px; left: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Barra de progreso de lectura -->
+    <div id="progress-bar"></div>
+
+    <header>
+        <h1>Código de Ética</h1>
+        <div class="header-actions">
+            <button id="themeToggle" class="btn btn-outline" title="Cambiar tema">
+                ☀️ Modo Claro
+            </button>
+            <button id="downloadPdf" class="btn btn-outline" title="Descargar PDF">
+                📥 Descargar PDF
+            </button>
+            <a href="index.html" class="btn btn-primary">⬅ Volver a la App</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="intro-card">
+            En un partido político como el MEP en donde, entre sus principales figuras, tenemos a su fundador, el Maestro Luís Beltrán Prieto Figueroa, referente histórico en el país de honestidad, transparencia y comportamiento ético intachable, resulta necesario que el comportamiento de todo individuo que sea militante o cuadro político mepista, sea ajustado de acuerdo a las siguientes normas que conforman el presente código de ética:
+        </div>
+
+        <ol class="lista-etica">
+            <li>Ser sincero o sincera, no ocultar ni tergiversar jamás la verdad. Luchar contra la mentira, el engaño, la demagogia y el fraude en cualquier circunstancia o lugar donde se presente.</li>
+            <li>Cultivar los valores y principios mepistas establecidos en la doctrina y estatutos del partido, el honor y la dignidad, por lo que debe rechazarse cualquier ofrecimiento que atente contra la dignidad, pese a cualquier carencia, limitación o aspiración personal que se tenga.</li>
+            <li>Fomentar y cumplir la disciplina, el respeto y la lealtad hacia nuestro partido, nuestra Constitución Nacional, hacia la Revolución y hacia la Patria.</li>
+            <li>Educar y practicar la exigencia y el respeto consigo mismo y con los demás, predicando siempre con el ejemplo.</li>
+            <li>Ser estricto cumplidor o cumplidora de los compromisos y de la palabra empeñada.</li>
+            <li>Combatir la apatía, la indolencia, el pesimismo, el hipercriticismo y el derrotismo.</li>
+            <li>Ser honrado y honrada, y practicar consecuentemente la sana crítica y autocrítica de manera constructiva.</li>
+            <li>Considerar como actitud dañina el espíritu justificativo, la inacción frente a las dificultades y errores, y la ausencia de iniciativas.</li>
+            <li>Saber rectificar buscando soluciones nuevas para viejos y nuevos problemas.</li>
+            <li>Vincularse con el Pueblo y sus diferentes sectores, trabajadores y trabajadoras, mujeres, jóvenes, adultos mayores, sexo-diversidad, afrodescendientes, entre otros, demostrarles respeto y confianza, así como sensibilidad para percibir y compartir con ellos sus sentimientos, sus expectativas, necesidades, opiniones, sueños, esperanzas, pero al igual sus frustraciones, tristezas y su drama cotidiano.</li>
+            <li>Basar las relaciones de amistad en la coincidencia de principios, de visión en un proyecto compartido y en la moral revolucionaria.</li>
+            <li>Mantener una correcta y transparente administración de los recursos que se nos encomienden. Ser ejemplo de honradez, modestia y austeridad.</li>
+            <li>Utilizar las prerrogativas y facultades inherentes al cargo que eventualmente se desempeñe (sea dentro del partido o fuera de él), así como los medios y recursos conferidos, para los requerimientos del partido o del trabajo.</li>
+            <li>Entregarse por entero y con amor al desempeño cabal de la responsabilidad encomendada.</li>
+            <li>Observar en su actividad política, laboral, social y familiar, un estilo de vida que le haga acreedor o acreedora del respeto y la confianza de los demás.</li>
+            <li>El hecho de ejercer un cargo de responsabilidad dentro del partido, en la administración pública o privada, no confiere ningún tipo de derechos especiales, privilegios o preferencias sobre los demás que no cumplan esas funciones.</li>
+            <li>La corrupción denigra tanto a quien incurre en ella como a quien la tolera, o peor aún, se hace cómplice de ella.</li>
+            <li>Se debe compartir con los militantes las dificultades y los grandes esfuerzos, aportando y exigiendo todo el empeño y consagración necesarios.</li>
+            <li>Apoyarse en el razonamiento colectivo y en la capacidad personal para la toma de decisiones, de acuerdo a los valores y principios mepistas.</li>
+            <li>Desarrollar la disposición al diálogo y a la comunicación eficaz con el colectivo.</li>
+            <li>Ser discreto o discreta y prudente en el manejo de la información interna del MEP, para salvaguardar los intereses de nuestro partido y evitar problemas o conflictos originados por rumores en el trabajo político y en las relaciones interpersonales.</li>
+            <li>Impulsar una política de cuadros sobre la base del trabajo y la capacidad del o las combatientes.</li>
+            <li>Mostrarse solícito o solícita y solidario o solidaria ante los problemas de los y las combatientes.</li>
+            <li>Ayudar a cuadros que hayan cometido errores en el desempeño de sus responsabilidades, siempre y cuando, mantengan una actitud revolucionaria y una disposición a enmendarlos.</li>
+            <li>Considerar la actitud política y la integridad moral del combatiente sobre la base de la idoneidad y la capacidad real demostrada.</li>
+            <li>Asumir la autoridad otorgada como un honor y un compromiso, y jamás como una ventaja personal sobre otros.</li>
+            <li>Asumir y contribuir conscientemente, desde la trinchera de lucha que le toque a cada combatiente, a defender, preservar y serle fiel a los principios que entrañan la tesis política de nuestro partido, al legado histórico de nuestros fundadores y desde luego a los principios y valores de la Patria, de la Revolución Bolivariana y del Socialismo desde la perspectiva mepista.</li>
+        </ol>
+
+        <div class="footer">
+            <strong>Aprobado por unanimidad</strong> en reunión ordinaria de Comando Político Nacional, CPN, el 21 de julio de 2023.<br>
+            El incumplimiento del presente Código de Ética es considerado una falta a la disciplina o a la ética partidista (Artículo 48, ordinal a) de los Estatutos vigentes) y se sancionará de acuerdo a lo que se establece en el Artículo 53.
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT PARA INTERACTIVIDAD -->
+    <script>
+        // 1. Lógica del Modo Oscuro / Claro
+        const themeToggle = document.getElementById('themeToggle');
+        const htmlElement = document.documentElement;
+        
+        // Cargar tema guardado
+        const savedTheme = localStorage.getItem('mep-etica-theme') || 'dark';
+        htmlElement.setAttribute('data-theme', savedTheme);
+        themeToggle.innerHTML = savedTheme === 'dark' ? '☀️ Modo Claro' : '🌙 Modo Oscuro';
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = htmlElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            htmlElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('mep-etica-theme', newTheme);
+            
+            themeToggle.innerHTML = newTheme === 'dark' ? '☀️ Modo Claro' : '🌙 Modo Oscuro';
+        });
+
+        // 2. Lógica para Descargar PDF (Usa la función nativa de impresión)
+        document.getElementById('downloadPdf').addEventListener('click', () => {
+            window.print();
+        });
+
+        // 3. Barra de Progreso de Lectura
+        window.onscroll = function() {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById("progress-bar").style.width = scrolled + "%";
+        };
+    </script>
+</body>
+</html>
