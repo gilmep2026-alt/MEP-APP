@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Estatutos MEP</title>
     <style>
-        /* =========================================
-           VARIABLES Y TEMAS
-           ========================================= */
         :root[data-theme="dark"] {
             --bg-body: #0d0418;
             --bg-surface: rgba(42, 16, 80, 0.4);
@@ -41,7 +38,6 @@
         body { 
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
             background-color: var(--bg-body); 
-            /* Fondo con gradientes para resaltar el efecto glossy */
             background-image: radial-gradient(circle at 15% 50%, rgba(114, 27, 196, 0.15), transparent 25%), radial-gradient(circle at 85% 30%, rgba(252, 209, 22, 0.1), transparent 25%);
             background-attachment: fixed;
             color: var(--text-main); 
@@ -50,15 +46,27 @@
             overflow-x: hidden;
         }
 
-        /* Barra de progreso de lectura */
+        /* EFECTO DE RESALTADO EN LA BÚSQUEDA */
+        mark.resaltado {
+            background-color: var(--accent);
+            color: var(--bg-body);
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-weight: bold;
+            box-shadow: 0 0 12px var(--accent);
+            animation: pulseGlow 1.5s infinite alternate;
+        }
+
+        @keyframes pulseGlow {
+            from { box-shadow: 0 0 5px var(--accent); }
+            to { box-shadow: 0 0 15px var(--accent); }
+        }
+
         #progress-bar {
             position: fixed; top: 0; left: 0; height: 4px; background: var(--accent);
             width: 0%; z-index: 9999; transition: width 0.1s ease; box-shadow: 0 0 15px var(--accent);
         }
 
-        /* =========================================
-           HEADER GLOSSY
-           ========================================= */
         header { 
             position: sticky; top: 0; z-index: 100; 
             background: var(--bg-header); 
@@ -72,7 +80,6 @@
         header h1 { color: var(--accent); font-size: 1.3rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 800; }
         .header-actions { display: flex; gap: 10px; flex-wrap: wrap; }
 
-        /* Botones Glossy */
         .btn { 
             display: inline-flex; align-items: center; gap: 8px;
             padding: 10px 18px; border-radius: 30px; font-size: 0.9rem; font-weight: 700;
@@ -89,9 +96,6 @@
         .btn-outline { color: var(--text-main); }
         .btn-outline:hover { background: rgba(255,255,255,0.1); transform: translateY(-2px); }
 
-        /* =========================================
-           CONTENEDOR DE BÚSQUEDA GLOSSY
-           ========================================= */
         .search-container {
             max-width: 950px; margin: 30px auto 10px auto; padding: 0 20px;
             position: sticky; top: 80px; z-index: 90;
@@ -123,9 +127,6 @@
             font-size: 1.1rem; font-weight: bold;
         }
 
-        /* =========================================
-           CONTENEDOR PRINCIPAL Y TARJETAS GLOSSY
-           ========================================= */
         .container { max-width: 950px; margin: 10px auto 40px auto; padding: 0 20px; }
 
         .portada {
@@ -144,7 +145,6 @@
             text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
-        /* Acordeones Glossy */
         details {
             background: var(--bg-surface); 
             backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
@@ -189,16 +189,12 @@
         }
         .firmas strong { color: var(--accent); }
 
-        /* =========================================
-           ESTILOS DE IMPRESIÓN
-           ========================================= */
         @media print {
             body { background: white !important; color: black !important; }
             #progress-bar, header .header-actions, .search-container { display: none !important; }
             header { position: static; background: transparent; border-bottom: 2px solid #000; padding-bottom: 10px; }
             header h1 { color: #000 !important; }
             .container { margin: 0; padding: 0; max-width: 100%; }
-            
             .portada, details, .content, .firmas, .article {
                 background: transparent !important; border-color: #ccc !important; box-shadow: none !important; color: black !important;
             }
@@ -206,6 +202,7 @@
             summary { color: black !important; background: transparent !important; border-bottom: 1px solid #000; }
             summary::after { display: none; }
             .article strong, h2.titulo, .portada h2 { color: black !important; }
+            mark.resaltado { background: transparent !important; color: black !important; box-shadow: none !important; font-weight: bold; }
         }
 
         @media (max-width: 600px) {
@@ -230,11 +227,11 @@
         </div>
     </header>
 
-    <!-- BUSCADOR FLOTANTE -->
+    <!-- BARRA DE BÚSQUEDA CON EVENTO ONINPUT DIRECTO -->
     <div class="search-container" id="searchContainer">
         <div class="search-box">
             <span class="search-icon">🔍</span>
-            <input type="search" id="searchInput" placeholder="Buscar artículo, palabra o tema (ej. 'Asamblea', 'Artículo 48')...">
+            <input type="search" id="searchInput" oninput="buscarEnEstatutos()" onkeyup="buscarEnEstatutos()" placeholder="Buscar artículo, palabra o tema...">
         </div>
     </div>
 
