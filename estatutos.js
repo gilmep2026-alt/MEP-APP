@@ -1,6 +1,6 @@
-// Esperar a que todo el HTML esté cargado antes de ejecutar
-document.addEventListener('DOMContentLoaded', () => {
+console.log("¡Cargando el buscador de estatutos v2!");
 
+document.addEventListener('DOMContentLoaded', () => {
     // 1. MODO OSCURO / CLARO
     const themeToggle = document.getElementById('themeToggle');
     const htmlElement = document.documentElement;
@@ -25,18 +25,14 @@ document.addEventListener('DOMContentLoaded', () => {
         downloadPdf.addEventListener('click', () => {
             const details = document.querySelectorAll('details');
             const wasOpen = [];
-            
             details.forEach((d, i) => {
                 wasOpen[i] = d.open;
                 d.open = true; 
                 d.style.display = 'block'; 
             });
-
             const searchCont = document.getElementById('searchContainer');
             if(searchCont) searchCont.style.display = 'none';
-
             window.print();
-
             setTimeout(() => {
                 details.forEach((d, i) => { d.open = wasOpen[i]; });
                 if(searchCont) searchCont.style.display = 'block';
@@ -57,30 +53,26 @@ document.addEventListener('DOMContentLoaded', () => {
         if (progressBar) progressBar.style.width = scrolled + "%";
     };
 
-    // 4. MOTOR DE BÚSQUEDA INTELIGENTE
+    // 4. MOTOR DE BÚSQUEDA
     const searchInput = document.getElementById('searchInput');
     const detailsElements = document.querySelectorAll('details');
     const noResults = document.getElementById('noResults');
 
     if (searchInput) {
         searchInput.addEventListener('input', function(e) {
-            // Convertir a minúsculas y quitar espacios extra
             const term = e.target.value.toLowerCase().trim();
             let hasResults = false;
 
             detailsElements.forEach(details => {
-                // Obtener todo el texto del capítulo en minúsculas
                 const text = details.textContent.toLowerCase();
                 
                 if (text.includes(term)) {
                     details.style.display = 'block';
-                    
-                    // Si hay término de búsqueda, abrimos el capítulo automáticamente
                     if (term !== '') {
                         details.open = true;
                         hasResults = true;
                     } else {
-                        details.open = false; // Cerrar si borran la búsqueda
+                        details.open = false;
                         hasResults = true;
                     }
                 } else {
@@ -88,7 +80,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            // Mostrar mensaje si no hay resultados
             if (noResults) {
                 if (!hasResults && term !== '') {
                     noResults.style.display = 'block';
@@ -97,5 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         });
+    } else {
+        console.error("Error: No se encontró el input con id 'searchInput'");
     }
 });
