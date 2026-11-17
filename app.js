@@ -17,7 +17,7 @@ function safeUrl(u) {
   } catch { return null; }
 }
 
-const PB_URL = 'https://pocketbase-railway-production-6031.up.railway.app';
+const PB_URL = 'https://api.andresdig.org';
 const pb = new PocketBase(PB_URL);
 pb.autoCancellation(false);
 
@@ -1970,7 +1970,7 @@ function registrarSW() {
     setTimeout(() => location.reload(), 900);
   });
 
-  navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch((e) => console.warn('Service worker:', e));
+  navigator.serviceWorker.register('/sw.js', { scope: '/', updateViaCache: 'none' }).catch((e) => console.warn('Service worker:', e));
 }
 
 function mostrarTerminos() {
