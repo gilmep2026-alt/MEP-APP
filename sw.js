@@ -7,7 +7,7 @@
      Eso protege el realtime (SSE) y las descargas de /api/files/.
    ========================================================================== */
 
-const VERSION = 'mep-v23';
+const VERSION = 'mep-v24';
 const STATIC_CACHE = 'mep-static-' + VERSION;
 const RUNTIME_CACHE = 'mep-runtime-' + VERSION;
 const MAX_ESTATICOS = 90;
@@ -19,13 +19,10 @@ const PRECACHE = [
   '/app.js',
   '/manifest.json',
   '/estatutos.html',
-  '/etica.html', /* <-- NUEVA LÍNEA AGREGADA AQUÍ */
+  '/etica.html',
   '/logo.png',
   '/icon-192.png',
-  '/icon-512.png',
-  '/icon-180.png',
-  '/icon-maskable-192.png',
-  '/icon-maskable-512.png'
+  '/icon-512.png'
 ];
 
 /* ------------------------------------------------------------- instalación */
