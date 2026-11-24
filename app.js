@@ -153,12 +153,78 @@ function setFallbacks(root) {
   root.querySelectorAll('img').forEach((img) => {
     if (img.dataset.fb) return;
     img.dataset.fb = '1';
-    img.addEventListener('error', () => { img.src = PLACEHOLDER; }, { once: true });
+    img.addEventListener('error', () => {
+      img.removeAttribute('srcset');
+      img.src = PLACEHOLDER;
+    }, { once: true });
   });
 }
 
 function imgDe(rec, file) {
   try { return pb.files.getUrl(rec, file); } catch { return ''; }
+}
+
+function avatarUsuario(rec, size = 96) {
+  if (!rec || !rec.foto) return 'icon-192.png';
+  try { return `${pb.files.getUrl(rec, rec.foto)}?thumb=${size}x${size}`; } catch { return 'icon-192.png'; }
+}
+
+/* Miniaturas reales. PocketBase genera estos anchos a partir del campo `archivo`
+   (ver thumbs en la colección `galeria`), así el móvil no descarga el original. */
+const ANCHOS_IMG = [480, 960, 1600];
+
+function srcsetDe(it) {
+  if (!it || !it.archivo || it.tipo === 'video') return '';
+  try {
+    const base = pb.files.getUrl(it, it.archivo);
+    return ANCHOS_IMG.map((w) => `${base}?thumb=${w}x0 ${w}w`).join(', ');
+  } catch { return ''; }
+}
+
+function thumbDe(it, w = 480) {
+  if (!it) return '';
+  if (!it.archivo) return safeUrl(it.url) || '';
+  try { return `${pb.files.getUrl(it, it.archivo)}?thumb=${w}x0`; } catch { return ''; }
+}
+
+function imgHtml(it, opciones = {}) {
+  const { clase = 'gal-media', sizes = '(max-width:640px) 100vw, (max-width:960px) 50vw, 380px', eager = false, prioridad = '', alt = '' } = opciones;
+  const src = it.tipo === 'video' ? posterDe(it) : (safeUrl(it.url) || '');
+  if (!src) return '';
+  const ss = srcsetDe(it);
+  const prio = prioridad ? ` fetchpriority="${prioridad}"` : '';
+  return `<img class="${clase}" src="${esc(src)}"${ss ? ` srcset="${esc(ss)}" sizes="${esc(sizes)}"` : ''} alt="${esc(alt || it.titulo || '')}" loading="${eager ? 'eager' : 'lazy'}" decoding="async"${prio}>`;
+}
+
+/* Reduce fotos grandes antes de subirlas (máx. 2000 px de lado). Conserva PNG
+   con transparencia; todo lo demás se convierte a JPEG calidad 0.85. */
+async function optimizarImagen(file) {
+  if (!file || !file.type || !file.type.startsWith('image/')) return file;
+  if (file.size <= 900 * 1024) return file;
+  try {
+    const bmp = await createImageBitmap(file);
+    const maxLado = 2000;
+    const escala = Math.min(1, maxLado / Math.max(bmp.width, bmp.height));
+    const conAlfa = /png|webp|gif|avif/i.test(file.type);
+    const w = Math.max(1, Math.round(bmp.width * escala));
+    const h = Math.max(1, Math.round(bmp.height * escala));
+    const canvas = document.createElement('canvas');
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    if (!conAlfa) { ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, w, h); }
+    ctx.drawImage(bmp, 0, 0, w, h);
+    bmp.close?.();
+    const tipo = conAlfa ? 'image/png' : 'image/jpeg';
+    const blob = await new Promise((res) => canvas.toBlob(res, tipo, 0.85));
+    if (!blob || blob.size >= file.size) return file;
+    const nombre = file.name.replace(/\.[^.]+$/, conAlfa ? '.png' : '.jpg');
+    return new File([blob], nombre, { type: tipo, lastModified: Date.now() });
+  } catch {
+    return file;
+  }
 }
 
 /* ------------------------------------------------------------- modales */
@@ -241,7 +307,7 @@ function aplicarSesion(rec) {
   $('adminNavWrap').style.display = isAdmin ? 'block' : 'none';
   $('navItemIntranet').style.display = isAdmin ? 'flex' : 'none';
 
-  $('topbarAvatar').src = rec.foto ? imgDe(rec, rec.foto) : 'logo.png';
+  $('topbarAvatar').src = avatarUsuario(rec, 96);
   $('topbarName').textContent = rec.nombre_completo ? String(rec.nombre_completo).split(' ')[0] : 'Perfil';
   $('topbarCargo').textContent = rec.cargo || 'Usuario';
 
@@ -262,7 +328,7 @@ function limpiarSesionUI() {
   $('btnLogout').style.display = 'none';
   $('adminNavWrap').style.display = 'none';
   $('navItemIntranet').style.display = 'none';
-  $('topbarAvatar').src = 'logo.png';
+  $('topbarAvatar').src = 'icon-192.png';
 
   desuscribirIntranet();
   desuscribirRealtime();
@@ -390,13 +456,32 @@ function aplicarSidebarColapsada() {
 function renderNavSubapps() {
   const cont = $('navSubapps');
   if (!cont) return;
-  cont.innerHTML = DB.subapps.length
-    ? DB.subapps.map((s) => `
+  // Las sub-apps destacadas viven en el botón flotante de la galería, no en el menú.
+  const visibles = DB.subapps.filter((s) => !s.destacado);
+  cont.innerHTML = visibles.length
+    ? visibles.map((s) => `
         <div class="nav-item" data-subapp="${esc(s.id)}" role="button" tabindex="0">
           <span style="font-size:16px;line-height:1;width:18px;text-align:center;flex:none" aria-hidden="true">${esc(s.icono || '🔗')}</span>
           <span class="label">${esc(s.nombre || 'Sub-app')}</span>
         </div>`).join('')
     : '<div class="nav-item" style="opacity:.5;font-size:13px"><span class="label">Sin sub-apps</span></div>';
+}
+
+function renderEventoFab() {
+  const fab = $('eventoFab');
+  if (!fab) return;
+  const ev = DB.subapps.find((s) => s.destacado && s.activo !== false);
+  const url = ev ? safeUrl(ev.url) : null;
+  if (!ev || !url) {
+    fab.hidden = true;
+    fab.removeAttribute('href');
+    return;
+  }
+  fab.href = url;
+  fab.title = `Abrir ${ev.nombre || 'evento'} en una pestaña nueva`;
+  $('eventoFabIco').textContent = ev.icono || '🔗';
+  $('eventoFabNombre').textContent = ev.nombre || 'Abrir evento';
+  fab.hidden = false;
 }
 
 function itemAgenda(a, conFecha) {
@@ -526,19 +611,18 @@ function mediaReal(it, auto) {
       ? `<video class="gal-media" src="${esc(u)}" controls ${auto ? 'autoplay muted loop playsinline' : 'preload="metadata"'}></video>`
       : '';
   }
-  const u = safeUrl(it.url);
-  return u ? `<img class="gal-media" src="${esc(u)}" alt="${esc(it.titulo || '')}" loading="lazy" decoding="async">` : '';
+  return imgHtml(it, { clase: 'gal-media', sizes: '100vw', eager: !!auto });
 }
 
 function tarjetaGaleria(it, i) {
   const esVideo = it.tipo === 'video';
   const poster = posterDe(it);
   const media = poster
-    ? `<img class="gal-media" src="${esc(poster)}" alt="${esc(it.titulo || '')}" loading="lazy" decoding="async">`
+    ? imgHtml(it, { sizes: '(max-width:640px) 100vw, (max-width:960px) 50vw, 380px' })
     : '<div class="gal-media gal-media-ph"><svg class="ico ico-2xl" aria-hidden="true"><use href="#i-video"/></svg></div>';
 
   return `
-    <div class="gal-card" style="animation-delay:${Math.min(i * 45, 450)}ms">
+    <div class="gal-card" data-gal="${i}" role="button" tabindex="0" aria-label="Abrir ${esc(it.titulo || 'contenido')}">
       <div class="gal-media-wrap">
         <span class="gal-badge"><svg class="ico" aria-hidden="true"><use href="#i-${esVideo ? 'video' : 'image'}"/></svg>${esVideo ? 'Video' : 'Imagen'}</span>
         ${media}
@@ -574,6 +658,59 @@ function renderGaleria() {
   if (gp) { gp.innerHTML = tarjetas.slice(0, 8).join(''); setFallbacks(gp); }
 }
 
+/* ------------------------------------------------------------------ visor */
+let lbIdx = -1;
+
+function abrirLightbox(i) {
+  const total = DB.galeria.length;
+  if (!total) return;
+  lbIdx = ((Number(i) % total) + total) % total;
+  pintarLightbox();
+  const lb = $('lightbox');
+  if (!lb) return;
+  lb.classList.add('open');
+  lb.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('lb-open');
+  $('lbClose').focus({ preventScroll: true });
+}
+
+function cerrarLightbox() {
+  const lb = $('lightbox');
+  if (!lb || !lb.classList.contains('open')) return;
+  lb.classList.remove('open');
+  lb.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('lb-open');
+  $('lbStage').innerHTML = '';
+  lbIdx = -1;
+}
+
+function moverLightbox(paso) {
+  if (lbIdx < 0 || !DB.galeria.length) return;
+  lbIdx = (lbIdx + paso + DB.galeria.length) % DB.galeria.length;
+  pintarLightbox();
+}
+
+function pintarLightbox() {
+  const it = DB.galeria[lbIdx];
+  const stage = $('lbStage');
+  if (!it || !stage) return;
+  const yt = ytEmbed(it.url);
+  if (it.tipo === 'video' && yt) {
+    stage.innerHTML = `<iframe src="${esc(yt + '?rel=0&autoplay=1')}" title="${esc(it.titulo || 'Video')}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+  } else if (it.tipo === 'video') {
+    const u = safeUrl(it.url);
+    stage.innerHTML = u ? `<video src="${esc(u)}" controls autoplay playsinline></video>` : '';
+  } else {
+    stage.innerHTML = imgHtml(it, { clase: 'lb-img', sizes: '100vw', eager: true });
+    setFallbacks(stage);
+  }
+  $('lbTitle').textContent = it.titulo || '';
+  $('lbCount').textContent = `${lbIdx + 1} / ${DB.galeria.length}`;
+  const varios = DB.galeria.length > 1;
+  $('lbPrev').style.display = varios ? '' : 'none';
+  $('lbNext').style.display = varios ? '' : 'none';
+}
+
 /* ------------------------------------------------------------ carrusel */
 const CARRUSEL_MS = 5500;
 let cIdx = 0;
@@ -581,13 +718,10 @@ let cTimer = null;
 let cPausado = false;
 
 function slideHtml(it, i) {
-  const poster = posterDe(it);
   return `
     <div class="carousel-slide" data-slide="${i}">
       <div class="slide-media">
-        ${poster
-          ? `<img src="${esc(poster)}" alt="${esc(it.titulo || '')}" ${i === 0 ? 'loading="eager"' : 'loading="lazy"'} decoding="async">`
-          : '<div class="slide-ph"></div>'}
+        ${imgHtml(it, { clase: 'slide-img', sizes: '100vw', eager: true, prioridad: i === 0 ? 'high' : 'low' }) || '<div class="slide-ph"></div>'}
       </div>
       <div class="carousel-overlay"></div>
       <div class="carousel-caption">
@@ -692,7 +826,7 @@ function iniciarAutoplay() {
 
 /* --------------------------------------------------------------- chat */
 function avatarDe(m) {
-  return safeUrl(m.foto_url) || 'logo.png';
+  return safeUrl(m.foto_url) || 'icon-192.png';
 }
 
 const chatModo = { tipo: 'publico', con: null, nombre: '' };
@@ -1127,7 +1261,7 @@ function renderAdminListas() {
   if (g) g.innerHTML = DB.galeria.length ? DB.galeria.map((it) => `
     <div class="ad-row">
       ${it.tipo === 'imagen'
-        ? `<img class="thumb" src="${esc(it.url)}" alt="" loading="lazy">`
+        ? `<img class="thumb" src="${esc(thumbDe(it, 480))}" alt="" loading="lazy">`
         : '<div class="thumb" style="display:flex;align-items:center;justify-content:center;color:var(--gold-300)"><svg class="ico ico-lg" aria-hidden="true"><use href="#i-video"/></svg></div>'}
       <div class="ad-txt"><b>${esc(it.titulo || 'Sin título')}</b><small>${esc(it.tipo || 'imagen')} · ${esc(fmtFecha(it.fecha) || 'sin fecha')}</small></div>
       <button type="button" class="btn sm icon" data-action="edit" data-type="galeria" data-id="${esc(it.id)}" aria-label="Editar"><svg class="ico" aria-hidden="true"><use href="#i-pencil"/></svg></button>
@@ -1163,7 +1297,7 @@ function renderAdminListas() {
   if (s) s.innerHTML = DB.subapps.length ? DB.subapps.map((x) => `
     <div class="ad-row">
       <div class="thumb" style="display:flex;align-items:center;justify-content:center;font-size:24px;background:transparent;border-color:var(--glass-border-subtle)">${esc(x.icono || '🔗')}</div>
-      <div class="ad-txt"><b>${esc(x.nombre || '')}</b><small>${esc(x.url || '')}</small></div>
+      <div class="ad-txt"><b>${esc(x.nombre || '')}${x.destacado ? ' <span style="font-size:10px;color:var(--gold-500)">[Destacada]</span>' : ''}</b><small>${esc(x.url || '')}</small></div>
       <button type="button" class="btn sm icon" data-action="edit" data-type="subapps" data-id="${esc(x.id)}" aria-label="Editar"><svg class="ico" aria-hidden="true"><use href="#i-pencil"/></svg></button>
       <button type="button" class="btn sm icon danger" data-action="del" data-type="subapps" data-id="${esc(x.id)}" aria-label="Eliminar"><svg class="ico" aria-hidden="true"><use href="#i-trash"/></svg></button>
     </div>`).join('') : '<p class="muted">Sin sub-apps.</p>';
@@ -1200,6 +1334,7 @@ async function limpiarForm(type) {
   }
   if (type === 'subapps') {
     ['s_nombre', 's_icono', 's_url'].forEach((i) => { $(i).value = ''; });
+    if ($('s_destacado')) $('s_destacado').checked = false;
     setEtiquetaBoton('s_save', 'Agregar');
     $('s_cancel').style.display = 'none';
   }
@@ -1258,6 +1393,7 @@ function cargarParaEditar(type, id) {
     $('s_nombre').value = it.nombre || '';
     $('s_icono').value = it.icono || '';
     $('s_url').value = it.url || '';
+    if ($('s_destacado')) $('s_destacado').checked = !!it.destacado;
     setEtiquetaBoton('s_save', 'Actualizar');
     $('s_cancel').style.display = 'inline-flex';
   }
@@ -1286,9 +1422,15 @@ async function eliminarItem(type, id) {
 async function guardarGaleria() {
   const titulo = $('g_titulo').value.trim();
   const url = $('g_url').value.trim();
-  const archivo = $('g_file').files[0];
+  let archivo = $('g_file').files[0];
   if (!titulo) { toast('Escribe un título', 'err'); return; }
   if (!url && !archivo && !editando.galeria) { toast('Indica una URL o un archivo', 'err'); return; }
+
+  if (archivo && archivo.type.startsWith('image/')) {
+    const original = archivo;
+    archivo = await optimizarImagen(archivo);
+    if (archivo !== original) toast('Foto optimizada para carga rápida');
+  }
 
   const fd = new FormData();
   fd.append('titulo', titulo);
@@ -1386,19 +1528,35 @@ async function guardarReglamento() {
   }
 }
 
+function normalizarUrlSubapp(valor) {
+  let u = String(valor || '').trim();
+  if (!u) return '';
+  if (!/^https?:\/\//i.test(u)) u = 'https://' + u;
+  try {
+    const x = new URL(u);
+    x.hostname = x.hostname.replace(/\.+$/, '');
+    return x.toString();
+  } catch { return u; }
+}
+
 async function guardarSubapp() {
   const nombre = $('s_nombre').value.trim();
-  const url = $('s_url').value.trim();
-  if (!nombre || !url) { toast('Escribe nombre y URL', 'err'); return; }
+  const url = safeUrl(normalizarUrlSubapp($('s_url').value));
+  if (!nombre || !url) { toast('Escribe el nombre y una URL válida', 'err'); return; }
 
   const payload = {
     nombre,
     icono: $('s_icono').value.trim() || '🔗',
     url,
-    activo: true
+    activo: true,
+    destacado: !!$('s_destacado').checked
   };
 
   try {
+    if (payload.destacado) {
+      const otras = DB.subapps.filter((x) => x.destacado && x.id !== editando.subapps);
+      await Promise.all(otras.map((x) => pb.collection('subapps').update(x.id, { destacado: false })));
+    }
     if (editando.subapps) {
       await pb.collection('subapps').update(editando.subapps, payload);
     } else {
@@ -1452,7 +1610,9 @@ function abrirSubapp(id) {
 
 function abrirPrimeraSubapp() {
   if (!DB.subapps.length) { toast('Todavía no hay sub-apps configuradas'); return; }
-  abrirSubapp(DB.subapps[0].id);
+  const normal = DB.subapps.find((s) => !s.destacado && s.activo !== false) || DB.subapps.find((s) => !s.destacado);
+  if (!normal) { toast('La sub-app está disponible en el botón de la galería'); return; }
+  abrirSubapp(normal.id);
 }
 
 /* ------------------------------------------------------------ eventos */
@@ -1516,11 +1676,18 @@ function enlazarEventos() {
 
     const play = e.target.closest('[data-play]');
     if (play) {
-      const it = DB.galeria[Number(play.dataset.play)];
-      const wrap = play.closest('.gal-media-wrap');
-      if (it && wrap) { wrap.innerHTML = mediaReal(it, false); setFallbacks(wrap); }
+      e.preventDefault();
+      abrirLightbox(Number(play.dataset.play));
       return;
     }
+
+    const gal = e.target.closest('[data-gal]');
+    if (gal) { abrirLightbox(Number(gal.dataset.gal)); return; }
+
+    if (e.target.closest('#lbClose')) { cerrarLightbox(); return; }
+    if (e.target.closest('#lbPrev')) { moverLightbox(-1); return; }
+    if (e.target.closest('#lbNext')) { moverLightbox(1); return; }
+    if (e.target.id === 'lightbox' || e.target.id === 'lbStage') { cerrarLightbox(); return; }
 
     const accion = e.target.closest('[data-action]');
     if (!accion) return;
@@ -1532,17 +1699,38 @@ function enlazarEventos() {
   });
 
   document.addEventListener('keydown', (e) => {
+    if ($('lightbox') && $('lightbox').classList.contains('open')) {
+      if (e.key === 'Escape') { cerrarLightbox(); return; }
+      if (e.key === 'ArrowLeft') { moverLightbox(-1); return; }
+      if (e.key === 'ArrowRight') { moverLightbox(1); return; }
+      if (e.key === 'Tab') return;
+    }
     if (e.key === 'Escape') {
       if (document.querySelector('.modal-overlay.show')) { cerrarTodosLosModales(); return; }
       cerrarMenu();
     }
-    if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[data-goto],[role="button"].nav-item')) {
+    if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('[data-goto],[role="button"].nav-item,.gal-card')) {
       e.preventDefault();
       if (e.target.dataset.goto) go(e.target.dataset.goto);
+      else if (e.target.dataset.gal !== undefined) abrirLightbox(Number(e.target.dataset.gal));
       else if (e.target.dataset.link) window.location.href = e.target.dataset.link;
       else if (e.target.dataset.subapp) abrirSubapp(e.target.dataset.subapp);
     }
   });
+
+  /* visor: cerrar al tocar fuera y deslizar en móvil */
+  (() => {
+    const lb = $('lightbox');
+    if (!lb) return;
+    let x0 = null;
+    lb.addEventListener('touchstart', (e) => { x0 = e.touches[0]?.clientX ?? null; }, { passive: true });
+    lb.addEventListener('touchend', (e) => {
+      if (x0 === null) return;
+      const dx = (e.changedTouches[0]?.clientX ?? x0) - x0;
+      x0 = null;
+      if (Math.abs(dx) > 50) moverLightbox(dx > 0 ? -1 : 1);
+    }, { passive: true });
+  })();
 
   /* auth */
   $('btnLogin').addEventListener('click', abrirModalAuth);
@@ -1554,7 +1742,7 @@ function enlazarEventos() {
 
   $('btnProfile').addEventListener('click', () => {
     if (!currentUser) return;
-    $('profFoto').src = currentUser.foto ? imgDe(currentUser, currentUser.foto) : 'logo.png';
+    $('profFoto').src = avatarUsuario(currentUser, 192);
     $('profNombre').textContent = currentUser.nombre_completo || '';
     $('profCargo').textContent = currentUser.cargo || '';
     $('profEstado').textContent = currentUser.estado || '—';
@@ -1823,7 +2011,7 @@ async function registrarUsuario(e) {
     return;
   }
 
-  const foto = $('regFoto').files[0];
+  let foto = $('regFoto').files[0];
   if (foto) {
     if (!foto.type || !foto.type.startsWith('image/')) {
       mostrarErrorAuth('El archivo debe ser una imagen (JPG, PNG, WEBP).');
@@ -1833,6 +2021,7 @@ async function registrarUsuario(e) {
       mostrarErrorAuth('La foto pesa más de 5 MB. Usa una imagen más pequeña.');
       return;
     }
+    foto = await optimizarImagen(foto);
   }
 
   const btn = e.target.querySelector('button[type="submit"]');
@@ -1981,6 +2170,7 @@ function mostrarTerminos() {
 /* -------------------------------------------------------------- arranque */
 function renderTodo() {
   renderNavSubapps();
+  renderEventoFab();
   renderInicio();
   renderAgenda();
   renderReglamentos();
